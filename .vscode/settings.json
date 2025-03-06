@@ -1,4 +1,4 @@
 {
-  "conventionalCommits.scopes": ["logo", "theme", "test-data"],
+  "conventionalCommits.scopes": ["logo", "theme", "test-data", "hero"],
   "cSpell.words": ["Artiverse"]
 }
