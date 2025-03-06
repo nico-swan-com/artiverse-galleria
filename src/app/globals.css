@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://rsms.me/inter/inter.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,97 +8,168 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 240 10% 3.9%;
 
     --card: 0 0% 100%;
-
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 240 10% 3.9%;
 
     --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
 
-    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
-    --primary-foreground: 210 40% 98%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-    --secondary: 218.18 12.09% 64.31%;
-
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
 
     --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
 
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-
-    --input: 214.3 31.8% 91.4%;
-
-    --ring: 222.2 84% 4.9%;
-
-    --error: 12 76% 61%;
-
-    --success: 173 58% 39%;
-
-    --warning: 27 87% 67%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
 
     --radius: 0.5rem;
-  }
-  .dark {
-    --background: 207 43% 9%;
 
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 218.18 12.09% 64.31%;
-
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-
-    --input: 217.2 32.6% 17.5%;
-
-    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
+
+  html {
+    height: 100%;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    height: 100%;
+    overflow-x: hidden;
+  }
+
+  #root {
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display tracking-tight;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-gallery-medium-gray transition-colors;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gallery-dark-gray;
+  }
+
+  /* Background blur on modals and overlays */
+  .backdrop-blur {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* Image lazy loading effects */
+  .lazy-image-container {
+    @apply relative overflow-hidden;
+    background-color: #f5f5f5;
+  }
+
+  .lazy-image {
+    @apply transition-all duration-600 ease-swift-out;
+  }
+
+  .lazy-image-loading {
+    @apply scale-105 blur-xl;
+  }
+
+  .lazy-image-loaded {
+    @apply scale-100 blur-0;
+  }
+
+  /* Page transitions */
+  .page-transition-enter {
+    @apply opacity-0;
+  }
+
+  .page-transition-enter-active {
+    @apply opacity-100 transition-opacity duration-400 ease-swift-out;
+  }
+
+  .page-transition-exit {
+    @apply opacity-100;
+  }
+
+  .page-transition-exit-active {
+    @apply opacity-0 transition-opacity duration-400 ease-swift-out;
+  }
+
+  /* Magnification glass effect for artwork viewing */
+  .magnify-container {
+    @apply relative cursor-zoom-in overflow-hidden;
+  }
+
+  .magnify-glass {
+    @apply pointer-events-none absolute rounded-full opacity-0 shadow-lg;
+    transition: opacity 0.3s ease-out;
+    background-repeat: no-repeat;
+    border: 2px solid white;
+    width: 150px;
+    height: 150px;
+    z-index: 10;
+  }
+
+  /* QR code styling */
+  .qr-code-container {
+    @apply inline-flex flex-col items-center rounded-md bg-white p-4;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.07));
+  }
+
+  /* Card hover effects */
+  .artwork-card,
+  .artist-card {
+    @apply transition-all duration-400 ease-swift-out;
+  }
+
+  .artwork-card:hover,
+  .artist-card:hover {
+    transform: translateY(-4px);
   }
 }
