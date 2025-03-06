@@ -75,7 +75,6 @@ Please see our [contributors guide](./CONTRIBUTORS.md).
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-
 ## Contact
 
 Nico Swan e-mail: [hi@nicoswan.com](mailto://hi@nicoswan.com)
