@@ -5,6 +5,7 @@ import { ArrowDownCircle } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from './ui/button'
 import { artworks } from '@/data/artworks'
+import Image from 'next/image'
 
 const Hero = () => {
   const [isVisible, setIsVisible] = useState(false)
@@ -46,7 +47,7 @@ const Hero = () => {
               </div>
               <div className='relative overflow-hidden rounded-lg shadow-xl'>
                 {artworks.length > 0 && (
-                  <img
+                  <Image
                     src={artworks[0].images[0]}
                     alt='Featured artwork'
                     className='aspect-[4/3] size-full object-cover'

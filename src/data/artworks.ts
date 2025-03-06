@@ -1,5 +1,4 @@
 import { Artwork } from '@/types/artwork'
-import { Artist } from '@/types/artist'
 import { artists, getArtistById } from './artists'
 
 export const artworks: Artwork[] = [

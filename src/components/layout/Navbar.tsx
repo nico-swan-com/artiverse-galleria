@@ -106,7 +106,7 @@ const Navbar = () => {
           >
             <ShoppingCart size={isMobile ? 20 : 24} />
             {itemCount > 0 && (
-              <span className='absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gallery-black text-xs font-medium text-white'>
+              <span className='absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-gallery-black text-xs font-medium text-white'>
                 {itemCount}
               </span>
             )}

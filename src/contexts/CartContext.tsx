@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { Artwork } from '@/types/artwork'
-import { toast } from '@/hooks/use-toast'
+import { toast } from 'sonner'
 
 // Define cart item type
 export type CartItem = {
@@ -43,19 +43,32 @@ export const useCart = () => useContext(CartContext)
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   children
 }) => {
+  //const { toast } = useToast() // Using the toast hook
+
   // Try to get initial cart from localStorage
   const [cart, setCart] = useState<CartItem[]>(() => {
-    const savedCart = localStorage.getItem('art-gallery-cart')
-    return savedCart ? JSON.parse(savedCart) : []
+    if (typeof window !== 'undefined') {
+      const savedCart = localStorage.getItem('art-gallery-cart')
+      return savedCart ? JSON.parse(savedCart) : []
+    }
+    return [] // Return empty array on server-side rendering
   })
 
   const [itemCount, setItemCount] = useState(0)
 
+  // Get total number of items
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const getItemCount = () => {
+    return cart.reduce((total, item) => total + item.quantity, 0)
+  }
+
   // Update localStorage when cart changes
   useEffect(() => {
-    localStorage.setItem('art-gallery-cart', JSON.stringify(cart))
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('art-gallery-cart', JSON.stringify(cart))
+    }
     setItemCount(getItemCount())
-  }, [cart])
+  }, [cart, getItemCount])
 
   // Add item to cart
   const addToCart = (artwork: Artwork, quantity = 1) => {
@@ -77,8 +90,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     })
 
-    toast({
-      title: 'Added to cart',
+    toast('Added to cart', {
       description: `${artwork.title} has been added to your cart.`
     })
   }
@@ -112,11 +124,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   // Clear cart
   const clearCart = () => {
     setCart([])
-  }
-
-  // Get total number of items
-  const getItemCount = () => {
-    return cart.reduce((total, item) => total + item.quantity, 0)
   }
 
   // Get cart total price
