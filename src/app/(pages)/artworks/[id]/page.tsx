@@ -138,7 +138,7 @@ const ArtworkDetail = () => {
                     </div>
                   </div>
                 </DialogTrigger>
-                <DialogTitle></DialogTitle>
+                <DialogTitle>{artwork.title}</DialogTitle>
                 <DialogContent className='h-[80vh] max-w-5xl'>
                   <div className='flex h-full items-center justify-center'>
                     {selectedImage && (

@@ -10,9 +10,7 @@ export const artworks: Artwork[] = [
       'A vibrant expression of color and movement, this abstract piece creates a sense of harmony through contrasting elements. Layers of acrylic paint build depth and texture, inviting the viewer to discover new details with each viewing.',
     price: 1200,
     images: [
-      'https://images.unsplash.com/photo-1602738328654-51ab2ae6c4ff?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80',
-      'https://images.unsplash.com/photo-1576769267141-f07a5f2ffd6a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80',
-      'https://images.unsplash.com/photo-1552355757-88196237badc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
+      'https://images.unsplash.com/photo-1602738328654-51ab2ae6c4ff?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
     ],
     yearCreated: 2023,
     medium: 'Acrylic on Canvas',
@@ -71,8 +69,7 @@ export const artworks: Artwork[] = [
       'A bold exploration of geometric shapes and color relationships. This piece plays with perception and spatial relationships, creating a dynamic visual experience that changes as you move around it.',
     price: 1400,
     images: [
-      'https://images.unsplash.com/photo-1584285405429-136507257dal?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80',
-      'https://images.unsplash.com/photo-1620503374956-c942862f0372?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
+      'https://images.unsplash.com/photo-1515155075601-23009d0cb6d4?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
     ],
     yearCreated: 2022,
     medium: 'Acrylic on Canvas',
@@ -151,8 +148,7 @@ export const artworks: Artwork[] = [
       'This digital artwork explores the intersection of technology and imagination. Created using advanced 3D modeling and rendering techniques, it presents a surreal landscape that could not exist in the physical world.',
     price: 800,
     images: [
-      'https://images.unsplash.com/photo-1558865869-c93d6f8c8152?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1771&q=80',
-      'https://images.unsplash.com/photo-1611532736597-8bc40fea3fe4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80'
+      'https://images.unsplash.com/photo-1660480904370-a5dcd0be395b?q=80&w=2018&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
     ],
     yearCreated: 2023,
     medium: 'Digital Art, Limited Edition Print',
