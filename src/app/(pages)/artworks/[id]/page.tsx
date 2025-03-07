@@ -126,11 +126,10 @@ const ArtworkDetail = () => {
                 <DialogTrigger asChild>
                   <div className='h-full cursor-zoom-in'>
                     {selectedImage && (
-                      <Image
+                      <img
                         src={selectedImage}
                         alt={artwork.title}
-                        fill
-                        priority
+                        className='h-full w-full object-contain'
                       />
                     )}
                     <div className='absolute bottom-4 right-4 rounded-full bg-white/80 p-2 backdrop-blur-sm'>
@@ -142,11 +141,10 @@ const ArtworkDetail = () => {
                 <DialogContent className='h-[80vh] max-w-5xl'>
                   <div className='flex h-full items-center justify-center'>
                     {selectedImage && (
-                      <Image
+                      <img
                         src={selectedImage}
                         alt={artwork.title}
-                        fill
-                        priority
+                        className='max-h-full max-w-full object-contain'
                       />
                     )}
                   </div>
