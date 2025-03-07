@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ShoppingCart, Search, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import Logo from '../logo/Logo'
 
 const Navbar = () => {
   const { getItemCount } = useCart()
@@ -65,12 +66,7 @@ const Navbar = () => {
   return (
     <header className={navbarClasses}>
       <nav className='container mx-auto flex items-center justify-between px-6 py-4'>
-        <Link
-          href='/'
-          className='font-display text-xl tracking-tight text-gallery-black transition-opacity hover:opacity-80 md:text-2xl'
-        >
-          <span className='font-bold'>Artiverse</span>
-        </Link>
+        <Logo />
 
         {!isMobile && (
           <ul className='hidden space-x-8 md:flex'>
