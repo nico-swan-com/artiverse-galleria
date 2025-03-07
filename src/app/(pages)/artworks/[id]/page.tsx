@@ -22,7 +22,6 @@ import {
 } from '@/components/ui/dialog'
 import ArtworkCard from '@/components/artwork/ArtworkCard'
 import { toast } from 'sonner'
-import Image from 'next/image'
 import QRCode from '@/components/QRCode'
 
 const ArtworkDetail = () => {
