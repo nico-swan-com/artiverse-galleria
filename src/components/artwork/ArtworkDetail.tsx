@@ -206,7 +206,7 @@ const ArtworkDetail: React.FC<ArtworkDetailProps> = ({ artwork }) => {
             {artwork.title}
           </h1>
           <Link
-            to={`/artists/${artist.id}`}
+            href={`/artists/${artist.id}`}
             className='mb-6 text-xl text-gray-600 transition-colors hover:text-gray-900'
           >
             {artist.name}

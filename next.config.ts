@@ -50,15 +50,13 @@ const staticConfig: NextConfig = {
    */
   images: {
     unoptimized: true,
-    images: {
-      remotePatterns: [
-        {
-          protocol: 'https',
-          hostname: 'images.unsplash.com',
-          pathname: '/**' // This allows all paths
-        }
-      ]
-    }
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**' // This allows all paths
+      }
+    ]
   }
 }
 

@@ -14,7 +14,12 @@ import {
   ShoppingCart,
   ZoomIn
 } from 'lucide-react'
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog'
 import ArtworkCard from '@/components/artwork/ArtworkCard'
 import { toast } from 'sonner'
 import Image from 'next/image'
@@ -133,6 +138,7 @@ const ArtworkDetail = () => {
                     </div>
                   </div>
                 </DialogTrigger>
+                <DialogTitle></DialogTitle>
                 <DialogContent className='h-[80vh] max-w-5xl'>
                   <div className='flex h-full items-center justify-center'>
                     {selectedImage && (
