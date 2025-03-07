@@ -6,7 +6,8 @@
     "hero",
     "Navbar",
     "footer",
-    "artwork-browse"
+    "artwork-browse",
+    "artwork-detail"
   ],
   "cSpell.words": ["Artiverse"]
 }
