@@ -5,9 +5,10 @@ import { ArrowDownCircle } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from './ui/button'
 import { artworks } from '@/data/artworks'
-import Image from 'next/image'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 const Hero = () => {
+  const isMobile = useIsMobile()
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
@@ -23,7 +24,7 @@ const Hero = () => {
 
   return (
     <>
-      <div className='relative flex h-screen flex-col items-center justify-center overflow-hidden'>
+      <div className='relative flex min-h-screen flex-col items-center justify-center overflow-hidden'>
         <section className='relative bg-gray-50 px-4 py-20 sm:px-6 lg:px-8'>
           <div className='mx-auto max-w-7xl'>
             <div className='grid grid-cols-1 items-center gap-12 md:grid-cols-2'>
@@ -47,7 +48,8 @@ const Hero = () => {
               </div>
               <div className='relative overflow-hidden rounded-lg shadow-xl'>
                 {artworks.length > 0 && (
-                  <Image
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
                     src={artworks[0].images[0]}
                     alt='Featured artwork'
                     className='aspect-[4/3] size-full object-cover'
@@ -57,15 +59,18 @@ const Hero = () => {
             </div>
           </div>
         </section>
-        <button
-          onClick={scrollToContent}
-          className={`animate-bounce text-secondary transition-colors duration-300 hover:text-orange-500 dark:text-primary/80 ${
-            isVisible ? 'opacity-100' : 'opacity-0'
-          }`}
-          aria-label='Scroll down'
-        >
-          <ArrowDownCircle size={32} />
-        </button>
+
+        {!isMobile && (
+          <button
+            onClick={scrollToContent}
+            className={`animate-bounce text-secondary transition-colors duration-300 hover:text-accent dark:text-primary/80 ${
+              isVisible ? 'opacity-100' : 'opacity-0'
+            }`}
+            aria-label='Scroll down'
+          >
+            <ArrowDownCircle size={32} />
+          </button>
+        )}
       </div>
     </>
   )
