@@ -15,8 +15,9 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Next App',
-  description: 'next starter web application'
+  title: 'Artiverse Gallerria',
+  description:
+    "Explore our curated collection of original artworks from talented artists around the world. Each piece comes with it's own story and identity."
 }
 
 export default function RootLayout({
