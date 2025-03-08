@@ -27,7 +27,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "_next/types/**/*.ts",
-    "next-env.d.ts"
+    "next-env.d.ts",
+    "src/app/(pages)/artworks/[id]/page.bac",
+    "src/app/(pages)/artworks/[id]/page.bac2"
   ],
   "exclude": ["node_modules"]
 }

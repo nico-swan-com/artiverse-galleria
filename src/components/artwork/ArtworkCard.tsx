@@ -34,13 +34,12 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({ artwork, className }) => {
           <Image
             src={artwork.images[0]}
             alt={artwork.title}
-            layout='fill' // Important for layout
-            objectFit='cover' // Important for object fit
+            fill
             className={cn(
-              'transition-all duration-400',
+              'object-cover transition-all duration-400',
               isImageLoaded ? 'scale-100 blur-0' : 'scale-105 blur-xl'
             )}
-            onLoadingComplete={() => setIsImageLoaded(true)} // changed onLoad to onLoadingComplete
+            onLoad={() => setIsImageLoaded(true)}
           />
 
           {/* Overlay with actions */}

@@ -3,10 +3,16 @@ import type { NextConfig } from 'next'
 const { BUILD_TYPE } = process.env
 
 const defaultConfig: NextConfig = {
+  distDir: '_next',
   images: {
-    domains: ['images.unsplash.com']
-  },
-  distDir: '_next'
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**' // This allows all paths
+      }
+    ]
+  }
 }
 
 const customServerConfig: NextConfig = {
@@ -18,7 +24,13 @@ const customServerConfig: NextConfig = {
    */
   output: 'standalone',
   images: {
-    domains: ['images.unsplash.com']
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**' // This allows all paths
+      }
+    ]
   }
 }
 
@@ -38,7 +50,13 @@ const staticConfig: NextConfig = {
    */
   images: {
     unoptimized: true,
-    domains: ['images.unsplash.com']
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**' // This allows all paths
+      }
+    ]
   }
 }
 
