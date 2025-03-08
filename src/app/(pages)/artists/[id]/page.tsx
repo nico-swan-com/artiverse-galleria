@@ -11,10 +11,8 @@ import { useParams } from 'next/navigation'
 
 const ArtistDetail = () => {
   const { id } = useParams<{ id: string }>()
-  const [artist, setArtist] = useState(artists.find((a) => a.id === id))
-  const [artistArtworks, setArtistArtworks] = useState(
-    artworks.filter((a) => a.artist.id === id)
-  )
+  const [artist] = useState(artists.find((a) => a.id === id))
+  const [artistArtworks] = useState(artworks.filter((a) => a.artist.id === id))
 
   useEffect(() => {
     if (!artist) {

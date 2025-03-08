@@ -1,12 +1,11 @@
 'use client' // Marks this module as a client component
 
 import { useState } from 'react'
-import { artists } from '@/data/artists' // Assuming your artists data is exported as default
+import { artists } from '@/data/artists'
 import ArtistCard from '@/components/artist/ArtistCard'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Search } from 'lucide-react'
-import { artworks } from '@/data/artworks'
 
 const Artists = () => {
   const [searchTerm, setSearchTerm] = useState('')
