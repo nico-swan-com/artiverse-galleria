@@ -1,5 +1,7 @@
+'use client'
+
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { Artwork } from '@/types/artwork'
+import { Artwork } from '@/types/artwork' // Adjust the import path as needed
 import { toast } from 'sonner'
 
 // Define cart item type
@@ -17,7 +19,6 @@ type CartContextType = {
   clearCart: () => void
   getItemCount: () => number
   getCartTotal: () => number
-  addItem: (artwork: Artwork, quantity?: number) => void
   isInCart: (artworkId: string) => boolean
   itemCount: number
 }
@@ -31,7 +32,6 @@ const CartContext = createContext<CartContextType>({
   clearCart: () => {},
   getItemCount: () => 0,
   getCartTotal: () => 0,
-  addItem: () => {},
   isInCart: () => false,
   itemCount: 0
 })
@@ -43,13 +43,16 @@ export const useCart = () => useContext(CartContext)
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   children
 }) => {
-  //const { toast } = useToast() // Using the toast hook
-
   // Try to get initial cart from localStorage
   const [cart, setCart] = useState<CartItem[]>(() => {
     if (typeof window !== 'undefined') {
-      const savedCart = localStorage.getItem('art-gallery-cart')
-      return savedCart ? JSON.parse(savedCart) : []
+      try {
+        const savedCart = localStorage.getItem('art-gallery-cart')
+        return savedCart ? JSON.parse(savedCart) : []
+      } catch (error) {
+        console.error('Error loading cart from localStorage:', error)
+        return []
+      }
     }
     return [] // Return empty array on server-side rendering
   })
@@ -57,7 +60,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   const [itemCount, setItemCount] = useState(0)
 
   // Get total number of items
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const getItemCount = () => {
     return cart.reduce((total, item) => total + item.quantity, 0)
   }
@@ -65,10 +67,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   // Update localStorage when cart changes
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('art-gallery-cart', JSON.stringify(cart))
+      try {
+        localStorage.setItem('art-gallery-cart', JSON.stringify(cart))
+      } catch (error) {
+        console.error('Error saving cart to localStorage:', error)
+      }
     }
     setItemCount(getItemCount())
-  }, [cart, getItemCount])
+  }, [cart]) // Removed getItemCount from dependency array.
 
   // Add item to cart
   const addToCart = (artwork: Artwork, quantity = 1) => {
@@ -94,9 +100,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
       description: `${artwork.title} has been added to your cart.`
     })
   }
-
-  // Add alias for addToCart for compatibility
-  const addItem = addToCart
 
   // Check if item is in cart
   const isInCart = (artworkId: string) => {
@@ -143,7 +146,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     clearCart,
     getItemCount,
     getCartTotal,
-    addItem,
     isInCart,
     itemCount
   }
