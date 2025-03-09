@@ -10,7 +10,8 @@
     "artwork-detail",
     "artists-browse",
     "artist-detail",
-    "about"
+    "about",
+    "not-found"
   ],
   "cSpell.words": ["Artiverse"]
 }
