@@ -69,9 +69,7 @@ export default function StoreBackLayout({
   if (!isAuthenticated) {
     return (
       <div className='flex min-h-screen items-center justify-center bg-secondary/50 p-4'>
-        <div className='w-full max-w-md animate-slide-up'>
-          {children}
-        </div>
+        <div className='w-full max-w-md animate-slide-up'>{children}</div>
       </div>
     )
   }

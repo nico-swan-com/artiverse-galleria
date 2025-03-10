@@ -48,8 +48,6 @@ const Dashboard: React.FC = () => {
     sales: product.sales
   }))
 
-
-
   return (
     <PageTransition>
       <div className='space-y-6'>
@@ -154,7 +152,7 @@ const Dashboard: React.FC = () => {
               </div>
             </CardContent>
           </Card>
-        </div> 
+        </div>
       </div>
     </PageTransition>
   )
