@@ -13,6 +13,8 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "plugins": [
       {
         "name": "next"
@@ -23,13 +25,13 @@
     }
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
+    "./src/**/*.ts",
+    "./src/**/*.tsx",
     ".next/types/**/*.ts",
     "_next/types/**/*.ts",
     "next-env.d.ts",
-    "src/app/(pages)/artworks/[id]/page.bac",
-    "src/app/(pages)/artworks/[id]/page.bac2"
+    "src/lib/database/data-source.js",
+    "src/lib/database/data-source.mts"
   ],
   "exclude": ["node_modules"]
 }

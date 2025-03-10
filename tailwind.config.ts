@@ -146,6 +146,11 @@ export default {
       transitionDuration: {
         '400': '400ms',
         '600': '600ms'
+      },
+      boxShadow: {
+        subtle: '0 2px 10px rgba(0, 0, 0, 0.05)',
+        message: '0 2px 5px rgba(0, 0, 0, 0.03)',
+        elevated: '0 10px 30px rgba(0, 0, 0, 0.08)'
       }
     }
   },
