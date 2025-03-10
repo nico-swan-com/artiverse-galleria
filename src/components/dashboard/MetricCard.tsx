@@ -60,7 +60,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
                 xmlns='http://www.w3.org/2000/svg'
                 viewBox='0 0 20 20'
                 fill='currentColor'
-                className='mr-1 h-3 w-3'
+                className='mr-1 size-3'
               >
                 <path
                   fillRule='evenodd'
@@ -73,7 +73,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
                 xmlns='http://www.w3.org/2000/svg'
                 viewBox='0 0 20 20'
                 fill='currentColor'
-                className='mr-1 h-3 w-3'
+                className='mr-1 size-3'
               >
                 <path
                   fillRule='evenodd'

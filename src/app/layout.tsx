@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Artiverse Gallerria',
+  title: 'Artiverse Galleria',
   description:
     "Explore our curated collection of original artworks from talented artists around the world. Each piece comes with it's own story and identity."
 }
@@ -28,6 +28,7 @@ export default function RootLayout({
     <SessionProvider>
       <html lang='en'>
         <body
+          // eslint-disable-next-line tailwindcss/no-custom-classname
           className={`${geistSans.variable} ${geistMono.variable} dark antialiased`}
         >
           <AnimatePresence mode='wait'>{children}</AnimatePresence>
