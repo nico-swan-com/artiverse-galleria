@@ -24,6 +24,7 @@
 # misc
 .DS_Store
 *.pem
+.devenv
 
 # debug
 npm-debug.log*
@@ -42,3 +43,5 @@ yarn-error.log*
 next-env.d.ts
 _next
 server.js
+
+
