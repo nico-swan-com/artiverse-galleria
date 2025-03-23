@@ -25,15 +25,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <SessionProvider>
-      <html lang='en'>
-        <body
-          // eslint-disable-next-line tailwindcss/no-custom-classname
-          className={`${geistSans.variable} ${geistMono.variable} dark antialiased`}
-        >
+    <html lang='en'>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <SessionProvider>
           <AnimatePresence mode='wait'>{children}</AnimatePresence>
-        </body>
-      </html>
-    </SessionProvider>
+        </SessionProvider>
+      </body>
+    </html>
   )
 }

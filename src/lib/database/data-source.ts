@@ -15,3 +15,9 @@ export const AppDataSource = new DataSource({
   logging: process.env.NODE_ENV === 'development',
   migrations: [__dirname + '/migrations/*.ts']
 })
+
+AppDataSource.initialize()
+  .then(() => {
+    console.log('Data Source has been initialized!')
+  })
+  .catch((error) => console.error('Data Source initialization error', error))

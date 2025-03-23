@@ -15,7 +15,8 @@
     "contact-page",
     "cart",
     "checkout",
-    "dashboard"
+    "dashboard",
+    "authentication"
   ],
   "cSpell.words": ["Artiverse"]
 }

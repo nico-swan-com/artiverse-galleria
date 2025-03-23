@@ -1,6 +1,8 @@
 { pkgs, lib, config, inputs, ... }:
 
 {
+  dotenv.enable = true;
+  
   # https://devenv.sh/basics/
   env = {
     NODE_ENV="development";
@@ -24,10 +26,9 @@
   languages.typescript.enable = true;
 
   # https://devenv.sh/processes/
-  processes = {
-    "dev".exec = "npm run dev";
-
-  };
+  # processes = {
+  #   "dev".exec = "npm run dev";
+  # };
 
   # https://devenv.sh/services/
   services.postgres = {
@@ -42,6 +43,23 @@
     ];
     listen_addresses = "*";
     port = 5433;
+  };
+
+  services.wiremock = {
+    enable = true;
+    port = 8080;
+    mappings = [
+      {
+        request = {
+          method = "GET";
+          url = "/api/hello";
+        };
+        response = {
+          status = 200;
+          body = "Hello, world!";
+        };
+      }
+    ];
   };
 
   # # https://devenv.sh/scripts/
