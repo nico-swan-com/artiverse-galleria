@@ -24,6 +24,7 @@
 # misc
 .DS_Store
 *.pem
+.devenv
 
 # debug
 npm-debug.log*
@@ -53,12 +54,3 @@ devenv.local.nix
 # pre-commit
 .pre-commit-config.yaml
 
-# Devenv
-.devenv*
-devenv.local.nix
-
-# direnv
-.direnv
-
-# pre-commit
-.pre-commit-config.yaml

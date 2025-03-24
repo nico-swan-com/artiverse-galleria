@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { AnimatePresence } from 'framer-motion'
 import { SessionProvider } from 'next-auth/react'
+import QueryProvider from '@/contexts/QueryProvider'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -17,21 +18,23 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Artiverse Galleria',
   description:
-    "Explore our curated collection of original artworks from talented artists around the world. Each piece comes with it's own story and identity."
+    'Explore our curated collection of original artworks from talented artists around the world. Each piece comes with its own story and identity.'
 }
 export default function RootLayout({
   children
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang='en'>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SessionProvider>
-          <AnimatePresence mode='wait'>{children}</AnimatePresence>
-        </SessionProvider>
+        <QueryProvider>
+          <SessionProvider>
+            <AnimatePresence mode='wait'>{children}</AnimatePresence>
+          </SessionProvider>
+        </QueryProvider>
       </body>
     </html>
   )

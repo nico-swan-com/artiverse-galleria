@@ -29,9 +29,7 @@
     "./src/**/*.tsx",
     ".next/types/**/*.ts",
     "_next/types/**/*.ts",
-    "next-env.d.ts",
-    "src/lib/database/data-source.js",
-    "src/lib/database/data-source.mts"
+    "next-env.d.ts"
   ],
   "exclude": ["node_modules"]
 }
