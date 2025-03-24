@@ -45,3 +45,4 @@ _next
 server.js
 
 
+.pre-commit-config.yaml

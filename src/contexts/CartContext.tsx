@@ -4,6 +4,10 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 import { Artwork } from '@/types/artwork' // Adjust the import path as needed
 import { toast } from 'sonner'
 
+interface ChildrenProps {
+  children: React.ReactNode
+}
+
 // Define cart item type
 export type CartItem = {
   artwork: Artwork
@@ -40,9 +44,7 @@ const CartContext = createContext<CartContextType>({
 export const useCart = () => useContext(CartContext)
 
 // Provider component
-export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
-  children
-}) => {
+export const CartProvider = ({ children }: ChildrenProps) => {
   // Try to get initial cart from localStorage
   const [cart, setCart] = useState<CartItem[]>(() => {
     if (typeof window !== 'undefined') {
