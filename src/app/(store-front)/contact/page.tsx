@@ -1,51 +1,8 @@
-'use client'
-
-import React, { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react'
-import { toast } from 'sonner'
+import React from 'react'
+import { MapPin, Phone, Mail, Clock } from 'lucide-react'
+import ContactForm from '@/components/contact/ContactForm'
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const handleChange = (
-    event:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    const { name, value } = event.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setIsSubmitting(true)
-
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false)
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
-      })
-
-      toast('Message sent successfully!', {
-        description: "We'll get back to you as soon as possible."
-      })
-    }, 1500)
-  }
-
   return (
     <div className='min-h-screen bg-white'>
       {/* Contact Header */}
@@ -152,74 +109,7 @@ const Contact = () => {
             </div>
 
             {/* Contact Form */}
-            <div className='rounded-lg bg-white p-8 shadow-sm'>
-              <h2 className='mb-6 text-2xl font-bold text-gray-900'>
-                Send Us a Message
-              </h2>
-
-              <form onSubmit={handleSubmit} className='space-y-6'>
-                <div className='space-y-2'>
-                  <Label htmlFor='name'>Your Name</Label>
-                  <Input
-                    id='name'
-                    name='name'
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className='space-y-2'>
-                  <Label htmlFor='email'>Email Address</Label>
-                  <Input
-                    id='email'
-                    name='email'
-                    type='email'
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className='space-y-2'>
-                  <Label htmlFor='subject'>Subject</Label>
-                  <Input
-                    id='subject'
-                    name='subject'
-                    value={formData.subject}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className='space-y-2'>
-                  <Label htmlFor='message'>Message</Label>
-                  <Textarea
-                    id='message'
-                    name='message'
-                    value={formData.message}
-                    onChange={handleChange}
-                    rows={5}
-                    required
-                  />
-                </div>
-
-                <Button
-                  type='submit'
-                  disabled={isSubmitting}
-                  className='w-full'
-                >
-                  {isSubmitting ? (
-                    'Sending...'
-                  ) : (
-                    <>
-                      <Send className='mr-2 size-4' />
-                      Send Message
-                    </>
-                  )}
-                </Button>
-              </form>
-            </div>
+            <ContactForm></ContactForm>
           </div>
         </div>
       </section>
