@@ -2,11 +2,30 @@
 
 {
   dotenv.enable = true;
-  
+
+  env = {
+    NODE_ENV="local";
+    SOPS_AGE_KEY_FILE="/home/nicoswan/.config/sops/age/keys.txt";
+    NEXTAUTH_URL="http://localhost:3000";
+
+    POSTGRES_HOST="localhost";
+    POSTGRES_PORT="5433";
+    POSTGRES_USER="app";
+    POSTGRES_DATABASE="app";
+    POSTGRES_SCHEMA="public";
+
+    SMTP_SERVER_HOST="mail.cygnus-labs.com";
+    SMTP_SERVER_PORT="465";
+    SMTP_SERVER_SECURE="true";
+    SITE_MAIL_RECEIVER="nico.swan@cygnus-labs.com";
+    SMTP_SIMULATOR="true";
+  };
+
   # https://devenv.sh/packages/
   packages = with pkgs; [
     git
     nodejs-18_x
+    envsubst
   ];
 
   # https://devenv.sh/languages/
@@ -49,10 +68,15 @@
     ];
   };
 
-  # # https://devenv.sh/scripts/
-  # scripts.hello.exec = ''
-  #   echo hello from $GREET
-  # '';
+  # https://devenv.sh/scripts/
+  scripts = {
+    edit-secrets.exec = ''
+      sops ./secrets.yaml
+    '';
+    generate-env.exec = ''
+      sops --decrypt secrets.yaml |envsubst > .env
+    '';
+  };
 
   # enterShell = ''
   #   hello
