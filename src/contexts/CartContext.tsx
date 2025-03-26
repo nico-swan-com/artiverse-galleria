@@ -62,6 +62,7 @@ export const CartProvider = ({ children }: ChildrenProps) => {
   const [itemCount, setItemCount] = useState(0)
 
   // Get total number of items
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const getItemCount = () => {
     return cart.reduce((total, item) => total + item.quantity, 0)
   }
@@ -76,7 +77,7 @@ export const CartProvider = ({ children }: ChildrenProps) => {
       }
     }
     setItemCount(getItemCount())
-  }, [cart]) // Removed getItemCount from dependency array.
+  }, [cart, getItemCount]) // Removed getItemCount from dependency array.
 
   // Add item to cart
   const addToCart = (artwork: Artwork, quantity = 1) => {

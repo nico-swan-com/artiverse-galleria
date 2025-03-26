@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -18,14 +17,12 @@ import {
 import { toast } from 'sonner'
 import { ChevronLeft, CreditCard, Check } from 'lucide-react'
 import Image from 'next/image'
-
 const Checkout = () => {
   const { cart, clearCart } = useCart()
   const router = useRouter()
   const [subtotal, setSubtotal] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
-
   // Form state
   const [formData, setFormData] = useState({
     firstName: '',
@@ -43,50 +40,38 @@ const Checkout = () => {
     cvv: '',
     notes: ''
   })
-
   useEffect(() => {
     // If cart is empty and not after successful checkout, redirect to cart
     if (cart.length === 0 && !success) {
       router.push('/cart')
     }
-
     const total = cart.reduce(
       (sum, item) => sum + item.artwork.price * item.quantity,
       0
     )
     setSubtotal(total)
   }, [cart, router, success])
-
-  const handleChange = (
-    event:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
+  const handleChange = (event) => {
     const { name, value } = event.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
-
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = (name, value) => {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
-
-  const handleSubmit = (event: React.FocusEvent<HTMLFormElement>) => {
+  const handleSubmit = (event) => {
     event.preventDefault()
     setIsSubmitting(true)
-
     // Simulating API call
     setTimeout(() => {
       setIsSubmitting(false)
       setSuccess(true)
       clearCart()
-
       // Display success message
       toast('Order placed successfully!', {
         description: 'Thank you for your purchase.'
       })
     }, 2000)
   }
-
   if (success) {
     return (
       <div className='min-h-screen bg-gray-50 px-4 py-16 sm:px-6 lg:px-8'>
@@ -110,7 +95,6 @@ const Checkout = () => {
       </div>
     )
   }
-
   return (
     <div className='min-h-screen bg-gray-50 px-4 py-12 sm:px-6 lg:px-8'>
       <div className='mx-auto max-w-7xl'>
@@ -408,5 +392,4 @@ const Checkout = () => {
     </div>
   )
 }
-
 export default Checkout

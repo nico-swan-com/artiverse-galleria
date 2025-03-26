@@ -7,22 +7,18 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Send } from 'lucide-react'
 
-import submitContactMessage from './submitContactMessage'
+import submitContactMessage from './submit-contact-message.action'
 import { toast } from 'sonner'
+import { formInitialState } from '@/types/form-state.type'
 
-const initialState = {
-  success: false,
-  message: '',
-  errors: {}
-}
 
 const ContactForm = () => {
   const [state, formAction, isPending] = useActionState(
     submitContactMessage,
-    initialState
+    formInitialState
   )
 
-  if (state?.success) {
+  if (!isPending && state?.success) {
     toast('Message sent successfully!', {
       description: "We'll get back to you as soon as possible."
     })

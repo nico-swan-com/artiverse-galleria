@@ -14,7 +14,10 @@
     "not-found",
     "contact-page",
     "cart",
-    "checkout"
+    "checkout",
+    "dashboard",
+    "authentication",
+    "users"
   ],
   "cSpell.words": ["Artiverse"]
 }

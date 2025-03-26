@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { AnimatePresence } from 'framer-motion'
+import { SessionProvider } from 'next-auth/react'
 import QueryProvider from '@/contexts/QueryProvider'
 
 const geistSans = Geist({
@@ -15,11 +16,10 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Artiverse Gallerria',
+  title: 'Artiverse Galleria',
   description:
     'Explore our curated collection of original artworks from talented artists around the world. Each piece comes with its own story and identity.'
 }
-
 export default function RootLayout({
   children
 }: {
@@ -28,10 +28,12 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} dark antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <QueryProvider>
-          <AnimatePresence mode='wait'>{children}</AnimatePresence>
+          <SessionProvider>
+            <AnimatePresence mode='wait'>{children}</AnimatePresence>
+          </SessionProvider>
         </QueryProvider>
       </body>
     </html>
