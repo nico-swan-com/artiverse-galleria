@@ -1,18 +1,8 @@
 'use server'
 
 import { sendMail } from '@/lib/mailer/sendMail'
+import { MessageSchema } from './message.schema'
 import { z } from 'zod'
-
-const MessageSchema = z.object({
-  name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  email: z.string().email({ message: 'Invalid email address.' }),
-  subject: z
-    .string()
-    .min(2, { message: 'Subject must be at least 2 characters.' }),
-  message: z
-    .string()
-    .min(10, { message: 'Message must be at least 10 characters.' })
-})
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function submitContactMessage(prevState: any, formData: FormData) {
