@@ -1,5 +1,3 @@
-import { UserRoles } from '@/lib/data-access/users/user-roles.enum'
-import { UserStatus } from '@/lib/data-access/users/user-status.enum'
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
 export class User1741552010158 implements MigrationInterface {
