@@ -3,19 +3,6 @@
 {
   dotenv.enable = true;
   
-  # https://devenv.sh/basics/
-  env = {
-    NODE_ENV="development";
-    NEXTAUTH_URL="http://localhost:3000";
-    NEXTAUTH_SECRET="cvk0SMhmSkJd4MJSuNBIeP/P9Iwr+Myi7T0bMhJ9Iv0=";
-    POSTGRES_HOST="localhost";
-    POSTGRES_PORT="5433";
-    POSTGRES_USER="app";
-    POSTGRES_PASSWORD="app";
-    POSTGRES_DATABASE="app";
-
-  };
-
   # https://devenv.sh/packages/
   packages = with pkgs; [
     git
