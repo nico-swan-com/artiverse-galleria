@@ -11,6 +11,7 @@ import submitContactMessage from './submit-contact-message.action'
 import { toast } from 'sonner'
 import { formInitialState } from '@/types/form-state.type'
 
+
 const ContactForm = () => {
   const [state, formAction, isPending] = useActionState(
     submitContactMessage,
