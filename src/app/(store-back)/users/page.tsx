@@ -1,4 +1,4 @@
-import PageTransition from '@/components/utility/page-transition.component'
+import PageTransition from '@/components/PageTransition'
 import { Button } from '@/components/ui/button'
 import { UserPlus, Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
