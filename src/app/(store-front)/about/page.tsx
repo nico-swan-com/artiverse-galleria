@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const About = () => {
   return (
@@ -48,11 +49,12 @@ const About = () => {
                 </p>
               </div>
             </div>
-            <div className='relative overflow-hidden rounded-lg shadow-xl'>
-              <img
+            <div className='relative h-full overflow-hidden rounded-lg shadow-xl'>
+              <Image
                 src='https://images.unsplash.com/photo-1594732832278-abd644401426?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80'
                 alt='Gallery interior'
                 className='aspect-[4/3] size-full object-cover'
+                fill
               />
             </div>
           </div>
@@ -63,11 +65,12 @@ const About = () => {
       <section className='bg-gray-50 px-4 py-16 sm:px-6 lg:px-8'>
         <div className='mx-auto max-w-7xl'>
           <div className='grid grid-cols-1 items-center gap-12 lg:grid-cols-2'>
-            <div className='relative order-2 overflow-hidden rounded-lg shadow-xl lg:order-1'>
-              <img
+            <div className='relative order-2 h-full overflow-hidden rounded-lg shadow-xl lg:order-1'>
+              <Image
                 src='https://images.unsplash.com/photo-1629010307583-f27ae0f9662e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
                 alt='Artist working'
                 className='aspect-[4/3] size-full object-cover'
+                fill
               />
             </div>
             <div className='order-1 lg:order-2'>
@@ -145,10 +148,12 @@ const About = () => {
                 className='overflow-hidden rounded-lg bg-white shadow-sm'
               >
                 <div className='aspect-square'>
-                  <img
+                  <Image
                     src={member.image}
                     alt={member.name}
                     className='size-full object-cover'
+                    width={500}
+                    height={500}
                   />
                 </div>
                 <div className='p-6'>
