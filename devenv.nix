@@ -2,7 +2,7 @@
 
 {
   dotenv.enable = true;
-  
+
   # https://devenv.sh/basics/
   env = {
     NODE_ENV="development";
@@ -13,6 +13,7 @@
     POSTGRES_USER="app";
     POSTGRES_PASSWORD="app";
     POSTGRES_DATABASE="app";
+    POSTGRES_SCHEMA="public";
 
   };
 
@@ -52,25 +53,25 @@
       {
         request = {
           method = "GET";
-          url = "/api/hello";
+          url = "/api/artists";
         };
         response = {
           status = 200;
-          body = "Hello, world!";
-        };
+          body =  [];
+      };
       }
     ];
   };
 
   # # https://devenv.sh/scripts/
-  # scripts.hello.exec = ''
+  # scripts.hello.exec = ""
   #   echo hello from $GREET
-  # '';
+  # "";
 
-  # enterShell = ''
+  # enterShell = ""
   #   hello
   #   git --version
-  # '';
+  # "";
 
   # https://devenv.sh/tasks/
   # tasks = {
@@ -80,10 +81,10 @@
   # };
 
   # https://devenv.sh/tests/
-  # enterTest = ''
+  # enterTest = ""
   #   echo "Running tests"
   #   git --version | grep --color=auto "${pkgs.git.version}"
-  # '';
+  # "";
 
   # https://devenv.sh/git-hooks/
   git-hooks.hooks.shellcheck.enable = true;

@@ -1,8 +1,7 @@
 import crypto from 'crypto'
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { AppDataSource } from '@/lib/database/data-source'
-import { User } from '@/lib/database/entities/auth/user.entity'
+import { UsersRepository } from '@/lib/data-access/users/users.repository'
 
 const getGravatar = (email: string, name: string): string | undefined => {
   if (email && name) {
@@ -20,16 +19,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!credentials?.email || !credentials?.password) {
           return null
         }
+        const users = new UsersRepository()
 
         const email: string = credentials.email as string
         const password: string = credentials.password as string
 
         try {
-          await AppDataSource.initialize()
-          const userRepository = AppDataSource.getRepository(User)
-          const user = await userRepository.findOne({
-            where: { email }
-          })
+          const user = await users.getUserByEmail(email)
 
           if (!user) {
             return null
@@ -51,10 +47,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         } catch (error) {
           console.error('Authentication error:', error)
           return null
-        } finally {
-          if (AppDataSource.isInitialized) {
-            await AppDataSource.destroy()
-          }
         }
       }
     })
@@ -64,6 +56,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: 'jwt'
   },
   callbacks: {
+    authorized: async ({ auth }) => {
+      // Logged in users are authenticated, otherwise redirect to login page
+      //  TODO can we do attribute based access control here?
+      return !!auth
+    },
     async jwt({ token, user }) {
       if (user) {
         token.email = user.email

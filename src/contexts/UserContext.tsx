@@ -1,11 +1,10 @@
+'use client'
+
 import { User } from '@/types/user'
-import React, {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useCallback
-} from 'react'
+import React, { createContext, useContext, useState, useCallback } from 'react'
+interface ChildrenProps {
+  children: React.ReactNode
+}
 
 interface UserContextType {
   // Auth
@@ -23,9 +22,7 @@ const getUserByEmail = (email: string) => {
 
 const UserContext = createContext<UserContextType | undefined>(undefined)
 
-export const UserProvider: React.FC<{ children: ReactNode }> = ({
-  children
-}) => {
+export const UserProvider = ({ children }: ChildrenProps) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
 
   const login = useCallback((email: string, password: string) => {

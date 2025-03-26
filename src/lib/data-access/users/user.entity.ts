@@ -1,5 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
 import bcrypt from 'bcryptjs'
+import { UserStatus } from './user-status.enum'
+import { UserRoles } from './user-roles.enum'
 
 @Entity()
 export class User {
@@ -17,6 +19,15 @@ export class User {
 
   @Column()
   password!: string
+
+  @Column({ type: 'varchar', enum: UserRoles, default: 'Client' })
+  role!: UserRoles
+
+  @Column({ type: 'varchar', enum: UserStatus, default: 'Pending' })
+  status!: UserStatus
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt!: Date
 
   async setPassword(password: string): Promise<void> {
     const salt = await bcrypt.genSalt(10)
