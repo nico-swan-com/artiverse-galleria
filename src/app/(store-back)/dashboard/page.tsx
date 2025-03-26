@@ -15,7 +15,7 @@ import {
   ResponsiveContainer
 } from 'recharts'
 import { CreditCard, DollarSign, FileText, TrendingUp } from 'lucide-react'
-import PageTransition from '@/components/PageTransition'
+import PageTransition from '@/components/utility/page-transition.component'
 import { useSession } from 'next-auth/react'
 
 const Dashboard: React.FC = () => {
