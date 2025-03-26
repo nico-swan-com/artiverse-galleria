@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { artists } from '@/data/artists'
-import ArtistCard from '@/components/artist/ArtistCard'
+import ArtistCard from '@/components/artist/artist-card.component'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Search } from 'lucide-react'
