@@ -1,18 +1,5 @@
-import { User } from '@/types/user'
-import React, {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useCallback
-} from 'react'
-
-interface UserContextType {
-  // Auth
-  currentUser: User | null
-}
-
-const getUserByEmail = (email: string) => {
+import React, { createContext, useContext, useState, useCallback } from 'react'
+const getUserByEmail = (email) => {
   return {
     id: '1',
     email,
@@ -20,15 +7,10 @@ const getUserByEmail = (email: string) => {
     name: 'Demo User'
   }
 }
-
-const UserContext = createContext<UserContextType | undefined>(undefined)
-
-export const UserProvider: React.FC<{ children: ReactNode }> = ({
-  children
-}) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null)
-
-  const login = useCallback((email: string, password: string) => {
+const UserContext = createContext(undefined)
+export const UserProvider = ({ children }) => {
+  const [currentUser, setCurrentUser] = useState(null)
+  const login = useCallback((email, password) => {
     const user = getUserByEmail(email)
     if (user && user.password === password) {
       setCurrentUser(user)
@@ -36,20 +18,16 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     }
     return false
   }, [])
-
   const logout = useCallback(() => {
     setCurrentUser(null)
   }, [])
-
   const value = {
     currentUser,
     login,
     logout
   }
-
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>
 }
-
 export const useUser = () => {
   const context = useContext(UserContext)
   if (context === undefined) {

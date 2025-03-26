@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import { DataSource } from 'typeorm'
-import { User } from './entities/auth/user.entity'
+import { User } from '@/lib/data-access/users/user.entity'
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -21,3 +21,20 @@ AppDataSource.initialize()
     console.log('Data Source has been initialized!')
   })
   .catch((error) => console.error('Data Source initialization error', error))
+
+export function getDataSource() {
+  if (!AppDataSource) {
+    throw new Error('Data source is not initialized')
+  }
+  return AppDataSource
+}
+
+if (process.env.NODE_ENV === 'production') {
+  process.on('SIGINT', async () => {
+    if (AppDataSource?.isInitialized) {
+      await AppDataSource.destroy()
+      console.log('Database connection closed.')
+      process.exit(0)
+    }
+  })
+}
