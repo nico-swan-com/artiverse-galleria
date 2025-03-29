@@ -17,6 +17,7 @@
 /_next/
 /.next/
 /out/
+dist
 
 # production
 /build
@@ -53,3 +54,4 @@ devenv.local.nix
 
 # pre-commit
 .pre-commit-config.yaml
+

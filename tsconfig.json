@@ -21,7 +21,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/auth/*": ["./src/lib/authentication/*"],
+      "@/db/*": ["./src/lib/database/*"]
     }
   },
   "include": [
