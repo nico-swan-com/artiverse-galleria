@@ -19,7 +19,7 @@ export default function DashboardLayout({
     {
       title: 'Dashboard',
       icon: <BarChart3 size={18} />,
-      path: '/'
+      path: '/admin'
     },
     // {
     //   title: 'Blog',

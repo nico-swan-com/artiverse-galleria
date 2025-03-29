@@ -34,11 +34,29 @@ class UsersRepository {
     }
   }
 
-  async createUser(user: User) {
+  async create(user: User) {
     try {
-      return (await this.userRepository).save(user)
+      return (await this.userRepository).create(user)
     } catch (error) {
       console.error('Error creating user:', error)
+      return null
+    }
+  }
+
+  async update(user: User) {
+    try {
+      return (await this.userRepository).update(user.id, user)
+    } catch (error) {
+      console.error('Error updating user:', error)
+      return null
+    }
+  }
+
+  async delete(id: number) {
+    try {
+      return (await this.userRepository).delete(id)
+    } catch (error) {
+      console.error('Error deleting user:', error)
       return null
     }
   }

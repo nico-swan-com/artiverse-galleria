@@ -6,16 +6,16 @@ export const passwordSchema = z
   .min(8, { message: 'Password must be at least 8 characters.' })
   .max(20, { message: 'Password must be less 20 characters.' })
   .refine((password) => /[A-Z]/.test(password), {
-    message: 'Password must have be at least one uppercase characters.'
+    message: 'No uppercase characters.'
   })
   .refine((password) => /[a-z]/.test(password), {
-    message: 'Password must have be at least one lowercase characters.'
+    message: 'No lowercase characters.'
   })
   .refine((password) => /[0-9]/.test(password), {
-    message: 'Password must have be at least one number characters.'
+    message: 'No number characters.'
   })
   .refine((password) => /[!@#$%^&*]/.test(password), {
-    message: 'Password must have be at least one special characters.'
+    message: 'No special characters.'
   })
 
 export const updatePasswordSchema = z
@@ -29,11 +29,17 @@ export const updatePasswordSchema = z
     path: ['confirmPassword']
   })
 
-export const CreateUserSchema = z.object({
+export const UserSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Invalid email address.' }),
   password: passwordSchema,
-  role: z.nativeEnum(UserRoles).optional().default(UserRoles.Client),
-  status: z.nativeEnum(UserStatus).optional().default(UserStatus.Pending),
+  role: z
+    .nativeEnum(UserRoles, { message: 'Missing user role.' })
+    .optional()
+    .default(UserRoles.Client),
+  status: z
+    .nativeEnum(UserStatus, { message: 'Missing user status.' })
+    .optional()
+    .default(UserStatus.Pending),
   avatar: z.string().optional().default('/placeholder.svg')
 })

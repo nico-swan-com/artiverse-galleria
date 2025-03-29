@@ -3,13 +3,13 @@ import { auth } from '@/lib/authentication'
 import { redirect } from 'next/navigation'
 
 type Params = Promise<{ callbackUrl: string }>
-type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+type SearchParams = Promise<{ callbackUrl: string }>
 
 const LoginPage = async (props: {
   params: Params
   searchParams: SearchParams
 }) => {
-  const { callbackUrl } = await props.params
+  const { callbackUrl } = await props.searchParams
   const session = await auth()
   if (session) {
     redirect(callbackUrl || '/')
