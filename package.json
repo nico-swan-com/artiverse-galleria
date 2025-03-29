@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "prettier --check . && next build",
+    "fbuild": "prettier --write . && next build",
     "build:static": "BUILD_TYPE=static npm run build",
     "build:standalone": "BUILD_TYPE=standalone npm run build && npm run build:server",
     "build:server": "tsc --project tsconfig.standalone.json",
@@ -42,7 +43,7 @@
     "date-fns": "^4.1.0",
     "framer-motion": "^12.4.7",
     "lucide-react": "^0.476.0",
-    "next": "^15.2.4",
+    "next": "^15.3.0-canary.24",
     "next-auth": "^5.0.0-beta.25",
     "next-themes": "^0.4.4",
     "nodemailer": "^6.10.0",

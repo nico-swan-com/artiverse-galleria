@@ -2,8 +2,6 @@
 
 [![wakatime](https://wakatime.com/badge/user/51cddd85-c511-4b03-b6f1-57ae91619f53/project/f87ff665-d3df-4e8c-ae72-35dd79ded07a.svg)](https://wakatime.com/badge/user/51cddd85-c511-4b03-b6f1-57ae91619f53/project/f87ff665-d3df-4e8c-ae72-35dd79ded07a)
 
-[![wakatime](https://wakatime.com/badge/user/51cddd85-c511-4b03-b6f1-57ae91619f53/project/f87ff665-d3df-4e8c-ae72-35dd79ded07a.svg)](https://wakatime.com/badge/user/51cddd85-c511-4b03-b6f1-57ae91619f53/project/f87ff665-d3df-4e8c-ae72-35dd79ded07a)
-
 ## Project Description
 
 This project aims to develop a visually appealing and user-friendly e-commerce website for an art gallery, enabling artists to showcase their portfolios and sell their artwork online. The platform focuses on providing a seamless experience for art collectors, enthusiasts, and interior designers, featuring detailed artwork information, artist portfolios, and integrated QR code functionality for easy access to product pages.
@@ -11,7 +9,7 @@ This project aims to develop a visually appealing and user-friendly e-commerce w
 ## Key Features
 
 - **Artist Portfolios:**
-  - Dedicated portfolio pages for each artist.
+  - [x] Dedicated portfolio pages for each artist.
   - High-resolution image galleries of available artworks.
   - Artist biographies, statements, and optional contact information.
   - Categorization and filtering of artworks (style, medium, subject).

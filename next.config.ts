@@ -12,6 +12,11 @@ const defaultConfig: NextConfig = {
         pathname: '/**' // This allows all paths
       }
     ]
+  },
+  experimental: {
+    serverMinification: false,
+    authInterrupts: true,
+    nodeMiddleware: true
   }
 }
 
@@ -31,6 +36,11 @@ const customServerConfig: NextConfig = {
         pathname: '/**' // This allows all paths
       }
     ]
+  },
+  experimental: {
+    serverMinification: false,
+    authInterrupts: true,
+    nodeMiddleware: true
   }
 }
 
@@ -57,6 +67,11 @@ const staticConfig: NextConfig = {
         pathname: '/**' // This allows all paths
       }
     ]
+  },
+  experimental: {
+    serverMinification: false,
+    authInterrupts: true,
+    nodeMiddleware: true
   }
 }
 

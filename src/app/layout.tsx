@@ -3,7 +3,8 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { AnimatePresence } from 'framer-motion'
 import { SessionProvider } from 'next-auth/react'
-import QueryProvider from '@/contexts/QueryProvider'
+import QueryProvider from '@/contexts/query-provider.context'
+import { initializeDatabase } from '@/lib/database/data-source'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -20,21 +21,23 @@ export const metadata: Metadata = {
   description:
     'Explore our curated collection of original artworks from talented artists around the world. Each piece comes with its own story and identity.'
 }
-export default function RootLayout({
+export default async function RootLayout({
   children
 }: {
   children: React.ReactNode
 }) {
+  await initializeDatabase()
+
   return (
     <html lang='en'>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <QueryProvider>
-          <SessionProvider>
+        <SessionProvider>
+          <QueryProvider>
             <AnimatePresence mode='wait'>{children}</AnimatePresence>
-          </SessionProvider>
-        </QueryProvider>
+          </QueryProvider>
+        </SessionProvider>
       </body>
     </html>
   )

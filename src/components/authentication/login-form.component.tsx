@@ -13,18 +13,21 @@ import {
 import { Input } from '../ui/input'
 import submitLogin from './submit-login.action'
 import { Label } from '../ui/label'
-import { useRouter } from 'next/navigation'
 import { formInitialState } from '@/types/form-state.type'
+import { redirect } from 'next/navigation'
 
-const LoginForm = () => {
-  const router = useRouter()
+interface LoginFormProps {
+  callbackUrl?: string
+}
+
+const LoginForm = ({ callbackUrl }: LoginFormProps) => {
   const [state, formAction, isPending] = useActionState(
     submitLogin,
     formInitialState
   )
 
-  if (!isPending && state?.success) {
-    router.push('/dashboard')
+  if (state.success) {
+    redirect(callbackUrl || '/')
   }
 
   return (
