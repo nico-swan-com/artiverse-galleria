@@ -6,6 +6,7 @@ import { UserPlus } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger
@@ -46,6 +47,7 @@ const UsersPage = ({ users }: UsersProps) => {
             <DialogContent className='sm:max-w-[425px]'>
               <DialogHeader>
                 <DialogTitle>Add New User</DialogTitle>
+                <DialogDescription></DialogDescription>
               </DialogHeader>
               <Suspense>
                 <UserAddForm onClose={() => setOpen(false)} />
