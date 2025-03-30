@@ -1,4 +1,9 @@
-import { FindOptionsOrderValue, Repository } from 'typeorm'
+import {
+  DeleteResult,
+  FindOptionsOrderValue,
+  Repository,
+  UpdateResult
+} from 'typeorm'
 import { User } from './user.entity'
 import { DatabaseRepository } from '../data-access'
 import { PaginationParams } from '@/types'
@@ -16,9 +21,8 @@ class UsersRepository {
     const { page, limit } = pagination
     const skip = (page - 1) * limit
     try {
-      const [users, total] = await (
-        await this.userRepository
-      ).findAndCount({
+      const repository = await this.userRepository
+      const [users, total] = await repository.findAndCount({
         skip,
         take: limit,
         order: { [sortBy]: order }
@@ -30,26 +34,30 @@ class UsersRepository {
     }
   }
 
-  async getUserById(id: number) {
+  async getUserById(id: number): Promise<User | null> {
     try {
-      return (await this.userRepository).findOne({ where: { id } })
+      const repository = await this.userRepository
+      const found = await repository.findOne({ where: { id } })
+      return found
     } catch (error) {
       console.error('Error getting user by id:', error)
       return null
     }
   }
-  async getUserByEmail(email: string) {
+  async getUserByEmail(email: string): Promise<User | null> {
     try {
-      return (await this.userRepository).findOne({
+      const repository = await this.userRepository
+      const found = await repository.findOne({
         where: { email }
       })
+      return found
     } catch (error) {
       console.error('Error getting user by email:', error)
       return null
     }
   }
 
-  async create(user: User) {
+  async create(user: User): Promise<User> {
     try {
       const repository = await this.userRepository
       const created = await repository.save(user)
@@ -60,21 +68,25 @@ class UsersRepository {
     }
   }
 
-  async update(user: User) {
+  async update(user: User): Promise<UpdateResult> {
     try {
-      return (await this.userRepository).update(user.id, user)
+      const repository = await this.userRepository
+      const updated = await repository.update(user.id, user)
+      return updated
     } catch (error) {
       console.error('Error updating user:', error)
-      return null
+      throw error
     }
   }
 
-  async delete(id: number) {
+  async delete(id: number): Promise<DeleteResult> {
     try {
-      return (await this.userRepository).delete(id)
+      const repository = await this.userRepository
+      const deleted = await repository.delete(id)
+      return deleted
     } catch (error) {
       console.error('Error deleting user:', error)
-      return null
+      throw error
     }
   }
 }
