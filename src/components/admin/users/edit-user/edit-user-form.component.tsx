@@ -23,18 +23,22 @@ interface EditUserFormProps {
 
 const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
   const [showPasswordFields, setShowPasswordFields] = useState(false)
-
+  const [notified, setNotified] = useState(false)
   const [state, formAction, isPending] = useActionState(
     editUserAction,
     formInitialState
   )
 
   useEffect(() => {
-    if (state.success) {
+    if (state.success && !notified) {
       toast.success(state.message)
+      setNotified(true)
       onClose()
+    } else if (!state.success && !!state.message && !notified) {
+      toast.error(state.message)
+      setNotified(true)
     }
-  }, [state, onClose])
+  }, [state, notified, onClose, setNotified])
 
   return (
     <form action={formAction} className='mt-4 space-y-4'>

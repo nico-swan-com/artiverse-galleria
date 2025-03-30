@@ -35,12 +35,10 @@ async function editUserAction(prevState: any, formData: FormData) {
     user.status = values.status
 
     const repository = new UsersRepository()
-    console.log(user)
-
     await repository.update(user)
     revalidateTag('users')
 
-    return { success: true, message: 'User created successfully!' }
+    return { success: true, message: 'User changed successfully!' }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error instanceof z.ZodError) {
@@ -51,7 +49,7 @@ async function editUserAction(prevState: any, formData: FormData) {
       }
     } else {
       console.error(error)
-      return { success: false, message: 'Failed to create user.' }
+      return { success: false, message: 'Failed to update user.' }
     }
   }
 }

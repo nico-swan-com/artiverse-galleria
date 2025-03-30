@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useActionState, useEffect } from 'react'
+import React, { useActionState, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -22,17 +22,22 @@ interface DeleteUserFormProps {
 }
 
 const DeleteUserForm = ({ user, onClose }: DeleteUserFormProps) => {
+  const [notified, setNotified] = useState(false)
   const [state, formAction, isPending] = useActionState(
     deleteUserAction,
     formInitialState
   )
 
   useEffect(() => {
-    if (state.success) {
+    if (state.success && !notified) {
       toast.success(state.message)
+      setNotified(true)
       onClose()
+    } else if (!state.success && !!state.message && !notified) {
+      toast.error(state.message)
+      setNotified(true)
     }
-  }, [state, onClose])
+  }, [state, notified, onClose, setNotified])
 
   return (
     <form action={formAction} className='mt-4 space-y-4'>
