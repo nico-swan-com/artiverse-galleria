@@ -12,7 +12,7 @@ import {
 import { Pencil } from 'lucide-react'
 import { useState, Suspense } from 'react'
 import EditUserForm from './edit-user-form.component'
-import { User } from '@/types/user'
+import { User } from '@/types'
 
 type EditUserProps = {
   user: User | null

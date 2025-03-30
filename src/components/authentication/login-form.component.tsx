@@ -13,7 +13,7 @@ import {
 import { Input } from '../ui/input'
 import submitLogin from './submit-login.action'
 import { Label } from '../ui/label'
-import { formInitialState } from '@/types/form-state.type'
+import { formInitialState } from '@/types'
 import { redirect } from 'next/navigation'
 
 interface LoginFormProps {

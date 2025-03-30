@@ -1,15 +1,10 @@
 'use server'
 
 import { z } from 'zod'
-import {
-  User,
-  UserRoles,
-  UserSchema,
-  UsersRepository,
-  UserStatus
-} from '@/lib/users'
+import { User, UserRoles, UserSchema, UserStatus } from '@/lib/users'
 import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
+import Users from '@/lib/users/users.service'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function createUserAction(prevState: any, formData: FormData) {
@@ -30,14 +25,13 @@ async function createUserAction(prevState: any, formData: FormData) {
     user.name = name
     user.email = email
     user.avatar = values.avatar
-    user.setPassword(values.password)
+    await user.setPassword(values.password)
     user.role = values.role
     user.status = values.status
 
-    const repository = new UsersRepository()
-    console.log(user)
+    const services = new Users()
 
-    await repository.create(user)
+    await services.create(user)
     revalidateTag('users')
 
     return { success: true, message: 'User created successfully!' }

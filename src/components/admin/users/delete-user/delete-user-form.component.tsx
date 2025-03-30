@@ -1,12 +1,11 @@
 'use client'
 
-import React, { useActionState } from 'react'
+import React, { useActionState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { formInitialState } from '@/types/form-state.type'
-import { User } from '@/types/user'
+import { User, formInitialState } from '@/types'
 import deleteUserAction from './delete-user.action'
 import { UserRoles, UserStatus } from '@/lib/users'
 import {
@@ -28,10 +27,12 @@ const DeleteUserForm = ({ user, onClose }: DeleteUserFormProps) => {
     formInitialState
   )
 
-  if (state.success) {
-    toast.success(state.message)
-    onClose()
-  }
+  useEffect(() => {
+    if (state.success) {
+      toast.success(state.message)
+      onClose()
+    }
+  }, [state, onClose])
 
   return (
     <form action={formAction} className='mt-4 space-y-4'>

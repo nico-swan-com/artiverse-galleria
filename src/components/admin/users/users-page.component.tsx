@@ -1,14 +1,28 @@
 'use client'
+
 import PageTransition from '@/components/common/utility/page-transition.component'
 import UsersList from './users-list.component'
-import { User } from '@/types/user'
+import { User } from '@/types'
 import CreateUserDialog from './create-user/create-user-dialog.component'
+import { FindOptionsOrderValue } from 'typeorm'
 
 interface UsersProps {
   users: User[]
+  page: number
+  limit: number
+  total: number
+  sortBy: keyof User
+  order: FindOptionsOrderValue
 }
 
-const UsersPage = ({ users }: UsersProps) => {
+const UsersPage = ({
+  users,
+  page,
+  limit,
+  total,
+  sortBy,
+  order
+}: UsersProps) => {
   return (
     <PageTransition>
       <div className='space-y-6'>
@@ -17,7 +31,14 @@ const UsersPage = ({ users }: UsersProps) => {
           <CreateUserDialog />
         </div>
 
-        <UsersList users={users} />
+        <UsersList
+          users={users}
+          total={total}
+          page={page}
+          limit={limit}
+          sortBy={sortBy}
+          order={order}
+        />
       </div>
     </PageTransition>
   )

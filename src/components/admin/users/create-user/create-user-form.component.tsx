@@ -1,11 +1,11 @@
 'use client'
 
-import React, { useActionState } from 'react'
+import React, { useActionState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { formInitialState } from '@/types/form-state.type'
+import { formInitialState } from '@/types'
 import createUserAction from './create-user.action'
 
 interface CreateUserFormProps {
@@ -17,11 +17,12 @@ const CreateUserForm = ({ onClose }: CreateUserFormProps) => {
     createUserAction,
     formInitialState
   )
-
-  if (state.success) {
-    toast.success(state.message)
-    onClose()
-  }
+  useEffect(() => {
+    if (state.success) {
+      toast.success(state.message)
+      onClose()
+    }
+  }, [state, onClose])
 
   return (
     <form action={formAction} className='mt-4 space-y-4'>

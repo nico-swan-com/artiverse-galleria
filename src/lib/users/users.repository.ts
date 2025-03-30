@@ -1,17 +1,32 @@
-import { Repository } from 'typeorm'
+import { FindOptionsOrderValue, Repository } from 'typeorm'
 import { User } from './user.entity'
 import { DatabaseRepository } from '../data-access'
+import { PaginationParams } from '@/types'
+import { Users } from './users.type'
 
 @DatabaseRepository(User, 'userRepository')
 class UsersRepository {
   userRepository!: Repository<User>
-  async getUsers() {
+
+  async getUsers(
+    pagination: PaginationParams,
+    sortBy: keyof User = 'createdAt',
+    order: FindOptionsOrderValue = 'DESC'
+  ): Promise<Users> {
+    const { page, limit } = pagination
+    const skip = (page - 1) * limit
     try {
-      const users = (await this.userRepository).find()
-      return users
+      const [users, total] = await (
+        await this.userRepository
+      ).findAndCount({
+        skip,
+        take: limit,
+        order: { [sortBy]: order }
+      })
+      return { users, total }
     } catch (error) {
       console.error('Error getting users:', error)
-      return []
+      return { users: [], total: 0 }
     }
   }
 
@@ -36,10 +51,12 @@ class UsersRepository {
 
   async create(user: User) {
     try {
-      return (await this.userRepository).create(user)
+      const repository = await this.userRepository
+      const created = await repository.save(user)
+      return created
     } catch (error) {
       console.error('Error creating user:', error)
-      return null
+      throw error
     }
   }
 
