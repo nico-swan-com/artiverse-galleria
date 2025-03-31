@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import { PasswordInput } from '../create-user/password-input.component'
 
 interface EditUserFormProps {
   user: User
@@ -23,22 +24,18 @@ interface EditUserFormProps {
 
 const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
   const [showPasswordFields, setShowPasswordFields] = useState(false)
-  const [notified, setNotified] = useState(false)
   const [state, formAction, isPending] = useActionState(
     editUserAction,
     formInitialState
   )
 
   useEffect(() => {
-    if (state.success && !notified) {
+    if (state.success && !!state.message && !isPending) {
       toast.success(state.message)
-      setNotified(true)
+      state.message = ''
       onClose()
-    } else if (!state.success && !!state.message && !notified) {
-      toast.error(state.message)
-      setNotified(true)
     }
-  }, [state, notified, onClose, setNotified])
+  }, [state, isPending, onClose])
 
   return (
     <form action={formAction} className='mt-4 space-y-4'>
@@ -130,10 +127,14 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
       {showPasswordFields && (
         <>
           <div className='space-y-2'>
-            <Label htmlFor='newPassword'>New password</Label>
-            <Input id='newPassword' name='newPassword' type='password' />
-            {state?.errors?.password && (
-              <p className='text-red-500'>{state.errors.password.join(', ')}</p>
+            <Label htmlFor='newPassword'>Password</Label>
+            <PasswordInput id='newPassword' name='newPassword' required />
+            {state.errors?.password && (
+              <p className='text-red-500'>
+                Password must be between 8 and 20 characters long and include
+                uppercase letters, lowercase letters, numbers, and at least one
+                special character.
+              </p>
             )}
           </div>
         </>

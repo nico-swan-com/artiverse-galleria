@@ -49,7 +49,13 @@ async function editUserAction(prevState: any, formData: FormData) {
       }
     } else {
       console.error(error)
-      return { success: false, message: 'Failed to update user.' }
+      return {
+        success: false,
+        message: 'Failed to update user.',
+        errors: {
+          database: [error.message]
+        } as { [x: string]: string[] | undefined }
+      }
     }
   }
 }

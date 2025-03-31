@@ -29,7 +29,13 @@ async function deleteUserAction(prevState: any, formData: FormData) {
       }
     } else {
       console.error(error)
-      return { success: false, message: 'Failed to remove user.' }
+      return {
+        success: false,
+        message: 'Failed to remove user.',
+        errors: {
+          database: [error.message]
+        }
+      }
     }
   }
 }

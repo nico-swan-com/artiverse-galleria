@@ -1,8 +1,7 @@
 export const formInitialState = {
   success: false,
   message: '',
-  errors: {},
-  callbackUrl: '/'
+  errors: {}
 }
 
 export type FormState = typeof formInitialState

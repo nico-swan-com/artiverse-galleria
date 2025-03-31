@@ -14,7 +14,7 @@ export const passwordSchema = z
   .refine((password) => /[0-9]/.test(password), {
     message: 'No number characters.'
   })
-  .refine((password) => /[!@#$%^&*]/.test(password), {
+  .refine((password) => /[!@#$%^&*()_+\-=`~[\]{}|;:'",.<>?/]/.test(password), {
     message: 'No special characters.'
   })
 
