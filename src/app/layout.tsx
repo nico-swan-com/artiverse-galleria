@@ -5,6 +5,7 @@ import { AnimatePresence } from 'framer-motion'
 import { SessionProvider } from 'next-auth/react'
 import QueryProvider from '@/contexts/query-provider.context'
 import { initializeDatabase } from '@/lib/database/data-source'
+import { Toaster } from 'sonner'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -38,6 +39,7 @@ export default async function RootLayout({
             <AnimatePresence mode='wait'>{children}</AnimatePresence>
           </QueryProvider>
         </SessionProvider>
+        <Toaster />
       </body>
     </html>
   )

@@ -1,41 +1,44 @@
 'use server'
 
 import { z } from 'zod'
-import { CreateUserSchema } from './create-user.schema'
-import { User, UsersRepository } from '@/lib/users'
+import { User, UserSchema, UsersRepository } from '@/lib/users'
 import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function createUserAction(prevState: any, formData: FormData) {
+async function editUserAction(prevState: any, formData: FormData) {
   try {
+    const userId = formData.get('userId')?.toString() || ''
     const name = formData.get('name')?.toString() || ''
     const email = formData.get('email')?.toString() || ''
-    const avatar = getAvatarUrl(email, name)
+    const newPassword = formData.get('newPassword')?.toString() || ''
+    const testPassword = newPassword || 'This12#Fake!'
 
-    const values = CreateUserSchema.parse({
+    const values = UserSchema.parse({
       name,
       email,
-      avatar,
-      password: formData.get('password'),
+      avatar: getAvatarUrl(email, name),
+      password: testPassword,
       role: formData.get('role'),
       status: formData.get('status')
     })
 
     const user = new User()
+    user.id = Number(userId)
     user.name = name
     user.email = email
-    user.avatar = avatar || ''
-    user.setPassword(values.password)
+    user.avatar = values.avatar
+    if (newPassword) {
+      user.setPassword(newPassword)
+    }
     user.role = values.role
     user.status = values.status
 
     const repository = new UsersRepository()
-
-    await repository.createUser(user)
+    await repository.update(user)
     revalidateTag('users')
 
-    return { success: true, message: 'User created successfully!' }
+    return { success: true, message: 'User changed successfully!' }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error instanceof z.ZodError) {
@@ -46,9 +49,15 @@ async function createUserAction(prevState: any, formData: FormData) {
       }
     } else {
       console.error(error)
-      return { success: false, message: 'Failed to create user.' }
+      return {
+        success: false,
+        message: 'Failed to update user.',
+        errors: {
+          database: [error.message]
+        } as { [x: string]: string[] | undefined }
+      }
     }
   }
 }
 
-export default createUserAction
+export default editUserAction

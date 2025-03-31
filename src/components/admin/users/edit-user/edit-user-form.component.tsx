@@ -1,9 +1,13 @@
 'use client'
 
-import React, { useActionState } from 'react'
+import React, { useActionState, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { toast } from 'sonner'
+import { User, formInitialState } from '@/types'
+import editUserAction from './edit-user.action'
+import { UserRoles, UserStatus } from '@/lib/users'
 import {
   Select,
   SelectContent,
@@ -11,33 +15,40 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import { PasswordInput } from '../create-user/password-input.component'
 
-import { toast } from 'sonner'
-import { UserRoles, UserStatus } from '@/lib/users'
-import { formInitialState } from '@/types/form-state.type'
-import createUserAction from './add-user.action'
-import { Plus } from 'lucide-react'
-
-interface UserAddFormProps {
+interface EditUserFormProps {
+  user: User
   onClose: () => void
 }
 
-const UserAddForm = ({ onClose }: UserAddFormProps) => {
+const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
+  const [showPasswordFields, setShowPasswordFields] = useState(false)
   const [state, formAction, isPending] = useActionState(
-    createUserAction,
+    editUserAction,
     formInitialState
   )
 
-  if (state.success) {
-    toast.success(state.message)
-    onClose()
-  }
+  useEffect(() => {
+    if (state.success && !!state.message && !isPending) {
+      toast.success(state.message)
+      state.message = ''
+      onClose()
+    }
+  }, [state, isPending, onClose])
 
   return (
     <form action={formAction} className='mt-4 space-y-4'>
+      <Input id='userId' name='userId' type='hidden' defaultValue={user.id} />
       <div className='space-y-2'>
         <Label htmlFor='name'>Name</Label>
-        <Input id='name' name='name' placeholder='John Doe' required />
+        <Input
+          id='name'
+          name='name'
+          placeholder='John Doe'
+          required
+          defaultValue={user.name}
+        />
         {state?.errors?.name && (
           <p className='text-red-500'>{state.errors.name.join(', ')}</p>
         )}
@@ -50,6 +61,7 @@ const UserAddForm = ({ onClose }: UserAddFormProps) => {
           name='email'
           type='email'
           placeholder='john@example.com'
+          defaultValue={user.email}
           required
         />
         {state?.errors?.email && (
@@ -58,17 +70,8 @@ const UserAddForm = ({ onClose }: UserAddFormProps) => {
       </div>
 
       <div className='space-y-2'>
-        <Label htmlFor='email'>Password</Label>
-        <Input id='password' name='password' type='password' required />
-        <span>Suggestion: {generatePassword()}</span>
-        {state?.errors?.password && (
-          <p className='text-red-500'>{state.errors.password.join(', ')}</p>
-        )}
-      </div>
-
-      <div className='space-y-2'>
         <Label htmlFor='role'>Role</Label>
-        <Select name='role'>
+        <Select name='role' defaultValue={user.role}>
           <SelectTrigger>
             <SelectValue placeholder='Select role' />
           </SelectTrigger>
@@ -87,7 +90,7 @@ const UserAddForm = ({ onClose }: UserAddFormProps) => {
 
       <div className='space-y-2'>
         <Label htmlFor='status'>Status</Label>
-        <Select name='status'>
+        <Select name='status' defaultValue={user.status}>
           <SelectTrigger>
             <SelectValue placeholder='Select status' />
           </SelectTrigger>
@@ -104,40 +107,46 @@ const UserAddForm = ({ onClose }: UserAddFormProps) => {
         )}
       </div>
 
+      {!showPasswordFields && (
+        <Button
+          className='w-full'
+          variant='secondary'
+          onClick={() => setShowPasswordFields(true)}
+        >
+          Change Password
+        </Button>
+      )}
+
+      <Input
+        id='password'
+        name='password'
+        type='hidden'
+        defaultValue={user.password}
+      />
+
+      {showPasswordFields && (
+        <>
+          <div className='space-y-2'>
+            <Label htmlFor='newPassword'>Password</Label>
+            <PasswordInput id='newPassword' name='newPassword' required />
+            {state.errors?.password && (
+              <p className='text-red-500'>
+                Password must be between 8 and 20 characters long and include
+                uppercase letters, lowercase letters, numbers, and at least one
+                special character.
+              </p>
+            )}
+          </div>
+        </>
+      )}
+
       <div className='flex justify-end pt-4'>
         <Button type='submit' disabled={isPending} className='w-full'>
-          {isPending ? (
-            'Adding user...'
-          ) : (
-            <>
-              <Plus className='mr-2 size-4' />
-              Add user
-            </>
-          )}
+          {isPending ? 'Updating user...' : 'Update user'}
         </Button>
       </div>
     </form>
   )
 }
 
-const generatePassword = (): string => {
-  const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-  const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz'
-  const numberChars = '0123456789'
-  const symbolChars = '!@#$%^&*()_+[]{}|;:,.<>?'
-
-  let allChars = ''
-  allChars += uppercaseChars
-  allChars += lowercaseChars
-  allChars += numberChars
-  allChars += symbolChars
-
-  let generatedPassword = ''
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * allChars.length)
-    generatedPassword += allChars[randomIndex]
-  }
-  return generatedPassword
-}
-
-export default UserAddForm
+export default EditUserForm

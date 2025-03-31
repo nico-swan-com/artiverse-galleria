@@ -9,7 +9,7 @@ import { Send } from 'lucide-react'
 
 import submitContactMessage from './submit-contact-message.action'
 import { toast } from 'sonner'
-import { formInitialState } from '@/types/form-state.type'
+import { formInitialState } from '@/types'
 
 const ContactForm = () => {
   const [state, formAction, isPending] = useActionState(

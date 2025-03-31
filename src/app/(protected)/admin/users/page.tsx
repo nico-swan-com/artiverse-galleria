@@ -1,23 +1,35 @@
-import { UsersRepository } from '@/lib/users'
 import UsersPage from '@/components/admin/users/users-page.component'
-import { unstable_cache } from 'next/cache'
+import { getUsersUnstableCache } from '@/lib/users/users.service'
+import { User } from '@/types'
+import { FindOptionsOrderValue } from 'typeorm'
 
-const Users = async () => {
-  const users = await getUsers()
+//type Params = Promise<{ callbackUrl: string }>
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
-  return <UsersPage users={users} />
+const UsersServerPage = async (props: { searchParams: SearchParams }) => {
+  const params = await props.searchParams
+
+  const sortBy = (params.sortBy || 'createdAt') as keyof User
+  const page = params.page ? parseInt(params.page as string, 10) : 1
+  const limit = Number(params.limit || 5)
+  const order = (params.order || 'DESC') as FindOptionsOrderValue
+
+  const { users, total } = await getUsersUnstableCache(
+    { page, limit },
+    sortBy,
+    order
+  )
+
+  return (
+    <UsersPage
+      users={users}
+      page={page}
+      limit={limit}
+      total={total}
+      sortBy={sortBy}
+      order={order}
+    />
+  )
 }
 
-const getUsers = unstable_cache(
-  async () => {
-    const repository = new UsersRepository()
-    const users = await repository.getUsers()
-    return users.map((user) => user.toPlain())
-  },
-  ['users'],
-  {
-    tags: ['users']
-  }
-)
-
-export default Users
+export default UsersServerPage
