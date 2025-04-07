@@ -5,7 +5,7 @@ import { Artwork } from '@/types/artwork'
 import { useCart } from '@/contexts/cart.context'
 import { ShoppingCart, Heart } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { formatPrice } from '@/data/artworks'
+import { formatPrice } from '@/lib/database/data/artworks'
 
 interface ArtworkCardProps {
   artwork: Artwork

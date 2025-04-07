@@ -1,7 +1,7 @@
 'use client' // Marks this module as a client component
 
 import { useState } from 'react'
-import { artists } from '@/data/artists'
+import { artists } from '@/lib/database/data/artists'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Search } from 'lucide-react'

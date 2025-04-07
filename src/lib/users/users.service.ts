@@ -1,9 +1,9 @@
-import { PaginationParams } from '@/types'
+import { PaginationParams } from './../../types/common/pagination-params.type'
 import { instanceToPlain } from 'class-transformer'
 import { unstable_cache } from 'next/cache'
 import { FindOptionsOrderValue } from 'typeorm'
-import { User } from './user.entity'
 import { usersRepository, UsersRepository } from './users.repository'
+import { User } from './model'
 
 export default class Users {
   repository: UsersRepository

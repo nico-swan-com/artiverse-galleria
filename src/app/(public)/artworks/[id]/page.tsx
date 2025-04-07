@@ -4,7 +4,11 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { artworks, formatPrice, getRelatedArtworks } from '@/data/artworks'
+import {
+  artworks,
+  formatPrice,
+  getRelatedArtworks
+} from '@/lib/database/data/artworks'
 import { Button } from '@/components/ui/button'
 import { useCart } from '@/contexts/cart.context'
 import {

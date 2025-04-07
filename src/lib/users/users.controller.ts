@@ -1,8 +1,9 @@
-import { AuthGuard } from '@/lib/authentication/auth-guard-route.decorator'
 import Users from './users.service'
 import { NextRequest, NextResponse } from 'next/server'
-import { User } from '@/types/common/user'
 import { FindOptionsOrderValue } from 'typeorm'
+
+import { AuthGuard } from '../authentication/auth-guard-route.decorator'
+import { User } from './model'
 
 export class UsersController {
   @AuthGuard()

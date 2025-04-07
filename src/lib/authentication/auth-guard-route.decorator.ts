@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { auth } from '@/lib/authentication'
 import { forbidden } from 'next/navigation'
 import { NextApiRequest } from 'next'
+import { auth } from './next-auth'
 
 export function AuthGuard() {
   return function (

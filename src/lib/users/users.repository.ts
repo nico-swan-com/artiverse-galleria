@@ -1,13 +1,12 @@
+import { PaginationParams } from './../../types/common/pagination-params.type'
 import {
   DeleteResult,
   FindOptionsOrderValue,
   Repository,
   UpdateResult
 } from 'typeorm'
-import { User } from './user.entity'
 import { DatabaseRepository } from '../data-access'
-import { PaginationParams } from '@/types'
-import { Users } from './users.type'
+import { Users, User } from './model'
 
 @DatabaseRepository(User, 'userRepository')
 class UsersRepository {

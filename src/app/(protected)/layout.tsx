@@ -3,7 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import { useIsMobile } from '@/hooks/use-mobile'
 import Sidebar from '@/components/layout/navigation/sidebar.component'
 import MobileNavbar from '@/components/layout/navigation/mobile-navbar.component'
-import { BarChart3, Users } from 'lucide-react'
+import { BarChart3, Palette, UserRound, UsersRound } from 'lucide-react'
 import { useState } from 'react'
 import { SessionProvider } from 'next-auth/react'
 
@@ -21,6 +21,23 @@ export default function DashboardLayout({
       icon: <BarChart3 size={18} />,
       path: '/admin'
     },
+    {
+      title: 'Users',
+      icon: <UsersRound size={18} />,
+      path: '/admin/users'
+    },
+    {
+      title: 'Artists',
+      icon: (
+        <>
+          <div className='relative'>
+            <Palette size={12} className='absolute right-0 top-[2] mr-[-8]' />
+            <UserRound size={18} />
+          </div>
+        </>
+      ),
+      path: '/admin/artists'
+    }
     // {
     //   title: 'Blog',
     //   icon: <FileText size={18} />,
@@ -31,11 +48,7 @@ export default function DashboardLayout({
     //   icon: <Package size={18} />,
     //   path: '/products'
     // },
-    {
-      title: 'Users',
-      icon: <Users size={18} />,
-      path: '/admin/users'
-    }
+
     // {
     //   title: 'Billing',
     //   icon: <CreditCard size={18} />,

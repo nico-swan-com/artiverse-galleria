@@ -4,7 +4,7 @@ export class User1741552010157 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'user',
+        name: 'users',
         columns: [
           {
             name: 'id',
@@ -29,6 +29,26 @@ export class User1741552010157 implements MigrationInterface {
           {
             name: 'password',
             type: 'varchar'
+          },
+          {
+            name: 'role',
+            type: 'varchar',
+            isNullable: false
+          },
+          {
+            name: 'status',
+            type: 'varchar',
+            isNullable: false
+          },
+          {
+            name: 'createdAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP'
+          },
+          {
+            name: 'updatedAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP'
           }
         ]
       }),

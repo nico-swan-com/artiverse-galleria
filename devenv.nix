@@ -6,7 +6,6 @@
   env = {
     NODE_ENV="local";
     SOPS_AGE_KEY_FILE="/home/nicoswan/.config/sops/age/keys.txt";
-    NEXTAUTH_URL="http://localhost:3000";
 
     POSTGRES_HOST="localhost";
     POSTGRES_PORT="5433";
