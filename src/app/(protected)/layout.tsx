@@ -7,6 +7,13 @@ import { BarChart3, Palette, UserRound, UsersRound } from 'lucide-react'
 import { useState } from 'react'
 import { SessionProvider } from 'next-auth/react'
 
+/**
+ * Provides a responsive dashboard layout with sidebar navigation and animated page transitions.
+ *
+ * Wraps dashboard content in a layout that adapts to mobile and desktop devices, displaying a collapsible sidebar and navigation menu. Includes authentication session context and animated transitions for child pages.
+ *
+ * @param children - The content to display within the dashboard layout.
+ */
 export default function DashboardLayout({
   children
 }: {

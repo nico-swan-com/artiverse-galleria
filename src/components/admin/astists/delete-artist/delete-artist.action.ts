@@ -4,7 +4,15 @@ import { z } from 'zod'
 import { revalidateTag } from 'next/cache'
 import { ArtistsRepository } from '@/lib/artists'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/**
+ * Handles the deletion of an artist based on form data input.
+ *
+ * Validates the artist ID from the provided {@link formData}, deletes the corresponding artist using the repository, and revalidates the 'artists' cache tag. Returns a success response on successful deletion, or a structured error response if validation fails or an unexpected error occurs.
+ *
+ * @param prevState - The previous state, not used in this function.
+ * @param formData - The form data containing the artist ID to delete.
+ * @returns An object indicating success or failure, with a message and error details if applicable.
+ */
 async function deleteArtistAction(prevState: any, formData: FormData) {
   try {
     const artistIdIdSchema = z

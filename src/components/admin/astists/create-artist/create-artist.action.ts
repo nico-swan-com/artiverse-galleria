@@ -6,7 +6,15 @@ import { revalidateTag } from 'next/cache'
 import { Artist, ArtistSchema } from '@/lib/artists'
 import Artists from '@/lib/artists/artists.service'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/**
+ * Processes form data to create a new artist record, validating input and returning the result.
+ *
+ * Extracts artist details from the provided {@link formData}, validates them using {@link ArtistSchema}, and attempts to persist a new artist. Returns an object indicating success or failure, including validation or database error details as needed.
+ *
+ * @param prevState - The previous state of the form, used for stateful operations.
+ * @param formData - The submitted form data containing artist information.
+ * @returns An object with success status, message, form state, and any validation or database errors.
+ */
 async function createArtistAction(prevState: any, formData: FormData) {
   const name = formData.get('name')?.toString() || ''
   const email = formData.get('email')?.toString() || ''

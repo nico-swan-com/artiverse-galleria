@@ -24,6 +24,17 @@ export const createDataSource = () => {
   })
 }
 
+/**
+ * Initializes the PostgreSQL database connection with retry logic.
+ *
+ * Attempts to establish a connection to the database, retrying on failure up to {@link maxRetries} times or until {@link maxWaitTime} is exceeded. If the connection cannot be established within these limits, an error is thrown.
+ *
+ * @param maxRetries - Maximum number of connection attempts before giving up.
+ * @param retryDelay - Delay in milliseconds between retry attempts.
+ * @param maxWaitTime - Maximum total time in milliseconds to keep retrying before failing.
+ *
+ * @throws {Error} If the database connection cannot be established after the specified number of retries or wait time.
+ */
 export async function initializeDatabase(
   maxRetries: number = 5,
   retryDelay: number = 3000,

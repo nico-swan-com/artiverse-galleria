@@ -5,7 +5,15 @@ import { User, UserSchema, UsersRepository } from '@/lib/users'
 import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/**
+ * Updates an artist's user information based on submitted form data.
+ *
+ * Validates and parses user fields, updates the user record, and triggers cache revalidation. Returns a success response on completion, or detailed error information if validation or database operations fail.
+ *
+ * @param prevState - The previous state, typically used for stateful server actions.
+ * @param formData - The form data containing user fields to update.
+ * @returns An object indicating success or failure, with messages and error details as applicable.
+ */
 async function editArtistAction(prevState: any, formData: FormData) {
   try {
     const userId = formData.get('userId')?.toString() || ''

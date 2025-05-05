@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/**
+ * Provides a mock decorator that performs no authentication checks.
+ *
+ * Use this as a placeholder for the actual `AuthGuardRoute` decorator in testing or development environments where authentication is not required.
+ */
 export function AuthGuardRoute() {
   return function (
     target: any,
