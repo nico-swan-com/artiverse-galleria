@@ -1,8 +1,8 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { initializeDatabase } from '../database/data-source'
-import { UsersRepository } from '@/lib/users'
 import { getAvatarUrl } from '../utilities'
+import { UsersRepository } from '../users'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [

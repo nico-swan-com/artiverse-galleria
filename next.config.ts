@@ -10,6 +10,11 @@ const defaultConfig: NextConfig = {
         protocol: 'https',
         hostname: 'images.unsplash.com',
         pathname: '/**' // This allows all paths
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.freepik.com',
+        pathname: '/**' // This allows all paths
       }
     ]
   },
@@ -33,6 +38,11 @@ const customServerConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
+        pathname: '/**' // This allows all paths
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.freepik.com',
         pathname: '/**' // This allows all paths
       }
     ]
@@ -64,6 +74,11 @@ const staticConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
+        pathname: '/**' // This allows all paths
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.freepik.com',
         pathname: '/**' // This allows all paths
       }
     ]

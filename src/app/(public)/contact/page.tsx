@@ -4,7 +4,7 @@ import ContactForm from '@/components/public/contact/contact-form.component'
 
 const Contact = () => {
   return (
-    <div className='min-h-screen bg-white'>
+    <div className='-m-20 min-h-screen bg-white'>
       {/* Contact Header */}
       <section className='relative bg-gray-50 px-4 py-20 sm:px-6 lg:px-8'>
         <div className='mx-auto max-w-7xl'>

@@ -34,7 +34,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div
       className={cn(
-        'h-full border-r border-sidebar-border bg-sidebar transition-all duration-300 ease-in-out',
+        'flex h-full flex-col border-r border-sidebar-border bg-sidebar transition-all duration-300 ease-in-out',
         isCollapsed ? 'w-16' : 'w-64',
         className,
         !isMobile && 'relative' // Change to relative when not mobile
@@ -71,7 +71,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </Button>
       </div>
-      <div className='overflow-y-auto py-4'>
+      <div className='flex-1 overflow-y-auto py-4'>
         <ul className='space-y-1 px-2'>
           {menuItems.map((item) => (
             <li key={item.path}>
@@ -97,8 +97,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       <div className='border-t border-sidebar-border p-4'>
         <div className='flex items-center gap-3'>
-          <Avatar>
-            <AvatarImage src={session?.user?.image || ''} />
+          <Avatar className='size-14'>
+            <AvatarImage className='rounded' src={session?.user?.image || ''} />
             <AvatarFallback>{session?.user?.name}</AvatarFallback>
           </Avatar>
           {!isCollapsed && (

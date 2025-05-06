@@ -24,7 +24,7 @@ const PasswordInput = React.forwardRef<
     const allChars =
       uppercaseChars + lowercaseChars + numberChars + specialChars
     const minLength = 8
-    const maxLength = 20
+    const maxLength = 19
 
     let password = ''
 

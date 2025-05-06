@@ -1,8 +1,8 @@
 'use server'
 
-import { signIn } from '@/lib/authentication'
 import { LoginSchema } from './login.schema'
 import { z } from 'zod'
+import { signIn } from '@/lib/authentication'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function submitLogin(prevState: any, formData: FormData) {

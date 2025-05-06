@@ -11,7 +11,7 @@ import Logo from '../admin/users/create-user/logo/logo.component'
 
 const Navbar = () => {
   const { getItemCount } = useCart()
-  const itemCount = getItemCount()
+  const [itemCount, setItemCount] = useState(0)
   const pathname = usePathname()
   const isMobile = useIsMobile()
   const [isScrolled, setIsScrolled] = useState(false)
@@ -35,6 +35,10 @@ const Navbar = () => {
   useEffect(() => {
     setIsMenuOpen(false)
   }, [pathname])
+
+  useEffect(() => {
+    setItemCount(getItemCount())
+  }, [getItemCount])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()

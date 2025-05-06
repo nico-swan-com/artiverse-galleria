@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { artists } from '@/data/artists'
-import { artworks } from '@/data/artworks'
+import { artists } from '@/lib/database/data/artists'
+import { artworks } from '@/lib/database/data/artworks'
 import { Button } from '@/components/ui/button'
 import ArtworkCard from '@/components/public/artwork/artwork-card.component'
 import { ChevronLeft, Mail, ExternalLink, MapPin } from 'lucide-react'
