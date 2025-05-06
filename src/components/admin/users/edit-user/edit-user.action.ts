@@ -12,8 +12,7 @@ async function editUserAction(prevState: any, formData: FormData) {
     const name = formData.get('name')?.toString() || ''
     const email = formData.get('email')?.toString() || ''
     const newPassword = formData.get('newPassword')?.toString() || ''
-    const testPassword = newPassword
-    console.log(newPassword)
+    const testPassword = newPassword || ''
     const values = UserSchema.parse({
       name,
       email,
