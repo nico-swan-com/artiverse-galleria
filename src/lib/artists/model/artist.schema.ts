@@ -14,7 +14,7 @@ export const ArtistSchema = z.object({
   exhibitions: z.array(z.string()).default([]),
   statement: z.string(),
   createdAt: z.date().default(() => new Date()),
-  updatedAt: z.date().default(() => new Date())
+  updatedAt: z.date()
 })
 
 export type Artist = z.infer<typeof ArtistSchema>
