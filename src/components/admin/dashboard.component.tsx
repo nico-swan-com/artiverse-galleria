@@ -81,7 +81,12 @@ const Dashboard = () => {
             />
             <MetricCard
               title='Pending Payments'
-              value={44444}
+  <MetricCard
+    title='Pending Payments'
+    value={dashboardStats?.pendingPaymentsAmount || 0}
+    icon={<CreditCard size={20} />}
+    trend={{ value: 2.1, positive: false }}
+  />
               icon={<CreditCard size={20} />}
               trend={{ value: 2.1, positive: false }}
             />
