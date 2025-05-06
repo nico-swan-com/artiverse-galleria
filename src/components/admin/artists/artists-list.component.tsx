@@ -18,14 +18,14 @@ import { ArrowDown, ArrowUp } from 'lucide-react'
 import TablePagination from '@/components/common/ui/table-pagination.component'
 import DeleteArtistDialog from './delete-artist/delete-artist-dialog.component'
 import EditArtistDialog from './edit-artist/edit-artist-dialog.component'
-import { Artist } from '@/lib/artists'
+import { Artist, ArtistsSortBy } from '@/lib/artists'
 
 interface ArtistsListProps {
   artists: Artist[]
   total: number
   page: number
   limit: number
-  sortBy: keyof Artist
+  sortBy: ArtistsSortBy
   order: FindOptionsOrderValue
 }
 
@@ -117,8 +117,12 @@ const ArtistsList = ({
                 <TableRow key={artist.id}>
                   <TableCell>
                     <div className='flex items-center gap-3'>
-                      <Avatar>
-                        <AvatarImage src={artist.photoUrl} alt={artist.name} />
+                      <Avatar className='size-20 rounded shadow-md shadow-gray-400'>
+                        <AvatarImage
+                          className='object-cover'
+                          src={artist.photoUrl}
+                          alt={artist.name}
+                        />
                         <AvatarFallback>
                           {artist.name.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
@@ -132,13 +136,15 @@ const ArtistsList = ({
                     </div>
                   </TableCell>
                   <TableCell>{artist.featured}</TableCell>
-                  <td className='px-4 py-3 text-muted-foreground'>
-                    {format(new Date(artist.createdAt), 'MMM d, yyyy')}
-                  </td>
-                  <td className='text-end'>
+                  <TableCell className='px-4 py-3 text-muted-foreground'>
+                    {artist.createdAt
+                      ? format(new Date(artist.createdAt), 'MMM d, yyyy')
+                      : ''}
+                  </TableCell>
+                  <TableCell className='text-end'>
                     <EditArtistDialog artist={artist} />
                     <DeleteArtistDialog artist={artist} />
-                  </td>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

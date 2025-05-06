@@ -6,7 +6,7 @@ import {
   UpdateResult
 } from 'typeorm'
 import { DatabaseRepository } from '../data-access'
-import { Users, User } from './model'
+import { Users, User, UsersSortBy } from './model'
 
 @DatabaseRepository(User, 'userRepository')
 class UsersRepository {
@@ -14,7 +14,7 @@ class UsersRepository {
 
   async getUsers(
     pagination: PaginationParams,
-    sortBy: keyof User = 'createdAt',
+    sortBy: UsersSortBy,
     order: FindOptionsOrderValue = 'DESC'
   ): Promise<Users> {
     const { page, limit } = pagination

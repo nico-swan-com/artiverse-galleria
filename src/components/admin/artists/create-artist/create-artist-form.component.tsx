@@ -116,7 +116,7 @@ const CreateArtistForm = ({ onClose }: CreateArtistFormProps) => {
 
       <div className='flex justify-end pt-4'>
         <Button type='submit' disabled={isPending} className='w-full'>
-          {isPending ? 'Adding user...' : 'Add user'}
+          {isPending ? 'Adding artist...' : 'Add artist'}
         </Button>
       </div>
     </form>

@@ -2,29 +2,28 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach",
+      "port": 9229,
+      "skipFiles": ["<node_internals>/**"],
+      "env": {
+        "NEXT_PRIVATE_LOCAL_WEBPACK": "1"
+      }
+    },
+    {
+      "type": "chrome",
+      "request": "attach",
+      "sourceMaps": true,
+      "protocol": "inspector",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}"
+    },
+    {
       "name": "Next.js: debug server-side",
-      "type": "node-terminal",
+      "type": "node",
       "request": "launch",
       "command": "npm run dev"
-    },
-    {
-      "name": "Next.js: debug client-side",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:3000"
-    },
-    {
-      "name": "Next.js: debug client-side (Firefox)",
-      "type": "firefox",
-      "request": "launch",
-      "url": "http://localhost:3000",
-      "reAttach": true,
-      "pathMappings": [
-        {
-          "url": "webpack://_N_E",
-          "path": "${workspaceFolder}"
-        }
-      ]
     },
     {
       "name": "Next.js: debug full stack",

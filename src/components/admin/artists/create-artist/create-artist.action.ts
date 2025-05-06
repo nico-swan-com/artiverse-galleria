@@ -3,7 +3,7 @@
 import { z } from 'zod'
 import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
-import { Artist, ArtistSchema } from '@/lib/artists'
+import { Artist, ArtistCreateSchema, ArtistSchema } from '@/lib/artists'
 import Artists from '@/lib/artists/artists.service'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,7 +18,7 @@ async function createArtistAction(prevState: any, formData: FormData) {
   const biography = formData.get('biography')?.toString() || ''
   const specialization = formData.get('specialization')?.toString() || ''
   const location = formData.get('location')?.toString() || ''
-  const website = formData.get('website')?.toString() || ''
+  const website = formData.get('website')?.toString()
   const exhibitions: string[] = (
     formData.get('exhibitions')?.toString() || ''
   ).split(',')
@@ -56,7 +56,7 @@ async function createArtistAction(prevState: any, formData: FormData) {
     }
   }
   try {
-    const values = ArtistSchema.parse({
+    const values = ArtistCreateSchema.parse({
       name,
       email,
       photoUrl,

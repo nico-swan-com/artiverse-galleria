@@ -8,33 +8,36 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-import { Pencil } from 'lucide-react'
+
+import { Trash } from 'lucide-react'
 import { useState, Suspense } from 'react'
-import EditArtistForm from './edit-artist-form.component'
+import DeleteArtistForm from './delete-artist-form.component'
 import { Artist } from '@/lib/artists'
 
 type EditArtistProps = {
   artist: Artist | null
 }
 
-const EditArtistDialog = ({ artist }: EditArtistProps) => {
+const DeleteArtistDialog = ({ artist }: EditArtistProps) => {
   const [isOpen, setOpen] = useState(false)
 
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button size='icon' variant='ghost'>
-          <Pencil className='size-4' />
+          <Trash className='size-4 text-red-500' />
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>Update artist</DialogTitle>
-          <DialogDescription></DialogDescription>
+          <DialogTitle>Remove artist</DialogTitle>
+          <DialogDescription className='text-red-500'>
+            Are you sure you want to remove {artist?.name || 'this artist'}?
+          </DialogDescription>
         </DialogHeader>
         <Suspense>
           {artist && (
-            <EditArtistForm artist={artist} onClose={() => setOpen(false)} />
+            <DeleteArtistForm artist={artist} onClose={() => setOpen(false)} />
           )}
         </Suspense>
       </DialogContent>
@@ -42,4 +45,4 @@ const EditArtistDialog = ({ artist }: EditArtistProps) => {
   )
 }
 
-export default EditArtistDialog
+export default DeleteArtistDialog

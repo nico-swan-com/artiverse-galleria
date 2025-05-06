@@ -3,13 +3,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { FindOptionsOrderValue } from 'typeorm'
 
 import { AuthGuard } from '../authentication/auth-guard-route.decorator'
-import { User } from './model'
+import { UsersSortBy } from './model'
 
 export class UsersController {
   @AuthGuard()
   async getUsers(request: NextRequest): Promise<Response> {
     const searchParams = request.nextUrl.searchParams
-    const sortBy = (searchParams.get('sortBy') || 'createdAt') as keyof User
+    const sortBy = (searchParams.get('sortBy') || 'createdAt') as UsersSortBy
     const page = parseInt(searchParams.get('page') || '1', 10)
     const limit = parseInt(searchParams.get('limit') || '5', 10)
     const order = (searchParams.get('order') || 'DESC') as FindOptionsOrderValue
@@ -23,18 +23,4 @@ export class UsersController {
 
     return NextResponse.json({ users, total })
   }
-
-  // async POST(request: Request) {
-  //   // Parse the request body
-  //   const body = await request.json()
-  //   const { name } = body
-
-  //   // e.g. Insert new user into your DB
-  //   const newUser = { id: Date.now(), name }
-
-  //   return new Response(JSON.stringify(newUser), {
-  //     status: 201,
-  //     headers: { 'Content-Type': 'application/json' }
-  //   })
-  // }
 }

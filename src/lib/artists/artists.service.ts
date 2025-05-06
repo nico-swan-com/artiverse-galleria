@@ -1,69 +1,95 @@
-import { PaginationParams } from './../../types/common/pagination-params.type'
-import { instanceToPlain } from 'class-transformer'
+import { PaginationParams } from '../../types/common/pagination-params.type'
 import { unstable_cache } from 'next/cache'
 import { FindOptionsOrderValue } from 'typeorm'
-import { artistsRepository, ArtistsRepository } from './artists.repository'
-import { Artist } from './model'
+import { ArtistsRepository } from './artists.repository'
+import { Artist, Artists as ArtistsResult, ArtistsSortBy } from './model'
 
 export default class Artists {
   repository: ArtistsRepository
 
   constructor() {
-    this.repository = artistsRepository
+    this.repository = new ArtistsRepository()
   }
 
-  async getArtists(
-    pagination: PaginationParams,
-    sortBy: keyof Artist,
+  async getAll(
+    sortBy: ArtistsSortBy,
     order: FindOptionsOrderValue
-  ) {
-    const repository = new ArtistsRepository()
-    const result = await repository.getArtists(pagination, sortBy, order)
+  ): Promise<ArtistsResult> {
+    const tag = `artists-${sortBy}-${order}`
+    const getAll = unstable_cache(
+      async (
+        sortBy: ArtistsSortBy,
+        order: FindOptionsOrderValue
+      ): Promise<ArtistsResult> => {
+        const result = await this.repository.getAll(sortBy, order)
+        return result
+      },
+      [tag],
+      {
+        tags: [tag, 'artists']
+      }
+    )
+    return getAll(sortBy, order)
+  }
+
+  async getPaged(
+    pagination: PaginationParams,
+    sortBy: ArtistsSortBy,
+    order: FindOptionsOrderValue,
+    searchQuery?: string
+  ): Promise<ArtistsResult> {
+    const tag = `artists-page-${pagination.page}-limit-${pagination.limit}-${sortBy}-${order}`
+    const getPaged = unstable_cache(
+      async (
+        pagination: PaginationParams,
+        sortBy: ArtistsSortBy,
+        order: FindOptionsOrderValue,
+        searchQuery?: string
+      ): Promise<ArtistsResult> => {
+        const result = await this.repository.getPaged(
+          pagination,
+          sortBy,
+          order,
+          searchQuery
+        )
+        return result
+      },
+      [tag],
+      {
+        tags: [tag, 'artists'],
+        revalidate: 1
+      }
+    )
+    return getPaged(pagination, sortBy, order, searchQuery)
+  }
+
+  async getById(id: string): Promise<Artist | null> {
+    const tag = `artist-${id}`
+    const getById = unstable_cache(
+      async (id: string): Promise<Artist | null> => {
+        const result = await this.repository.getById(id)
+        return result
+      },
+      [tag],
+      {
+        tags: [tag, 'artists']
+      }
+    )
+    return getById(id)
+  }
+
+  async create(artist: Artist): Promise<Artist> {
+    const result = await this.repository.create(artist)
     return result
   }
 
-  async create(user: Artist) {
-    const repository = new ArtistsRepository()
-    const result = await repository.create(user)
-    return result
+  async update(artist: Artist): Promise<void> {
+    await this.repository.update(artist)
+    return
   }
 
-  async update(user: Artist) {
-    const repository = new ArtistsRepository()
-    const result = await repository.update(user)
-    return result
-  }
-
-  async delete(user: Artist) {
-    const repository = new ArtistsRepository()
-    const result = await repository.delete(user.id)
-    return result
+  async delete(artist: Artist): Promise<void> {
+    await this.repository.delete(artist.id)
+    return
   }
 }
-
-export const getArtistsUnstableCache = unstable_cache(
-  async (
-    pagination: PaginationParams,
-    sortBy: keyof Artist,
-    order: FindOptionsOrderValue
-  ) => {
-    const result = new Artists().getArtists(pagination, sortBy, order)
-    return instanceToPlain(result)
-  },
-  ['users'],
-  {
-    tags: ['users'],
-    revalidate: 1
-  }
-)
-
-export const createArtistUnstableCache = unstable_cache(
-  async (user: Artist) => {
-    const result = new Artists().create(user)
-    return instanceToPlain(result)
-  },
-  ['users'],
-  {
-    tags: ['users']
-  }
-)

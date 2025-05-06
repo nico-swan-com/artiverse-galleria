@@ -1,7 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  UpdateDateColumn
+} from 'typeorm'
 import bcrypt from 'bcryptjs'
 import { UserRoles } from './user-roles.enum'
 import { UserStatus } from './user-status.enum'
+import { Transform } from 'class-transformer'
 
 @Entity('users')
 export class User {
@@ -26,11 +34,22 @@ export class User {
   @Column({ type: 'varchar', enum: UserStatus, default: 'Pending' })
   status!: UserStatus
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt!: Date
+  @CreateDateColumn({ name: 'created_at' })
+  @Transform(({ value }) => (value === null ? undefined : value))
+  @Transform(({ value }) => value.toISOString(), { toPlainOnly: true })
+  createdAt?: Date
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt!: Date
+  @UpdateDateColumn({ name: 'updated_at' })
+  @Transform(({ value }) => (value === null ? undefined : value))
+  @Transform(({ value }) => value.toISOString(), { toPlainOnly: true })
+  updatedAt?: Date
+
+  @DeleteDateColumn({ name: 'deleted_at' })
+  @Transform(({ value }) => (value === null ? undefined : value))
+  @Transform(({ value }) => (!!value ? value.toISOString() : undefined), {
+    toPlainOnly: true
+  })
+  deletedAt?: Date
 
   async setPassword(password: string): Promise<void> {
     const salt = await bcrypt.genSalt(10)

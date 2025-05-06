@@ -13,6 +13,7 @@ import { Pencil } from 'lucide-react'
 import { useState, Suspense } from 'react'
 import EditUserForm from './edit-user-form.component'
 import { User } from '@/types'
+import { Skeleton } from '@/components/ui/skeleton'
 
 type EditUserProps = {
   user: User | null
@@ -33,7 +34,9 @@ const EditUserDialog = ({ user }: EditUserProps) => {
           <DialogTitle>Update user</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
-        <Suspense>
+        <Suspense
+          fallback={<Skeleton className='h-[20px] w-full rounded-full' />}
+        >
           {user && <EditUserForm user={user} onClose={() => setOpen(false)} />}
         </Suspense>
       </DialogContent>

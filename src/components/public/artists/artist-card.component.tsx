@@ -2,8 +2,8 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Artist } from '@/types/artist' // Adjust the import path if needed
-import { cn } from '@/lib/utils' // Adjust the import path if needed
+import { cn } from '@/lib/utils'
+import { Artist } from '@/lib/artists/model'
 
 interface ArtistCardProps {
   artist: Artist

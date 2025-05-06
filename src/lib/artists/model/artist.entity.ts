@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
+import { instanceToPlain, Transform } from 'class-transformer'
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  UpdateDateColumn
+} from 'typeorm'
 
 @Entity('artists')
 export class Artist {
@@ -29,7 +37,8 @@ export class Artist {
   @Column()
   email!: string
 
-  @Column()
+  @Column({ nullable: true })
+  @Transform(({ value }) => (value === null ? undefined : value))
   website?: string
 
   @Column('text', { array: true, default: [] })
@@ -38,9 +47,24 @@ export class Artist {
   @Column({ type: 'text' })
   statement!: string
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt!: Date
+  @CreateDateColumn({ name: 'created_at' })
+  @Transform(({ value }) => (value === null ? undefined : value))
+  @Transform(({ value }) => value.toISOString(), { toPlainOnly: true })
+  createdAt?: Date
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt!: Date
+  @UpdateDateColumn({ name: 'updated_at' })
+  @Transform(({ value }) => (value === null ? undefined : value))
+  @Transform(({ value }) => value.toISOString(), { toPlainOnly: true })
+  updatedAt?: Date
+
+  @DeleteDateColumn({ name: 'deleted_at' })
+  @Transform(({ value }) => (value === null ? undefined : value))
+  @Transform(({ value }) => (!!value ? value.toISOString() : undefined), {
+    toPlainOnly: true
+  })
+  deletedAt?: Date
+
+  toPlain() {
+    return instanceToPlain(this).toPlainOnly()
+  }
 }

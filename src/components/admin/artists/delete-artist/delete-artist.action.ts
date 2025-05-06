@@ -34,7 +34,7 @@ async function deleteArtistAction(prevState: any, formData: FormData) {
       console.error(error)
       return {
         success: false,
-        message: 'Failed to remove user.',
+        message: 'Failed to remove artist.',
         errors: {
           database: [error.message]
         }

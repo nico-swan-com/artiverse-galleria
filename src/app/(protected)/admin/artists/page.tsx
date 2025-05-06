@@ -1,19 +1,26 @@
-import ArtistsPage from '@/components/admin/astists/artists-page.component'
-import { Artist, getArtistsUnstableCache } from '@/lib/artists'
+import ArtistsPage from '@/components/admin/artists/artists-page.component'
+import { Artist, ArtistsSortBy, isValidArtistsSortKey } from '@/lib/artists'
+import Artists from '@/lib/artists/artists.service'
+import { instanceToPlain } from 'class-transformer'
 import { FindOptionsOrderValue } from 'typeorm'
 
-//type Params = Promise<{ callbackUrl: string }>
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
 const ArtistServerPage = async (props: { searchParams: SearchParams }) => {
   const params = await props.searchParams
 
-  const sortBy = (params.sortBy || 'createdAt') as keyof Artist
-  const page = params.page ? parseInt(params.page as string, 10) : 1
-  const limit = Number(params.limit || 5)
-  const order = (params.order || 'DESC') as FindOptionsOrderValue
+  const sortBy = (
+    typeof params.sortBy === 'string' && isValidArtistsSortKey(params.sortBy)
+      ? params.sortBy
+      : 'createdAt'
+  ) as ArtistsSortBy
+  const page = Math.max(1, parseInt((params.page as string) || '1', 10) || 1)
+  const limit = Math.min(50, Math.max(1, Number(params.limit || 5) || 5))
+  const order = (
+    params.order === 'ASC' || params.order === 'DESC' ? params.order : 'DESC'
+  ) as FindOptionsOrderValue
 
-  const { artists, total } = await getArtistsUnstableCache(
+  const { artists, total } = await new Artists().getPaged(
     { page, limit },
     sortBy,
     order
@@ -21,7 +28,7 @@ const ArtistServerPage = async (props: { searchParams: SearchParams }) => {
 
   return (
     <ArtistsPage
-      artists={artists}
+      artists={instanceToPlain(artists) as Artist[]}
       page={page}
       limit={limit}
       total={total}

@@ -8,36 +8,36 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-
-import { Trash } from 'lucide-react'
+import { Pencil } from 'lucide-react'
 import { useState, Suspense } from 'react'
-import DeleteArtistForm from './delete-artist-form.component'
+import EditArtistForm from './edit-artist-form.component'
 import { Artist } from '@/lib/artists'
+import { Skeleton } from '@/components/ui/skeleton'
 
 type EditArtistProps = {
   artist: Artist | null
 }
 
-const DeleteArtistDialog = ({ artist }: EditArtistProps) => {
+const EditArtistDialog = ({ artist }: EditArtistProps) => {
   const [isOpen, setOpen] = useState(false)
 
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button size='icon' variant='ghost'>
-          <Trash className='size-4 text-red-500' />
+          <Pencil className='size-4' />
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>Remove user</DialogTitle>
-          <DialogDescription className='text-red-500'>
-            Are you sure you want to remove {artist?.name || 'this user'}?
-          </DialogDescription>
+          <DialogTitle>Update artist</DialogTitle>
+          <DialogDescription></DialogDescription>
         </DialogHeader>
-        <Suspense>
+        <Suspense
+          fallback={<Skeleton className='h-[20px] w-full rounded-full' />}
+        >
           {artist && (
-            <DeleteArtistForm artist={artist} onClose={() => setOpen(false)} />
+            <EditArtistForm artist={artist} onClose={() => setOpen(false)} />
           )}
         </Suspense>
       </DialogContent>
@@ -45,4 +45,4 @@ const DeleteArtistDialog = ({ artist }: EditArtistProps) => {
   )
 }
 
-export default DeleteArtistDialog
+export default EditArtistDialog

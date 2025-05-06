@@ -63,14 +63,20 @@ export class Artists1743547674198 implements MigrationInterface {
             type: 'text'
           },
           {
-            name: 'createdAt',
+            name: 'created_at',
             type: 'timestamp',
             default: 'CURRENT_TIMESTAMP'
           },
           {
-            name: 'updatedAt',
+            name: 'updated_at',
             type: 'timestamp',
-            default: 'CURRENT_TIMESTAMP'
+            default: 'CURRENT_TIMESTAMP',
+            onUpdate: 'CURRENT_TIMESTAMP'
+          },
+          {
+            name: 'deleted_at',
+            type: 'timestamp',
+            isNullable: true
           }
         ]
       }),

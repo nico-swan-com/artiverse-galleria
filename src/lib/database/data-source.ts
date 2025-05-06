@@ -2,7 +2,8 @@ import 'reflect-metadata'
 import { DataSource } from 'typeorm'
 import { User } from '../users'
 import { Artist } from '../artists'
-export let dataSourceInstance: DataSource
+
+let dataSourceInstance: DataSource
 
 export const getDataSourceInstance = () => {
   return dataSourceInstance
