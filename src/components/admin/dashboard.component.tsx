@@ -151,14 +151,7 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent className='pt-0'>
                 <div className='space-y-4'>
-                  {[
-                    {
-                      id: 'asdfadfadfa',
-                      name: 'dfasdfadfa',
-                      category: 'asdasdasda',
-                      sales: '3333'
-                    }
-                  ].map((product, index) => (
+                  {(topSellingProducts || []).map((product, index) => (
                     <ProductItem
                       key={product.id}
                       product={product}
