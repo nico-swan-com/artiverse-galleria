@@ -2,6 +2,7 @@
 
 import { sendMail } from '@/lib/mailer/sendMail'
 import { MessageSchema } from './message.schema'
+import { z } from 'zod'
 
 export type ContactFormErrors = {
   name?: string[]
@@ -56,7 +57,22 @@ async function submitContactMessage(
       message: 'Message sent successfully!'
     }
   } catch (error) {
-    if (error instanceof Error) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors: ContactFormErrors = {}
+      error.errors.forEach((err) => {
+        const field = err.path[0] as keyof ContactFormErrors
+        if (field) {
+          fieldErrors[field] = fieldErrors[field] || []
+          fieldErrors[field]!.push(err.message)
+        }
+      })
+      return {
+        ...state,
+        success: false,
+        message: 'Failed to send message',
+        errors: fieldErrors
+      }
+    } else if (error instanceof Error) {
       return {
         ...state,
         success: false,
@@ -66,14 +82,13 @@ async function submitContactMessage(
         }
       }
     }
-    return {
-      ...state,
-      success: false,
-      message: 'An unknown error occurred',
-      errors: {
-        content: ['Failed to send message']
-      }
-    }
+  }
+
+  return {
+    ...state,
+    success: false,
+    message: 'An unknown error occurred.',
+    errors: state.errors
   }
 }
 
