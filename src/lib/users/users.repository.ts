@@ -10,7 +10,11 @@ import { Users, User, UsersSortBy } from './model'
 
 @DatabaseRepository(User, 'userRepository')
 class UsersRepository {
-  userRepository!: Repository<User>
+  /**
+   * Injected by `@DatabaseRepository`.
+   * The decorator returns a Promise that resolves to the actual repository.
+   */
+  userRepository!: Promise<Repository<User>>
 
   async getUsers(
     pagination: PaginationParams,

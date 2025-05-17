@@ -9,7 +9,7 @@ import {
 import bcrypt from 'bcryptjs'
 import { UserRoles } from './user-roles.enum'
 import { UserStatus } from './user-status.enum'
-import { Transform } from 'class-transformer'
+import { Exclude, instanceToPlain, Transform } from 'class-transformer'
 
 @Entity('users')
 export class User {
@@ -25,6 +25,7 @@ export class User {
   @Column()
   avatar!: string
 
+  @Exclude()
   @Column()
   password!: string
 
@@ -61,7 +62,6 @@ export class User {
   }
 
   toPlain() {
-    const json = JSON.parse(JSON.stringify(this))
-    return { ...json }
+    return instanceToPlain(this)
   }
 }

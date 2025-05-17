@@ -3,7 +3,7 @@
 import { z } from 'zod'
 import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
-import { Artist, ArtistCreateSchema } from '@/lib/artists'
+import { ArtistCreateSchema } from '@/lib/artists'
 import Artists from '@/lib/artists/artists.service'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,7 +22,7 @@ async function createArtistAction(prevState: any, formData: FormData) {
   const exhibitions: string[] = (
     formData.get('exhibitions')?.toString() || ''
   ).split(',')
-  const statement = formData.get('website')?.toString() || ''
+  const statement = formData.get('statement')?.toString() || ''
 
   const state = {
     name,
@@ -70,22 +70,9 @@ async function createArtistAction(prevState: any, formData: FormData) {
       statement
     })
 
-    const artist = new Artist()
-    artist.name = values.name
-    artist.email = values.email
-    artist.featured = values.featured
-    artist.styles = values.styles
-    artist.biography = values.biography
-    artist.specialization = values.specialization
-    artist.location = values.location
-    artist.website = values.website
-    artist.exhibitions = values.exhibitions
-    artist.statement = values.statement
-    artist.photoUrl = values.photoUrl
-
     const services = new Artists()
 
-    await services.create(artist)
+    await services.create(values)
     revalidateTag('artists')
 
     return { success: true, message: 'Artist created successfully!', ...state }

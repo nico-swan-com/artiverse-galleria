@@ -55,10 +55,10 @@ const CreateArtistForm = ({ onClose }: CreateArtistFormProps) => {
     if (!!state.message && !isPending) {
       if (state.success) {
         toast.success(state.message)
-        state.message = ''
         onClose()
       } else {
         console.error(state?.errors)
+        toast.error(state.message || 'Failed to create artist')
       }
     }
   }, [state, isPending, onClose])

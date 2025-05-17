@@ -4,6 +4,12 @@ import { ArtistsSortBy } from './model'
 import Artists from './artists.service'
 
 export class ArtistsController {
+  private artistsService: Artists
+
+  constructor(artistsService?: Artists) {
+    this.artistsService = artistsService || new Artists()
+  }
+
   async getArtistsPublic(request: NextRequest): Promise<Response> {
     const searchParams = request.nextUrl.searchParams
     const sortBy = (searchParams.get('sortBy') || 'name') as ArtistsSortBy
@@ -12,20 +18,19 @@ export class ArtistsController {
     const order = (searchParams.get('order') || 'DESC') as FindOptionsOrderValue
     const query = searchParams.get('query')
 
-    const { artists, total } = await new Artists().getPaged(
+    const { artists, total } = await this.artistsService.getPaged(
       { page, limit },
       sortBy,
       order,
-      !!query ? query : undefined
+      query || undefined
     )
 
+    const sanitizedArtists = artists.map(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ({ createdAt, updatedAt, deletedAt, ...rest }) => rest
+    )
     return NextResponse.json({
-      artists: artists.map((artist) => {
-        delete artist.createdAt
-        delete artist.updatedAt
-        delete artist.deletedAt
-        return artist
-      }),
+      artists: sanitizedArtists,
       total
     })
   }

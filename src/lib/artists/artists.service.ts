@@ -2,7 +2,13 @@ import { PaginationParams } from '../../types/common/pagination-params.type'
 import { unstable_cache } from 'next/cache'
 import { FindOptionsOrderValue } from 'typeorm'
 import { ArtistsRepository } from './artists.repository'
-import { Artist, Artists as ArtistsResult, ArtistsSortBy } from './model'
+import {
+  Artist,
+  ArtistCreate,
+  Artists as ArtistsResult,
+  ArtistsSortBy,
+  ArtistUpdate
+} from './model'
 
 export default class Artists {
   repository: ArtistsRepository
@@ -79,17 +85,32 @@ export default class Artists {
   }
 
   async create(artist: Artist): Promise<Artist> {
-    const result = await this.repository.create(artist)
-    return result
+    try {
+      const result = await this.repository.create(artist)
+      return result
+    } catch (error) {
+      console.error('Error creating artist:', error)
+      throw error
+    }
   }
 
   async update(artist: Artist): Promise<void> {
-    await this.repository.update(artist)
-    return
+    try {
+      await this.repository.update(artist)
+      return
+    } catch (error) {
+      console.error('Error updating artist:', error)
+      throw error
+    }
   }
 
   async delete(artist: Artist): Promise<void> {
-    await this.repository.delete(artist.id)
-    return
+    try {
+      await this.repository.delete(artist.id)
+      return
+    } catch (error) {
+      console.error('Error deleting artist:', error)
+      throw error
+    }
   }
 }

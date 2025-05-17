@@ -17,6 +17,16 @@ const ArtistsList = (params: ArtistsListProps) => {
   const [artists, setArtists] = useState(params.artists)
 
   useEffect(() => {
+    setArtists(params.artists)
+  }, [params.artists])
+
+  useEffect(() => {
+    if (params.searchQuery !== searchQuery) {
+      setSearchQuery(params.searchQuery)
+    }
+  }, [params.searchQuery, searchQuery])
+
+  useEffect(() => {
     startTransition(() => {
       const filtered = !searchQuery
         ? params.artists
@@ -44,10 +54,18 @@ const ArtistsList = (params: ArtistsListProps) => {
             </p>
           </div>
           <div className='relative w-full md:w-80'>
-            <Search className='absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400' />
+            <Search
+              className='absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400'
+              aria-hidden='true'
+            />
+            <label htmlFor='artist-search' className='sr-only'>
+              Search artists
+            </label>
             <Input
+              id='artist-search'
               type='text'
               placeholder='Search artists...'
+              aria-label='Search artists by name, specialization, or location'
               onChange={(e) => {
                 const query = e.target.value
                 startTransition(() => {

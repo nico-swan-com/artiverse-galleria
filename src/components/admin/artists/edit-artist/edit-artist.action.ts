@@ -19,13 +19,11 @@ async function editArtistAction(prevState: any, formData: FormData) {
   const biography = formData.get('biography')?.toString() || ''
   const specialization = formData.get('specialization')?.toString() || ''
   const location = formData.get('location')?.toString() || ''
-  const website = !!formData.get('website')
-    ? formData.get('website')
-    : undefined
+  const website = formData.get('website')
   const exhibitions: string[] = (
     formData.get('exhibitions')?.toString() || ''
   ).split(',')
-  const statement = formData.get('website')?.toString() || ''
+  const statement = formData.get('statement')?.toString() || ''
 
   const state = {
     id,
@@ -76,12 +74,11 @@ async function editArtistAction(prevState: any, formData: FormData) {
 
     const services = new Artists()
 
-    await services.update(values as Artist)
+    await services.update(values)
     revalidateTag('artists')
 
     return { success: true, message: 'Artist successfully changed!', ...state }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
@@ -91,12 +88,14 @@ async function editArtistAction(prevState: any, formData: FormData) {
       }
     } else {
       console.error(error)
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error occurred'
       return {
         success: false,
         message: 'Failed to update artist information.',
         ...state,
         errors: {
-          database: [error.message]
+          database: [errorMessage]
         } as { [x: string]: string[] | undefined }
       }
     }

@@ -14,11 +14,11 @@ import { useState, Suspense } from 'react'
 import DeleteArtistForm from './delete-artist-form.component'
 import { Artist } from '@/lib/artists'
 
-type EditArtistProps = {
+type DeleteArtistProps = {
   artist: Artist | null
 }
 
-const DeleteArtistDialog = ({ artist }: EditArtistProps) => {
+const DeleteArtistDialog = ({ artist }: DeleteArtistProps) => {
   const [isOpen, setOpen] = useState(false)
 
   return (
@@ -35,7 +35,13 @@ const DeleteArtistDialog = ({ artist }: EditArtistProps) => {
             Are you sure you want to remove {artist?.name || 'this artist'}?
           </DialogDescription>
         </DialogHeader>
-        <Suspense>
+        <Suspense
+          fallback={
+            <div className='py-4 text-center text-sm text-muted-foreground'>
+              Loading...
+            </div>
+          }
+        >
           {artist && (
             <DeleteArtistForm artist={artist} onClose={() => setOpen(false)} />
           )}

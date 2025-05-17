@@ -7,12 +7,22 @@ import {
   UpdateResult
 } from 'typeorm'
 import { DatabaseRepository } from '../data-access'
-import { Artist, Artists, ArtistsSortBy } from './model'
+import {
+  Artist,
+  ArtistCreate,
+  Artists,
+  ArtistsSortBy,
+  ArtistUpdate
+} from './model'
 import { plainToInstance } from 'class-transformer'
 
 @DatabaseRepository(Artist, 'repository')
 class ArtistsRepository {
-  repository!: Repository<Artist>
+  /**
+   * Injected by `@DatabaseRepository`.
+   * The decorator returns a Promise that resolves to the actual repository.
+   */
+  repository!: Promise<Repository<Artist>>
 
   async getAll(
     sortBy: keyof Artist = 'name',
@@ -77,14 +87,14 @@ class ArtistsRepository {
     try {
       const repository = await this.repository
       const found = await repository.findOne({ where: { id } })
-      return plainToInstance(Artist, found)
+      return found ? plainToInstance(Artist, found) : null
     } catch (error) {
       console.error('Error getting user by id:', error)
       return null
     }
   }
 
-  async create(artist: Artist): Promise<Artist> {
+  async create(artist: ArtistCreate): Promise<Artist> {
     try {
       const repository = await this.repository
       const created = await repository.save(artist)
@@ -95,8 +105,9 @@ class ArtistsRepository {
     }
   }
 
-  async update(artist: Artist): Promise<UpdateResult> {
+  async update(artist: ArtistUpdate): Promise<UpdateResult> {
     try {
+      if (!artist.id) throw new Error('Artist ID is required for update')
       console.log('Updating artist:', artist)
       const repository = await this.repository
       const updated = await repository.update(artist.id, artist)

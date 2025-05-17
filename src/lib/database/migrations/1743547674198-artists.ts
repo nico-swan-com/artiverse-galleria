@@ -85,6 +85,6 @@ export class Artists1743547674198 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('artist')
+    await queryRunner.dropTable('artists')
   }
 }

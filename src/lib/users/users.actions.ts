@@ -12,7 +12,7 @@ export const getUsersUnstableCache = unstable_cache(
     sortBy: UsersSortBy,
     order: FindOptionsOrderValue
   ) => {
-    const result = new Users().getUsers(pagination, sortBy, order)
+    const result = await new Users().getUsers(pagination, sortBy, order)
     return instanceToPlain(result)
   },
   ['users'],
@@ -24,7 +24,7 @@ export const getUsersUnstableCache = unstable_cache(
 
 export const createUserUnstableCache = unstable_cache(
   async (user: User) => {
-    const result = new Users().create(user)
+    const result = await new Users().create(user)
     return instanceToPlain(result)
   },
   ['users'],

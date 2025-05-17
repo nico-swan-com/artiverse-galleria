@@ -18,7 +18,20 @@ async function deleteArtistAction(prevState: any, formData: FormData) {
 
     const repository = new ArtistsRepository()
 
-    await repository.delete(artistId)
+    try {
+      await repository.delete(artistId)
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('not found')) {
+        return {
+          success: false,
+          message: 'Artist not found.',
+          errors: {
+            artistId: ['Artist with this ID does not exist.']
+          }
+        }
+      }
+      throw error
+    }
     revalidateTag('artists')
 
     return { success: true, message: 'Artist removed successfully!' }

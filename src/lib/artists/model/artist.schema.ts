@@ -2,17 +2,29 @@ import { z } from 'zod'
 
 export const ArtistSchema = z.object({
   id: z.string().uuid(),
-  name: z.string(),
+  name: z.string().min(1, 'Name is required').max(100, 'Name is too long'),
   photoUrl: z.string().url(),
   featured: z.boolean().default(false),
   styles: z.array(z.string()).default([]),
-  biography: z.string(),
-  specialization: z.string(),
-  location: z.string(),
+  biography: z
+    .string()
+    .min(10, 'Biography must be at least 10 characters')
+    .max(5000, 'Biography is too long'),
+  specialization: z
+    .string()
+    .min(1, 'Specialization is required')
+    .max(100, 'Specialization is too long'),
+  location: z
+    .string()
+    .min(1, 'Location is required')
+    .max(100, 'Location is too long'),
   email: z.string().email(),
   website: z.string().optional().default('').pipe(z.string().url().optional()),
   exhibitions: z.array(z.string()).default([]),
-  statement: z.string(),
+  statement: z
+    .string()
+    .min(10, 'Statement must be at least 10 characters')
+    .max(2000, 'Statement is too long'),
   createdAt: z.date().default(() => new Date()),
   updatedAt: z.date().default(() => new Date())
 })

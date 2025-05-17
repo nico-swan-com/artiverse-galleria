@@ -135,7 +135,17 @@ const ArtistsList = ({
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{artist.featured}</TableCell>
+                  <TableCell>
+                    {artist.featured ? (
+                      <span className='inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800'>
+                        Featured
+                      </span>
+                    ) : (
+                      <span className='inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800'>
+                        Not Featured
+                      </span>
+                    )}
+                  </TableCell>
                   <TableCell className='px-4 py-3 text-muted-foreground'>
                     {artist.createdAt
                       ? format(new Date(artist.createdAt), 'MMM d, yyyy')

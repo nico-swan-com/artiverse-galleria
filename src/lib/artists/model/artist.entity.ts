@@ -65,6 +65,6 @@ export class Artist {
   deletedAt?: Date
 
   toPlain() {
-    return instanceToPlain(this).toPlainOnly()
+    return instanceToPlain(this)
   }
 }
