@@ -38,7 +38,7 @@ const DeleteUserDialog = ({ user }: EditUserProps) => {
                 associated data will be permanently deleted.
               </p>
               <p className='mt-3'>
-                <strong>Are you sure you want to remove this artist?</strong>
+                <strong>Are you sure you want to remove this user?</strong>
               </p>
             </div>
           </DialogDescription>

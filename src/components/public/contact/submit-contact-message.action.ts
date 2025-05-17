@@ -27,7 +27,7 @@ async function submitContactMessage(
   const name = formData.get('name')?.toString() || ''
   const email = formData.get('email')?.toString() || ''
   const subject = formData.get('subject')?.toString() || ''
-  const content = formData.get('message')?.toString() || ''
+  const content = formData.get('content')?.toString() || ''
 
   const state: ContactFormState = {
     success: false,

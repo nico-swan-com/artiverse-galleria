@@ -8,8 +8,8 @@ import { MigrationInterface, QueryRunner } from 'typeorm'
 export class Initial1741552010156 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     try {
+      await queryRunner.query(`CREATE DATABASE IF NOT EXISTS app`)
       await queryRunner.createSchema('app', true)
-      await queryRunner.createDatabase('app', true)
     } catch (error) {
       console.log('Schema or database might already exist:', error)
     }

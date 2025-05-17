@@ -68,8 +68,8 @@ const ContactForm = () => {
           </div>
 
           <div className='space-y-2'>
-            <Label htmlFor='message'>Message</Label>
-            <Textarea id='message' name='message' rows={5} required />
+            <Label htmlFor='content'>Message</Label>
+            <Textarea id='content' name='content' rows={5} required />
             {state?.errors?.content && (
               <p className='text-red-500'>{state.errors.content.join(', ')}</p>
             )}
