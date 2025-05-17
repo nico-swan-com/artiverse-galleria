@@ -1,7 +1,13 @@
 'use server'
 
 import { z } from 'zod'
-import { User, UserRoles, UserSchema, UserStatus } from '@/lib/users'
+import {
+  PasswordSchema,
+  User,
+  UserRoles,
+  UserSchema,
+  UserStatus
+} from '@/lib/users'
 import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
 import Users from '@/lib/users/users.service'
@@ -30,16 +36,17 @@ async function createUserAction(prevState: any, formData: FormData) {
       name,
       email,
       avatar: getAvatarUrl(email, name),
-      password,
       role: UserRoles.Client,
       status: UserStatus.Pending
     })
 
     const user = new User()
+    const newPassword = PasswordSchema.parse(password)
+    await user.setPassword(newPassword)
+
     user.name = name
     user.email = email
     user.avatar = values.avatar
-    await user.setPassword(values.password)
     user.role = values.role
     user.status = values.status
 

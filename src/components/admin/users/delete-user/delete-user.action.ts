@@ -7,11 +7,9 @@ import { revalidateTag } from 'next/cache'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function deleteUserAction(prevState: any, formData: FormData) {
   try {
-    const userIdSchema = z.number().nonnegative({ message: 'Invalid user ID.' })
+    const UserIdSchema = z.string().nonempty({ message: 'Invalid user ID.' })
 
-    const userId = userIdSchema.parse(
-      Number(formData.get('userId')?.toString())
-    )
+    const userId = UserIdSchema.parse(formData.get('userId')?.toString())
 
     const repository = new UsersRepository()
 

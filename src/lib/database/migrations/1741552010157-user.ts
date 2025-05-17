@@ -4,14 +4,13 @@ export class User1741552010157 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'user',
+        name: 'users',
         columns: [
           {
             name: 'id',
-            type: 'int',
+            type: 'uuid',
             isPrimary: true,
-            isGenerated: true,
-            generationStrategy: 'increment'
+            default: 'uuid_generate_v4()'
           },
           {
             name: 'email',
@@ -29,6 +28,32 @@ export class User1741552010157 implements MigrationInterface {
           {
             name: 'password',
             type: 'varchar'
+          },
+          {
+            name: 'role',
+            type: 'varchar',
+            isNullable: false
+          },
+          {
+            name: 'status',
+            type: 'varchar',
+            isNullable: false
+          },
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP'
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+            onUpdate: 'CURRENT_TIMESTAMP'
+          },
+          {
+            name: 'deleted_at',
+            type: 'timestamp',
+            isNullable: true
           }
         ]
       }),

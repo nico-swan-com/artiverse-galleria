@@ -15,15 +15,14 @@
     "incremental": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "baseUrl": "./",
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@/auth/*": ["./src/lib/authentication/*"],
-      "@/db/*": ["./src/lib/database/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": [

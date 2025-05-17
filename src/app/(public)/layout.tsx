@@ -12,7 +12,9 @@ export default function RootLayout({
   return (
     <CartProvider>
       <Navbar />
-      <AnimatePresence mode='wait'>{children}</AnimatePresence>
+      <div className='min-h-screen bg-gray-50 px-4 pb-10 pt-20 sm:px-6 lg:px-8'>
+        <AnimatePresence mode='wait'>{children}</AnimatePresence>
+      </div>
       <Footer />
     </CartProvider>
   )

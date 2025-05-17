@@ -1,69 +1,36 @@
-import { PaginationParams } from '@/types'
-import { instanceToPlain } from 'class-transformer'
-import { unstable_cache } from 'next/cache'
+import { PaginationParams } from './../../types/common/pagination-params.type'
 import { FindOptionsOrderValue } from 'typeorm'
-import { User } from './user.entity'
-import { usersRepository, UsersRepository } from './users.repository'
+import { UsersRepository } from './users.repository'
+import { User, UsersSortBy } from './model'
 
 export default class Users {
   repository: UsersRepository
 
   constructor() {
-    this.repository = usersRepository
+    this.repository = new UsersRepository()
   }
 
   async getUsers(
     pagination: PaginationParams,
-    sortBy: keyof User,
+    sortBy: UsersSortBy,
     order: FindOptionsOrderValue
   ) {
-    const repository = new UsersRepository()
-    const result = await repository.getUsers(pagination, sortBy, order)
+    const result = await this.repository.getUsers(pagination, sortBy, order)
     return result
   }
 
   async create(user: User) {
-    const repository = new UsersRepository()
-    const result = await repository.create(user)
+    const result = await this.repository.create(user)
     return result
   }
 
   async update(user: User) {
-    const repository = new UsersRepository()
-    const result = await repository.update(user)
+    const result = await this.repository.update(user)
     return result
   }
 
   async delete(user: User) {
-    const repository = new UsersRepository()
-    const result = await repository.delete(user.id)
+    const result = await this.repository.delete(user.id)
     return result
   }
 }
-
-export const getUsersUnstableCache = unstable_cache(
-  async (
-    pagination: PaginationParams,
-    sortBy: keyof User,
-    order: FindOptionsOrderValue
-  ) => {
-    const result = new Users().getUsers(pagination, sortBy, order)
-    return instanceToPlain(result)
-  },
-  ['users'],
-  {
-    tags: ['users'],
-    revalidate: 1
-  }
-)
-
-export const createUserUnstableCache = unstable_cache(
-  async (user: User) => {
-    const result = new Users().create(user)
-    return instanceToPlain(result)
-  },
-  ['users'],
-  {
-    tags: ['users']
-  }
-)

@@ -17,7 +17,8 @@
     "checkout",
     "dashboard",
     "authentication",
-    "users"
+    "users",
+    "artist-management"
   ],
   "cSpell.words": ["Artiverse"]
 }
