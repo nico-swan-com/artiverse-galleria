@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { formInitialState } from '@/types'
-import editArtistAction from './edit-artist.action'
+import editArtistAction, { EditArtistState } from './edit-artist.action'
 import { Artist } from '@/lib/artists'
 
 interface EditArtistFormProps {
@@ -14,25 +13,8 @@ interface EditArtistFormProps {
   onClose: () => void
 }
 
-const initialFormState = {
-  ...formInitialState,
-  errors: {
-    name: [],
-    email: [],
-    photoUrl: [],
-    featured: [],
-    styles: [],
-    biography: [],
-    specialization: [],
-    location: [],
-    website: [],
-    exhibitions: [],
-    statement: []
-  } as {
-    [x: string]: string[] | undefined
-    [x: number]: string[] | undefined
-    [x: symbol]: string[] | undefined
-  },
+const initialFormState: EditArtistState = {
+  id: '',
   name: '',
   email: '',
   photoUrl: '',
@@ -43,7 +25,10 @@ const initialFormState = {
   location: '',
   website: '',
   exhibitions: [],
-  statement: ''
+  statement: '',
+  success: false,
+  message: '',
+  errors: {}
 }
 
 const EditArtistForm = ({ onClose, artist }: EditArtistFormProps) => {

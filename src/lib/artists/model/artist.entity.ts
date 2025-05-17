@@ -59,7 +59,7 @@ export class Artist {
 
   @DeleteDateColumn({ name: 'deleted_at' })
   @Transform(({ value }) => (value === null ? undefined : value))
-  @Transform(({ value }) => (!!value ? value.toISOString() : undefined), {
+  @Transform(({ value }) => (value ? value.toISOString() : undefined), {
     toPlainOnly: true
   })
   deletedAt?: Date

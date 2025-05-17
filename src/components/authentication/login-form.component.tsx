@@ -11,19 +11,26 @@ import {
   CardTitle
 } from '../ui/card'
 import { Input } from '../ui/input'
-import submitLogin from './submit-login.action'
+import submitLogin, { LoginState } from './submit-login.action'
 import { Label } from '../ui/label'
-import { formInitialState } from '@/types'
 import { redirect } from 'next/navigation'
 
 interface LoginFormProps {
   callbackUrl?: string
 }
 
+const initialFormState: LoginState = {
+  success: false,
+  message: '',
+  email: '',
+  password: '',
+  errors: {}
+}
+
 const LoginForm = ({ callbackUrl }: LoginFormProps) => {
   const [state, formAction, isPending] = useActionState(
     submitLogin,
-    formInitialState
+    initialFormState
   )
 
   if (state.success) {

@@ -5,44 +5,27 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { formInitialState } from '@/types'
-import createArtistAction from './create-artist.action'
+import createArtistAction, { CreateArtistState } from './create-artist.action'
 
 interface CreateArtistFormProps {
   onClose: () => void
 }
 
-const initialFormState = {
-  ...formInitialState,
-  errors: {
-    name: [],
-    email: [],
-    photoUrl: [],
-    featured: [],
-    styles: [],
-    biography: [],
-    specialization: [],
-    location: [],
-    website: [],
-    exhibitions: [],
-    statement: [],
-    database: []
-  } as {
-    [x: string]: string[] | undefined
-    [x: number]: string[] | undefined
-    [x: symbol]: string[] | undefined
-  },
+const initialFormState: CreateArtistState = {
+  success: false,
+  message: '',
   name: '',
   email: '',
-  photoUrl: '',
+  photoUrl: undefined,
   featured: false,
   styles: [],
   biography: '',
   specialization: '',
   location: '',
-  website: '',
+  website: undefined,
   exhibitions: [],
-  statement: ''
+  statement: '',
+  errors: {}
 }
 
 const CreateArtistForm = ({ onClose }: CreateArtistFormProps) => {

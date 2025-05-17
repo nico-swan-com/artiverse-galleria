@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { User, formInitialState } from '@/types'
-import editUserAction from './edit-user.action'
+import { User } from '@/types'
+import editUserAction, { EditUserState } from './edit-user.action'
 import { UserRoles, UserStatus } from '@/lib/users'
 import {
   Select,
@@ -22,12 +22,33 @@ interface EditUserFormProps {
   onClose: () => void
 }
 
+const initialFormState: EditUserState = {
+  id: '',
+  success: false,
+  message: '',
+  name: '',
+  email: '',
+  password: '',
+  newPassword: '',
+  role: '',
+  status: '',
+  errors: {}
+}
+
 const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
   const [showPasswordFields, setShowPasswordFields] = useState(false)
-  const [state, formAction, isPending] = useActionState(
-    editUserAction,
-    formInitialState
-  )
+  const [state, formAction, isPending] = useActionState<
+    EditUserState,
+    FormData
+  >(editUserAction, {
+    ...initialFormState,
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    password: user.password,
+    role: user.role,
+    status: user.status
+  })
 
   useEffect(() => {
     if (state.success && !!state.message && !isPending) {
@@ -49,7 +70,7 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
           required
           defaultValue={user.name}
         />
-        {state?.errors?.name && (
+        {!state.success && state.errors?.name && (
           <p className='text-red-500'>{state.errors.name.join(', ')}</p>
         )}
       </div>
@@ -64,7 +85,7 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
           defaultValue={user.email}
           required
         />
-        {state?.errors?.email && (
+        {!state.success && state.errors?.email && (
           <p className='text-red-500'>{state.errors.email.join(', ')}</p>
         )}
       </div>
@@ -83,7 +104,7 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
             ))}
           </SelectContent>
         </Select>
-        {state?.errors?.role && (
+        {!state.success && state.errors?.role && (
           <p className='text-red-500'>{state.errors.role.join(', ')}</p>
         )}
       </div>
@@ -102,7 +123,7 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
             ))}
           </SelectContent>
         </Select>
-        {state?.errors?.status && (
+        {!state.success && state.errors?.status && (
           <p className='text-red-500'>{state.errors.status.join(', ')}</p>
         )}
       </div>
@@ -129,7 +150,7 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
           <div className='space-y-2'>
             <Label htmlFor='newPassword'>Password</Label>
             <PasswordInput id='newPassword' name='newPassword' required />
-            {state.errors?.password && (
+            {!state.success && state.errors?.password && (
               <p className='text-red-500'>
                 Password must be between 8 and 20 characters long and include
                 uppercase letters, lowercase letters, numbers, and at least one

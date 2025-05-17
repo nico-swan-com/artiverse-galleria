@@ -1,9 +1,18 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
-export class User1741552010157 implements MigrationInterface {
+/**
+ * Initial migration that creates the 'app' schema and database.
+ * This serves as the foundation for subsequent migrations that will create
+ * tables for users, artists, and other entities.
+ */
+export class Initial1741552010156 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.createSchema('app')
-    await queryRunner.createDatabase('app')
+    try {
+      await queryRunner.createSchema('app', true)
+      await queryRunner.createDatabase('app', true)
+    } catch (error) {
+      console.log('Schema or database might already exist:', error)
+    }
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

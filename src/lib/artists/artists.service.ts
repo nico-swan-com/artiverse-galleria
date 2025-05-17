@@ -84,7 +84,7 @@ export default class Artists {
     return getById(id)
   }
 
-  async create(artist: Artist): Promise<Artist> {
+  async create(artist: ArtistCreate): Promise<Artist> {
     try {
       const result = await this.repository.create(artist)
       return result
@@ -94,7 +94,7 @@ export default class Artists {
     }
   }
 
-  async update(artist: Artist): Promise<void> {
+  async update(artist: ArtistUpdate): Promise<void> {
     try {
       await this.repository.update(artist)
       return
@@ -104,9 +104,9 @@ export default class Artists {
     }
   }
 
-  async delete(artist: Artist): Promise<void> {
+  async delete(artistId: string): Promise<void> {
     try {
-      await this.repository.delete(artist.id)
+      await this.repository.delete(artistId)
       return
     } catch (error) {
       console.error('Error deleting artist:', error)

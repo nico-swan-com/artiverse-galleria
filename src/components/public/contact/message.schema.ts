@@ -7,18 +7,7 @@ export const MessageSchema = z.object({
   subject: z
     .string()
     .min(2, { message: 'Subject must be at least 2 characters.' }),
-  message: z
+  content: z
     .string()
     .min(10, { message: 'Message must be at least 10 characters.' })
 })
-
-export interface User {
-  id: number
-  email: string
-  password: string
-  name: string
-  role: string
-  createdAt: Date
-  avatar: string
-  status: string
-}

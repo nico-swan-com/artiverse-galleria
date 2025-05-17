@@ -4,8 +4,16 @@ import { z } from 'zod'
 import { revalidateTag } from 'next/cache'
 import { ArtistsRepository } from '@/lib/artists'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function deleteArtistAction(prevState: any, formData: FormData) {
+type DeleteArtistState = {
+  success: boolean
+  message: string
+  errors?: Record<string, string[]>
+}
+
+async function deleteArtistAction(
+  prevState: DeleteArtistState,
+  formData: FormData
+): Promise<DeleteArtistState> {
   try {
     const artistIdIdSchema = z
       .string()
@@ -35,21 +43,33 @@ async function deleteArtistAction(prevState: any, formData: FormData) {
     revalidateTag('artists')
 
     return { success: true, message: 'Artist removed successfully!' }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        errors: error.flatten().fieldErrors,
+        errors: Object.fromEntries(
+          Object.entries(error.flatten().fieldErrors)
+            .filter(([, v]) => v !== undefined)
+            .map(([k, v]) => [k, v as string[]])
+        ),
         message: 'Validation error. Please check the fields.'
       }
-    } else {
+    } else if (error instanceof Error) {
       console.error(error)
       return {
         success: false,
         message: 'Failed to remove artist.',
         errors: {
-          database: [error.message]
+          database: [error.message || 'Unknown error occurred']
+        }
+      }
+    } else {
+      console.error('Unknown error type:', error)
+      return {
+        success: false,
+        message: 'Failed to remove artist.',
+        errors: {
+          database: ['An unknown error occurred']
         }
       }
     }

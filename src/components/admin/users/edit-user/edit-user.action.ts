@@ -5,27 +5,63 @@ import { PasswordSchema, User, UserSchema, UsersRepository } from '@/lib/users'
 import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function editUserAction(prevState: any, formData: FormData) {
-  try {
-    const userId = formData.get('userId')?.toString() || ''
-    const name = formData.get('name')?.toString() || ''
-    const email = formData.get('email')?.toString() || ''
-    const newPassword = formData.get('newPassword')?.toString() || ''
-    const password = !!newPassword
-      ? PasswordSchema.parse(newPassword)
-      : undefined
+export type EditUserFieldErrors = {
+  id?: string[]
+  name?: string[]
+  email?: string[]
+  password?: string[]
+  newPassword?: string[]
+  role?: string[]
+  status?: string[]
+  database?: string[]
+}
 
+export type EditUserState = {
+  id: string
+  success: boolean
+  message: string
+  name: string
+  email: string
+  password: string
+  newPassword: string
+  role: string
+  status: string
+  errors: EditUserFieldErrors
+}
+
+async function editUserAction(
+  prevState: EditUserState,
+  formData: FormData
+): Promise<EditUserState> {
+  const name = formData.get('name')?.toString() || ''
+  const email = formData.get('email')?.toString() || ''
+  const newPassword = formData.get('newPassword')?.toString() || ''
+  const password = !!newPassword
+    ? PasswordSchema.parse(newPassword)
+    : prevState.password
+  const avatar = formData.get('avatar')?.toString() || getAvatarUrl(email, name)
+
+  const state: EditUserState = {
+    id: prevState.id,
+    success: false,
+    message: '',
+    name,
+    email,
+    password,
+    newPassword,
+    role: prevState.role || '',
+    status: prevState.status || '',
+    errors: {}
+  }
+
+  try {
     const values = UserSchema.parse({
-      name,
-      email,
-      avatar: getAvatarUrl(email, name),
-      role: formData.get('role'),
-      status: formData.get('status')
+      ...state,
+      avatar
     })
 
     const user = new User()
-    user.id = userId
+    user.id = prevState.id
     user.name = name
     user.email = email
     user.avatar = values.avatar
@@ -37,23 +73,29 @@ async function editUserAction(prevState: any, formData: FormData) {
     await repository.update(user)
     revalidateTag('users')
 
-    return { success: true, message: 'User changed successfully!' }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+    return {
+      ...state,
+      success: true,
+      message: 'User changed successfully!'
+    }
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       return {
+        ...state,
         success: false,
-        errors: error.flatten().fieldErrors,
-        message: 'Validation error. Please check the fields.'
+        message: 'Validation error. Please check the fields.',
+        errors: error.flatten().fieldErrors as EditUserFieldErrors
       }
-    } else {
-      console.error(error)
-      return {
-        success: false,
-        message: 'Failed to update user.',
-        errors: {
-          database: [error.message]
-        } as { [x: string]: string[] | undefined }
+    }
+
+    return {
+      ...state,
+      success: false,
+      message: 'Failed to update user information.',
+      errors: {
+        database: [
+          error instanceof Error ? error.message : 'Unknown error occurred'
+        ]
       }
     }
   }
