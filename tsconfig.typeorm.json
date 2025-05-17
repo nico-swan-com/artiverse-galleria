@@ -14,6 +14,7 @@
   "include": [
     "./src/lib/database/data-source*.ts",
     "./src/lib/database/migrations/*.ts",
+    "./src/lib/database/seeding/*.ts",
     "./src/lib/**/*.entity.ts",
     "./src/types/*.ts"
   ],

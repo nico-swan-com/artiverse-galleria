@@ -33,7 +33,7 @@ class UsersRepository {
     }
   }
 
-  async getUserById(id: number): Promise<User | null> {
+  async getUserById(id: string): Promise<User | null> {
     try {
       const repository = await this.userRepository
       const found = await repository.findOne({ where: { id } })
@@ -78,7 +78,7 @@ class UsersRepository {
     }
   }
 
-  async delete(id: number): Promise<DeleteResult> {
+  async delete(id: string): Promise<DeleteResult> {
     try {
       const repository = await this.userRepository
       const deleted = await repository.delete(id)

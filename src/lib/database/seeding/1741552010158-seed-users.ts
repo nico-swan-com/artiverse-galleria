@@ -5,7 +5,6 @@ import { getAvatarUrl } from '../../utilities'
 
 export const users: User[] = [
   {
-    id: 0,
     email: 'nicoswan@gmail.com',
     name: 'Nico Swan',
     avatar:

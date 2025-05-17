@@ -1,7 +1,7 @@
 import { UserRoles, UserStatus } from '.'
 import { z } from 'zod'
 
-export const passwordSchema = z
+export const PasswordSchema = z
   .string()
   .min(8, { message: 'Password must be at least 8 characters.' })
   .max(20, { message: 'Password must be less 20 characters.' })
@@ -18,10 +18,10 @@ export const passwordSchema = z
     message: 'No special characters.'
   })
 
-export const updatePasswordSchema = z
+export const UpdatePasswordSchema = z
   .object({
     currentPassword: z.string(),
-    password: passwordSchema,
+    password: PasswordSchema,
     confirmPassword: z.string()
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -32,7 +32,7 @@ export const updatePasswordSchema = z
 export const UserSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Invalid email address.' }),
-  password: passwordSchema,
+  password: z.string().optional(),
   role: z
     .nativeEnum(UserRoles, { message: 'Missing user role.' })
     .optional()

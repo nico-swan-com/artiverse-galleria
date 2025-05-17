@@ -13,8 +13,8 @@ import { Transform } from 'class-transformer'
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn()
-  id!: number
+  @PrimaryGeneratedColumn('uuid')
+  id!: string
 
   @Column({ unique: true })
   email!: string

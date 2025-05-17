@@ -16,8 +16,9 @@
     "prepare": "husky",
     "typeorm": "NODE_ENV=migration npx ts-node -r tsconfig-paths/register --project ./tsconfig.typeorm.json ./node_modules/.bin/typeorm",
     "schema:sync": "NODE_ENV=migration npx ts-node -r tsconfig-paths/register --project ./tsconfig.typeorm.json ./node_modules/.bin/typeorm schema:sync -d ./src/lib/database/data-source.ts",
-    "migration:generate": "NODE_ENV=migration npx ts-node -r tsconfig-paths/register --project ./tsconfig.typeorm.json && ./node_modules/.bin/typeorm --tsconfig tsconfig.typeorm.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js  migration:generate ./src/lib/database/migration -d ./src/lib/database/data-source.ts",
+    "migration:generate": "NODE_ENV=migration npx ts-node -r tsconfig-paths/register --project ./tsconfig.typeorm.json && ./node_modules/.bin/typeorm --tsconfig tsconfig.typeorm.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js  migration:generate ./src/lib/database/migrations -d ./src/lib/database/data-source.ts",
     "migration:run": "NODE_ENV=migration npx tsc --project ./tsconfig.typeorm.json && ./node_modules/typeorm/cli.js migration:run -d ./dist/lib/database/data-source-migration.js",
+    "migration:seed": "NODE_ENV=migration npx tsc --project ./tsconfig.typeorm.json && ./node_modules/typeorm/cli.js migration:run -d ./dist/lib/database/data-source-migration-seed.js",
     "migration:create": "NODE_ENV=migration npx ts-node -r tsconfig-paths/register --project ./tsconfig.typeorm.json ./node_modules/.bin/typeorm migration:create ./src/lib/database/migrations -t",
     "test": "jest"
   },

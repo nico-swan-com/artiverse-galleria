@@ -45,6 +45,19 @@ const Dashboard = () => {
     })
   )
 
+  const dashboardStats = {
+    pendingPaymentsAmount: 1234
+  }
+
+  const topSellingProducts: Product[] = [
+    {
+      id: '1234',
+      name: 'Product1',
+      category: 'category1',
+      sales: '1234.00'
+    }
+  ]
+
   return (
     <PageTransition>
       {status === 'loading' ? (
@@ -81,12 +94,7 @@ const Dashboard = () => {
             />
             <MetricCard
               title='Pending Payments'
-  <MetricCard
-    title='Pending Payments'
-    value={dashboardStats?.pendingPaymentsAmount || 0}
-    icon={<CreditCard size={20} />}
-    trend={{ value: 2.1, positive: false }}
-  />
+              value={dashboardStats?.pendingPaymentsAmount || 0}
               icon={<CreditCard size={20} />}
               trend={{ value: 2.1, positive: false }}
             />
@@ -151,13 +159,15 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent className='pt-0'>
                 <div className='space-y-4'>
-                  {(topSellingProducts || []).map((product, index) => (
-                    <ProductItem
-                      key={product.id}
-                      product={product}
-                      index={index + 1}
-                    />
-                  ))}
+                  {(topSellingProducts || []).map(
+                    (product: Product, index: number) => (
+                      <ProductItem
+                        key={product.id}
+                        product={product}
+                        index={index + 1}
+                      />
+                    )
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -167,9 +177,15 @@ const Dashboard = () => {
     </PageTransition>
   )
 }
+interface Product {
+  id: string
+  name: string
+  category: string
+  sales: string
+}
 
 interface ProductItemProps {
-  product: { name: string; category: string; sales: string }
+  product: Product
   index: number
 }
 

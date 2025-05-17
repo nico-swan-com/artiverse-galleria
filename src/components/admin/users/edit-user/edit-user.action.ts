@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod'
-import { User, UserSchema, UsersRepository } from '@/lib/users'
+import { PasswordSchema, User, UserSchema, UsersRepository } from '@/lib/users'
 import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
 
@@ -12,26 +12,26 @@ async function editUserAction(prevState: any, formData: FormData) {
     const name = formData.get('name')?.toString() || ''
     const email = formData.get('email')?.toString() || ''
     const newPassword = formData.get('newPassword')?.toString() || ''
-    const testPassword = newPassword || ''
+    const password = !!newPassword
+      ? PasswordSchema.parse(newPassword)
+      : undefined
+
     const values = UserSchema.parse({
       name,
       email,
       avatar: getAvatarUrl(email, name),
-      password: testPassword,
       role: formData.get('role'),
       status: formData.get('status')
     })
 
     const user = new User()
-    user.id = Number(userId)
+    user.id = userId
     user.name = name
     user.email = email
     user.avatar = values.avatar
-    if (newPassword) {
-      user.setPassword(newPassword)
-    }
     user.role = values.role
     user.status = values.status
+    if (password) await user.setPassword(password)
 
     const repository = new UsersRepository()
     await repository.update(user)

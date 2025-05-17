@@ -3,7 +3,7 @@
 import { z } from 'zod'
 import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
-import { Artist, ArtistCreateSchema, ArtistSchema } from '@/lib/artists'
+import { Artist, ArtistCreateSchema } from '@/lib/artists'
 import Artists from '@/lib/artists/artists.service'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
