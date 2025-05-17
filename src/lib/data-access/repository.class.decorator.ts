@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ObjectLiteral, Repository } from 'typeorm'
-import { dataSourceInstance } from '../database/data-source'
-import { initializeDatabase } from '@/lib/database/data-source' // Import AppDataSource
+import {
+  getDataSourceInstance,
+  initializeDatabase
+} from '../database/data-source'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export function DatabaseRepository<T extends { new (...args: any[]): {} }>(
@@ -25,6 +27,7 @@ export function DatabaseRepository<T extends { new (...args: any[]): {} }>(
 
           this._isInitializing = true
           try {
+            const dataSourceInstance = getDataSourceInstance()
             if (!dataSourceInstance || !dataSourceInstance.isInitialized) {
               await initializeDatabase()
             }

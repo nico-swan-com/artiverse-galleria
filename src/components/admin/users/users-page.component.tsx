@@ -5,13 +5,14 @@ import UsersList from './users-list.component'
 import { User } from '@/types'
 import CreateUserDialog from './create-user/create-user-dialog.component'
 import { FindOptionsOrderValue } from 'typeorm'
+import { UsersSortBy } from '@/lib/users'
 
 interface UsersProps {
   users: User[]
   page: number
   limit: number
   total: number
-  sortBy: keyof User
+  sortBy: UsersSortBy
   order: FindOptionsOrderValue
 }
 

@@ -2,7 +2,6 @@
 
 import React from 'react'
 import MetricCard from '@/components/admin/metric-card.component'
-import { dashboardStats, Product } from '@/data/data'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   BarChart,
@@ -26,23 +25,38 @@ const Dashboard = () => {
     currency: 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0
-  }).format(dashboardStats.revenue.total)
+  }).format(9999)
 
   const monthlyRevenue = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0
-  }).format(dashboardStats.revenue.currentMonth)
+  }).format(9999)
 
   // Format product data for chart
-  const productChartData = dashboardStats.popularProducts.map((product) => ({
-    name:
-      product.name.length > 15
-        ? product.name.substring(0, 15) + '...'
-        : product.name,
-    sales: product.sales
-  }))
+  const productChartData = [{ name: 'asdasdasdasdas', sales: 99999 }].map(
+    (product) => ({
+      name:
+        product.name.length > 15
+          ? product.name.substring(0, 15) + '...'
+          : product.name,
+      sales: product.sales
+    })
+  )
+
+  const dashboardStats = {
+    pendingPaymentsAmount: 1234
+  }
+
+  const topSellingProducts: Product[] = [
+    {
+      id: '1234',
+      name: 'Product1',
+      category: 'category1',
+      sales: '1234.00'
+    }
+  ]
 
   return (
     <PageTransition>
@@ -62,9 +76,9 @@ const Dashboard = () => {
           <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
             <MetricCard
               title='Total Invoices'
-              value={dashboardStats.invoices.total}
+              value={11111}
               icon={<FileText size={20} />}
-              description={`${dashboardStats.invoices.paid} paid, ${dashboardStats.invoices.pending} pending`}
+              description={`${2222} paid, ${33333} pending`}
             />
             <MetricCard
               title='Total Revenue'
@@ -80,7 +94,7 @@ const Dashboard = () => {
             />
             <MetricCard
               title='Pending Payments'
-              value={dashboardStats.invoices.pending}
+              value={dashboardStats?.pendingPaymentsAmount || 0}
               icon={<CreditCard size={20} />}
               trend={{ value: 2.1, positive: false }}
             />
@@ -145,13 +159,15 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent className='pt-0'>
                 <div className='space-y-4'>
-                  {dashboardStats.popularProducts.map((product, index) => (
-                    <ProductItem
-                      key={product.id}
-                      product={product}
-                      index={index + 1}
-                    />
-                  ))}
+                  {(topSellingProducts || []).map(
+                    (product: Product, index: number) => (
+                      <ProductItem
+                        key={product.id}
+                        product={product}
+                        index={index + 1}
+                      />
+                    )
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -160,6 +176,12 @@ const Dashboard = () => {
       )}
     </PageTransition>
   )
+}
+interface Product {
+  id: string
+  name: string
+  category: string
+  sales: string
 }
 
 interface ProductItemProps {

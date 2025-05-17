@@ -1,21 +1,24 @@
+import { PaginationParams } from './../../types/common/pagination-params.type'
 import {
   DeleteResult,
   FindOptionsOrderValue,
   Repository,
   UpdateResult
 } from 'typeorm'
-import { User } from './user.entity'
 import { DatabaseRepository } from '../data-access'
-import { PaginationParams } from '@/types'
-import { Users } from './users.type'
+import { Users, User, UsersSortBy } from './model'
 
 @DatabaseRepository(User, 'userRepository')
 class UsersRepository {
-  userRepository!: Repository<User>
+  /**
+   * Injected by `@DatabaseRepository`.
+   * The decorator returns a Promise that resolves to the actual repository.
+   */
+  userRepository!: Promise<Repository<User>>
 
   async getUsers(
     pagination: PaginationParams,
-    sortBy: keyof User = 'createdAt',
+    sortBy: UsersSortBy,
     order: FindOptionsOrderValue = 'DESC'
   ): Promise<Users> {
     const { page, limit } = pagination
@@ -34,7 +37,7 @@ class UsersRepository {
     }
   }
 
-  async getUserById(id: number): Promise<User | null> {
+  async getUserById(id: string): Promise<User | null> {
     try {
       const repository = await this.userRepository
       const found = await repository.findOne({ where: { id } })
@@ -79,7 +82,7 @@ class UsersRepository {
     }
   }
 
-  async delete(id: number): Promise<DeleteResult> {
+  async delete(id: string): Promise<DeleteResult> {
     try {
       const repository = await this.userRepository
       const deleted = await repository.delete(id)

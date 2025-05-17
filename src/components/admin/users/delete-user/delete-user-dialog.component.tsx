@@ -31,8 +31,16 @@ const DeleteUserDialog = ({ user }: EditUserProps) => {
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle>Remove user</DialogTitle>
-          <DialogDescription className='text-red-500'>
-            Are you sure you want to remove {user?.name || 'this user'}?
+          <DialogDescription>
+            <div className='rounded-md bg-red-100 p-4 text-sm text-red-500'>
+              <p>
+                Warning: This action cannot be undone. The user and all
+                associated data will be permanently deleted.
+              </p>
+              <p className='mt-3'>
+                <strong>Are you sure you want to remove this user?</strong>
+              </p>
+            </div>
           </DialogDescription>
         </DialogHeader>
         <Suspense>

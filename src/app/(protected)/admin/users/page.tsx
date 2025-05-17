@@ -1,18 +1,23 @@
 import UsersPage from '@/components/admin/users/users-page.component'
-import { getUsersUnstableCache } from '@/lib/users/users.service'
-import { User } from '@/types'
+import { isValidUsersSortKey, UsersSortBy } from '@/lib/users'
+import { getUsersUnstableCache } from '@/lib/users/users.actions'
 import { FindOptionsOrderValue } from 'typeorm'
 
-//type Params = Promise<{ callbackUrl: string }>
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
 const UsersServerPage = async (props: { searchParams: SearchParams }) => {
   const params = await props.searchParams
 
-  const sortBy = (params.sortBy || 'createdAt') as keyof User
-  const page = params.page ? parseInt(params.page as string, 10) : 1
-  const limit = Number(params.limit || 5)
-  const order = (params.order || 'DESC') as FindOptionsOrderValue
+  const sortBy = (
+    typeof params.sortBy === 'string' && isValidUsersSortKey(params.sortBy)
+      ? params.sortBy
+      : 'createdAt'
+  ) as UsersSortBy
+  const page = Math.max(1, parseInt((params.page as string) || '1', 10) || 1)
+  const limit = Math.min(50, Math.max(1, Number(params.limit || 5) || 5))
+  const order = (
+    params.order === 'ASC' || params.order === 'DESC' ? params.order : 'DESC'
+  ) as FindOptionsOrderValue
 
   const { users, total } = await getUsersUnstableCache(
     { page, limit },
@@ -22,7 +27,7 @@ const UsersServerPage = async (props: { searchParams: SearchParams }) => {
 
   return (
     <UsersPage
-      users={users}
+      users={users || []}
       page={page}
       limit={limit}
       total={total}

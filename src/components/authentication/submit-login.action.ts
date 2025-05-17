@@ -1,11 +1,37 @@
 'use server'
 
-import { signIn } from '@/lib/authentication'
 import { LoginSchema } from './login.schema'
-import { z } from 'zod'
+import { signIn } from '@/lib/authentication'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function submitLogin(prevState: any, formData: FormData) {
+export type LoginFieldErrors = {
+  email?: string[]
+  password?: string[]
+  credentials?: string[]
+}
+
+export type LoginState = {
+  success: boolean
+  message: string
+  email: string
+  password: string
+  errors: LoginFieldErrors
+}
+
+async function submitLogin(
+  prevState: LoginState,
+  formData: FormData
+): Promise<LoginState> {
+  const email = formData.get('username')?.toString() || ''
+  const password = formData.get('password')?.toString() || ''
+
+  const state: LoginState = {
+    success: false,
+    message: '',
+    email,
+    password,
+    errors: {}
+  }
+
   try {
     const credentials = LoginSchema.parse({
       email: formData.get('username'),
@@ -20,29 +46,22 @@ async function submitLogin(prevState: any, formData: FormData) {
     if (result?.error) {
       console.error('Sign-in error:', result.error)
       return {
+        ...state,
         success: false,
         message: 'Sign-in error.',
         errors: result.error
       }
     } else {
-      return { success: true }
+      return { ...state, success: true, message: 'Login successful' }
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    if (error instanceof z.ZodError) {
-      // Return the errors to the form
-      return {
-        success: false,
-        errors: error.flatten().fieldErrors,
-        message: 'Validation error. Please check the fields.'
-      }
-    } else {
-      console.error(error)
-      return {
-        success: false,
-        message: 'Invalid form submission.',
-        errors: error.errors
+  } catch (error: unknown) {
+    console.error('Validation error:', error)
+    return {
+      ...state,
+      success: false,
+      message: 'Authentication failed',
+      errors: {
+        credentials: ['Invalid email or password']
       }
     }
   }

@@ -1,11 +1,28 @@
 import 'reflect-metadata'
 import { DataSource } from 'typeorm'
-import { User } from '@/lib/users'
+import { User } from '../users'
+import { Artist } from '../artists'
 
-export let dataSourceInstance: DataSource
+let dataSourceInstance: DataSource
 
 export const getDataSourceInstance = () => {
   return dataSourceInstance
+}
+
+export const createDataSource = () => {
+  return new DataSource({
+    type: 'postgres',
+    host: process.env.POSTGRES_HOST,
+    port: parseInt(process.env.POSTGRES_PORT || '5432'),
+    username: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DATABASE,
+    schema: process.env.POSTGRES_SCHEMA || 'public',
+    entities: [User, Artist],
+    synchronize: false,
+    logging: process.env.NODE_ENV === 'development',
+    migrations: [__dirname + '/migrations/*.ts'] // Verify this path
+  })
 }
 
 export async function initializeDatabase(
@@ -20,19 +37,7 @@ export async function initializeDatabase(
     while (attempts < maxRetries && Date.now() - startTime < maxWaitTime) {
       attempts++
       try {
-        dataSourceInstance = new DataSource({
-          type: 'postgres',
-          host: process.env.POSTGRES_HOST,
-          port: parseInt(process.env.POSTGRES_PORT || '5432'),
-          username: process.env.POSTGRES_USER,
-          password: process.env.POSTGRES_PASSWORD,
-          database: process.env.POSTGRES_DATABASE,
-          schema: 'public', // Ensure this is set correctly
-          entities: [User],
-          synchronize: false,
-          logging: process.env.NODE_ENV === 'development',
-          migrations: [__dirname + '/migrations/*.ts'] // Verify this path
-        })
+        dataSourceInstance = createDataSource()
 
         await dataSourceInstance.initialize()
         console.log('Database connection initialized')

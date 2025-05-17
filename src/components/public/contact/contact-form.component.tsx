@@ -7,9 +7,20 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Send } from 'lucide-react'
 
-import submitContactMessage from './submit-contact-message.action'
+import submitContactMessage, {
+  ContactFormState
+} from './submit-contact-message.action'
 import { toast } from 'sonner'
-import { formInitialState } from '@/types'
+
+const formInitialState: ContactFormState = {
+  success: false,
+  message: '',
+  name: '',
+  email: '',
+  subject: '',
+  content: '',
+  errors: {}
+}
 
 const ContactForm = () => {
   const [state, formAction, isPending] = useActionState(
@@ -57,10 +68,10 @@ const ContactForm = () => {
           </div>
 
           <div className='space-y-2'>
-            <Label htmlFor='message'>Message</Label>
-            <Textarea id='message' name='message' rows={5} required />
-            {state?.errors?.message && (
-              <p className='text-red-500'>{state.errors.message.join(', ')}</p>
+            <Label htmlFor='content'>Message</Label>
+            <Textarea id='content' name='content' rows={5} required />
+            {state?.errors?.content && (
+              <p className='text-red-500'>{state.errors.content.join(', ')}</p>
             )}
           </div>
 

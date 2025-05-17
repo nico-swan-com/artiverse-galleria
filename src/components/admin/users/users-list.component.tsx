@@ -20,13 +20,14 @@ import { FindOptionsOrderValue } from 'typeorm'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowDown, ArrowUp } from 'lucide-react'
 import TablePagination from '@/components/common/ui/table-pagination.component'
+import { UsersSortBy } from '@/lib/users'
 
 interface UsersListProps {
   users: User[]
   total: number
   page: number
   limit: number
-  sortBy: keyof User
+  sortBy: UsersSortBy
   order: FindOptionsOrderValue
 }
 
@@ -155,13 +156,13 @@ const UsersList = ({
                       {user.status}
                     </Badge>
                   </TableCell>
-                  <td className='px-4 py-3 text-muted-foreground'>
+                  <TableCell className='px-4 py-3 text-muted-foreground'>
                     {format(new Date(user.createdAt), 'MMM d, yyyy')}
-                  </td>
-                  <td className='text-end'>
+                  </TableCell>
+                  <TableCell className='text-end'>
                     <EditUserDialog user={user} />
                     <DeleteUserDialog user={user} />
-                  </td>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
