@@ -3,11 +3,12 @@
 import { z } from 'zod'
 import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
-import { Artist, ArtistSchema } from '@/lib/artists'
+import { Artist, ArtistUpdate, ArtistUpdateSchema } from '@/lib/artists'
 import Artists from '@/lib/artists/artists.service'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function editArtistAction(prevState: any, formData: FormData) {
+  const id = formData.get('id')?.toString() || ''
   const name = formData.get('name')?.toString() || ''
   const email = formData.get('email')?.toString() || ''
   const photoUrl =
@@ -18,13 +19,16 @@ async function editArtistAction(prevState: any, formData: FormData) {
   const biography = formData.get('biography')?.toString() || ''
   const specialization = formData.get('specialization')?.toString() || ''
   const location = formData.get('location')?.toString() || ''
-  const website = formData.get('website')?.toString() || ''
+  const website = !!formData.get('website')
+    ? formData.get('website')
+    : undefined
   const exhibitions: string[] = (
     formData.get('exhibitions')?.toString() || ''
   ).split(',')
   const statement = formData.get('website')?.toString() || ''
 
   const state = {
+    id,
     name,
     email,
     photoUrl,
@@ -47,8 +51,7 @@ async function editArtistAction(prevState: any, formData: FormData) {
       location: [],
       website: [],
       exhibitions: [],
-      statement: [],
-      database: []
+      statement: []
     } as {
       [x: string]: string[] | undefined
       [x: number]: string[] | undefined
@@ -56,7 +59,8 @@ async function editArtistAction(prevState: any, formData: FormData) {
     }
   }
   try {
-    const values = ArtistSchema.parse({
+    const values: ArtistUpdate = ArtistUpdateSchema.parse({
+      id,
       name,
       email,
       photoUrl,
@@ -70,22 +74,9 @@ async function editArtistAction(prevState: any, formData: FormData) {
       statement
     })
 
-    const artist = new Artist()
-    artist.name = values.name
-    artist.email = values.email
-    artist.featured = values.featured
-    artist.styles = values.styles
-    artist.biography = values.biography
-    artist.specialization = values.specialization
-    artist.location = values.location
-    artist.website = values.website
-    artist.exhibitions = values.exhibitions
-    artist.statement = values.statement
-    artist.photoUrl = values.photoUrl
-
     const services = new Artists()
 
-    await services.update(artist)
+    await services.update(values as Artist)
     revalidateTag('artists')
 
     return { success: true, message: 'Artist successfully changed!', ...state }

@@ -27,8 +27,7 @@ const initialFormState = {
     location: [],
     website: [],
     exhibitions: [],
-    statement: [],
-    database: []
+    statement: []
   } as {
     [x: string]: string[] | undefined
     [x: number]: string[] | undefined
@@ -47,7 +46,7 @@ const initialFormState = {
   statement: ''
 }
 
-const EditArtistForm = ({ onClose }: EditArtistFormProps) => {
+const EditArtistForm = ({ onClose, artist }: EditArtistFormProps) => {
   const [state, formAction, isPending] = useActionState(
     editArtistAction,
     initialFormState
@@ -67,13 +66,14 @@ const EditArtistForm = ({ onClose }: EditArtistFormProps) => {
 
   return (
     <form action={formAction} className='mt-4 space-y-4'>
+      <input id='id' name='id' defaultValue={artist.id} hidden={true} />
       <div className='space-y-2'>
         <Label htmlFor='name'>Name</Label>
         <Input
           id='name'
           name='name'
           placeholder='John Doe'
-          defaultValue={state.name}
+          defaultValue={artist.name}
           required
         />
         {state?.errors?.name && (
@@ -88,7 +88,7 @@ const EditArtistForm = ({ onClose }: EditArtistFormProps) => {
           name='email'
           type='email'
           placeholder='john@example.com'
-          defaultValue={state.email}
+          defaultValue={artist.email}
           required
         />
         {state.errors?.email && (
@@ -103,7 +103,7 @@ const EditArtistForm = ({ onClose }: EditArtistFormProps) => {
           name='photoUrl'
           type='text'
           placeholder='https://example.com/photo.jpg'
-          defaultValue={state.photoUrl}
+          defaultValue={artist.photoUrl}
         />
         {state?.errors?.photoUrl && (
           <p className='text-red-500'>{state?.errors.photoUrl.join(', ')}</p>
@@ -118,7 +118,7 @@ const EditArtistForm = ({ onClose }: EditArtistFormProps) => {
 
       <div className='flex justify-end pt-4'>
         <Button type='submit' disabled={isPending} className='w-full'>
-          {isPending ? 'Adding artist...' : 'Add artist'}
+          {isPending ? 'Updating artist...' : 'Update artist'}
         </Button>
       </div>
     </form>

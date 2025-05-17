@@ -10,11 +10,11 @@ export const ArtistSchema = z.object({
   specialization: z.string(),
   location: z.string(),
   email: z.string().email(),
-  website: z.string().url().optional(),
+  website: z.string().optional().default('').pipe(z.string().url().optional()),
   exhibitions: z.array(z.string()).default([]),
   statement: z.string(),
   createdAt: z.date().default(() => new Date()),
-  updatedAt: z.date()
+  updatedAt: z.date().default(() => new Date())
 })
 
 export type Artist = z.infer<typeof ArtistSchema>

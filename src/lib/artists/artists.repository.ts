@@ -97,6 +97,7 @@ class ArtistsRepository {
 
   async update(artist: Artist): Promise<UpdateResult> {
     try {
+      console.log('Updating artist:', artist)
       const repository = await this.repository
       const updated = await repository.update(artist.id, artist)
       return updated
