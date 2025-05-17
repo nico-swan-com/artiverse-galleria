@@ -91,6 +91,78 @@ const CreateArtistForm = ({ onClose }: CreateArtistFormProps) => {
         )}
       </div>
 
+      <div className='space-y-2'>
+        <Label htmlFor='biography'>Biography</Label>
+        <Input
+          id='biography'
+          name='biography'
+          type='text'
+          placeholder='Artist biography...'
+          defaultValue={state.biography}
+        />
+        {state?.errors?.biography && (
+          <p className='text-red-500'>{state?.errors.biography.join(', ')}</p>
+        )}
+      </div>
+
+      <div className='space-y-2'>
+        <Label htmlFor='specialization'>Specialization</Label>
+        <Input
+          id='specialization'
+          name='specialization'
+          type='text'
+          placeholder='Oil painting, Digital art, etc.'
+          defaultValue={state.specialization}
+        />
+        {state?.errors?.specialization && (
+          <p className='text-red-500'>
+            {state?.errors.specialization.join(', ')}
+          </p>
+        )}
+      </div>
+
+      <div className='space-y-2'>
+        <Label htmlFor='location'>Location</Label>
+        <Input
+          id='location'
+          name='location'
+          type='text'
+          placeholder='City, Country'
+          defaultValue={state.location}
+        />
+        {state?.errors?.location && (
+          <p className='text-red-500'>{state?.errors.location.join(', ')}</p>
+        )}
+      </div>
+
+      <div className='space-y-2'>
+        <Label htmlFor='website'>Website</Label>
+        <Input
+          id='website'
+          name='website'
+          type='url'
+          placeholder='https://example.com'
+          defaultValue={state.website}
+        />
+        {state?.errors?.website && (
+          <p className='text-red-500'>{state?.errors.website.join(', ')}</p>
+        )}
+      </div>
+
+      <div className='space-y-2'>
+        <Label htmlFor='statement'>Artist Statement</Label>
+        <Input
+          id='statement'
+          name='statement'
+          type='text'
+          placeholder='Artist statement...'
+          defaultValue={state.statement}
+        />
+        {state?.errors?.statement && (
+          <p className='text-red-500'>{state?.errors.statement.join(', ')}</p>
+        )}
+      </div>
+
       <div className='flex w-full justify-end pt-4'>
         {state?.success === false && (
           <p className='text-red-500'>{state.message}</p>

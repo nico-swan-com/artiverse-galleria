@@ -31,12 +31,6 @@ const DeleteArtistForm = ({ artist, onClose }: DeleteArtistFormProps) => {
 
   return (
     <form action={formAction} className='mt-4 space-y-4'>
-      <div className='mb-4 rounded-md bg-red-100 p-4 text-sm text-red-700'>
-        <p>
-          Warning: This action cannot be undone. The artist and all associated
-          data will be permanently deleted.
-        </p>
-      </div>
       <Input
         id='artistId'
         name='artistId'

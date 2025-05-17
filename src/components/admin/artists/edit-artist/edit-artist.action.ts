@@ -44,7 +44,7 @@ async function editArtistAction(
   prevState: EditArtistState,
   formData: FormData
 ): Promise<EditArtistState> {
-  const id = formData.get('id')?.toString() || ''
+  const id = prevState.id
   const name = formData.get('name')?.toString() || ''
   const email = formData.get('email')?.toString() || ''
   const photoUrl =
