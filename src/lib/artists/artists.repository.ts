@@ -1,53 +1,49 @@
 import { PaginationParams } from './../../types/common/pagination-params.type'
-import {
-  DeleteResult,
-  FindOptionsOrderValue,
-  ILike,
-  Repository,
-  UpdateResult
-} from 'typeorm'
+import { FindOptionsOrderValue, ILike, Repository } from 'typeorm'
 import { DatabaseRepository } from '../data-access'
 import {
   Artist,
   ArtistCreate,
   Artists,
+  ArtistsEntity,
   ArtistsSortBy,
   ArtistUpdate
 } from './model'
-import { plainToInstance } from 'class-transformer'
 
-@DatabaseRepository(Artist, 'repository')
+@DatabaseRepository(ArtistsEntity, 'repository')
 class ArtistsRepository {
   /**
    * Injected by `@DatabaseRepository`.
    * The decorator returns a Promise that resolves to the actual repository.
    */
-  repository!: Promise<Repository<Artist>>
+  private repository!: Promise<Repository<Artist>>
 
   async getAll(
-    sortBy: keyof Artist = 'name',
-    order: FindOptionsOrderValue = 'DESC',
-    searchQuery?: string
-  ) {
+    sortBy: ArtistsSortBy = 'name',
+    order: FindOptionsOrderValue = 'DESC'
+  ): Promise<Artists> {
     try {
       const repository = await this.repository
-      const searchFilter = searchQuery
-        ? {
-            where: [
-              { name: ILike(`%${searchQuery}%`) },
-              { specialization: ILike(`%${searchQuery}%`) },
-              { location: ILike(`%${searchQuery}%`) }
-            ]
-          }
-        : undefined
-      const [artists, total] = await repository.findAndCount({
-        order: { [sortBy]: order },
-        where: searchFilter?.where
+      console.debug('Getting repository for getAll query')
+
+      console.debug('Executing findAndCount query', {
+        sortBy,
+        order
       })
-      return { artists: plainToInstance(Artist, artists), total }
+
+      const [artists, total] = await repository.findAndCount({
+        order: { [sortBy]: order }
+      })
+
+      console.debug(`Found ${artists.length} artists out of ${total} total`)
+
+      return {
+        artists: artists as Artist[],
+        total
+      }
     } catch (error) {
       console.error('Error getting artists:', error)
-      return { artists: [], total: 0 }
+      throw error // Let the service layer handle the error
     }
   }
 
@@ -59,70 +55,114 @@ class ArtistsRepository {
   ): Promise<Artists> {
     const { page, limit } = pagination
     const skip = (page - 1) * limit
-    const searchFilter = searchQuery
-      ? {
-          where: [
-            { name: ILike(`%${searchQuery}%`) },
-            { specialization: ILike(`%${searchQuery}%`) },
-            { location: ILike(`%${searchQuery}%`) }
-          ]
-        }
-      : undefined
+
     try {
       const repository = await this.repository
+      console.debug('Getting repository for paged query')
+
+      const searchFilter = searchQuery
+        ? {
+            where: [
+              { name: ILike(`%${searchQuery}%`) },
+              { specialization: ILike(`%${searchQuery}%`) },
+              { location: ILike(`%${searchQuery}%`) }
+            ]
+          }
+        : undefined
+
+      console.debug('Executing paged findAndCount query', {
+        skip,
+        limit,
+        sortBy,
+        order,
+        searchFilter: searchFilter?.where
+      })
+
       const [artists, total] = await repository.findAndCount({
         skip,
         take: limit,
         order: { [sortBy]: order },
         where: searchFilter?.where
       })
-      return { artists: plainToInstance(Artist, artists), total }
+
+      console.debug(`Found ${artists.length} artists out of ${total} total`)
+
+      return {
+        artists: artists as Artist[],
+        total
+      }
     } catch (error) {
-      console.error('Error getting artists:', error)
-      return { artists: [], total: 0 }
+      console.error('Error getting paged artists:', error)
+      throw error // Let the service layer handle the error
     }
   }
 
   async getById(id: string): Promise<Artist | null> {
     try {
       const repository = await this.repository
-      const found = await repository.findOne({ where: { id } })
-      return found ? plainToInstance(Artist, found) : null
-    } catch (error) {
-      console.error('Error getting user by id:', error)
+      console.debug(`Getting artist by id: ${id}`)
+
+      const found = await repository.findOne({
+        where: { id },
+        cache: true
+      })
+
+      if (found) {
+        console.debug('Artist found, transforming result')
+        return found as Artist
+      }
+
+      console.debug('No artist found with the given id')
       return null
+    } catch (error) {
+      console.error('Error getting artist by id:', error)
+      throw error
     }
   }
 
   async create(artist: ArtistCreate): Promise<Artist> {
     try {
       const repository = await this.repository
+      console.debug('Creating new artist', { artist })
+
       const created = await repository.save(artist)
-      return created
+      console.debug('Artist created successfully', { id: created.id })
+
+      return created as Artist
     } catch (error) {
       console.error('Error creating artist:', error)
       throw error
     }
   }
 
-  async update(artist: ArtistUpdate): Promise<UpdateResult> {
+  async update(artist: ArtistUpdate): Promise<void> {
     try {
-      if (!artist.id) throw new Error('Artist ID is required for update')
-      console.log('Updating artist:', artist)
+      if (!artist.id) {
+        throw new Error('Artist ID is required for update')
+      }
+
       const repository = await this.repository
-      const updated = await repository.update(artist.id, artist)
-      return updated
+      console.debug('Updating artist', { id: artist.id })
+
+      await repository.update(artist.id, artist)
+      console.debug('Artist updated successfully', { id: artist.id })
+
+      return
     } catch (error) {
       console.error('Error updating artist:', error)
       throw error
     }
   }
 
-  async delete(id: string): Promise<DeleteResult> {
+  async delete(id: string): Promise<void> {
     try {
       const repository = await this.repository
-      const deleted = await repository.delete(id)
-      return deleted
+      console.debug(`Deleting artist with id: ${id}`)
+
+      await repository.delete(id)
+      console.debug('Artist deleted successfully', { id })
+
+      return
     } catch (error) {
       console.error('Error deleting artist:', error)
       throw error

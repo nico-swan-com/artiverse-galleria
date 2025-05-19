@@ -1,7 +1,6 @@
 import 'reflect-metadata'
 import { DataSource } from 'typeorm'
 import { UsersEntity } from '../users'
-import { Artist } from '../artists'
 import { ProductsEntity } from '../products'
 import { ArtistsEntity } from '../artists'
 

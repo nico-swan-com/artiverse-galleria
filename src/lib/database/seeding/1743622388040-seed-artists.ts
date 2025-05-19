@@ -1,11 +1,11 @@
-import { Artist } from './../../artists/model/artist.entity'
+import { ArtistsEntity } from './../../artists/model/artist.entity'
 
 import { MigrationInterface, QueryRunner } from 'typeorm'
 import { artists as artistData } from '../data/artists'
 
 export class SeedArtists1743622388040 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const artistRepository = queryRunner.manager.getRepository(Artist)
+    const artistRepository = queryRunner.manager.getRepository(ArtistsEntity)
     const newArtists = artistData.map((artist) => ({
       name: artist.name,
       photoUrl: artist.photoUrl,
@@ -29,7 +29,7 @@ export class SeedArtists1743622388040 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    const artistRepository = queryRunner.manager.getRepository(Artist)
+    const artistRepository = queryRunner.manager.getRepository(ArtistsEntity)
     const artistIds = artistData.map((artist) => artist.id)
 
     try {
