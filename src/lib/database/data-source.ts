@@ -1,7 +1,9 @@
 import 'reflect-metadata'
 import { DataSource } from 'typeorm'
-import { User } from '../users'
+import { UsersEntity } from '../users'
 import { Artist } from '../artists'
+import { ProductsEntity } from '../products'
+import { ArtistsEntity } from '../artists'
 
 let dataSourceInstance: DataSource
 
@@ -10,6 +12,14 @@ export const getDataSourceInstance = () => {
 }
 
 export const createDataSource = () => {
+  console.debug('Creating DataSource with config:', {
+    host: process.env.POSTGRES_HOST,
+    port: process.env.POSTGRES_PORT,
+    database: process.env.POSTGRES_DATABASE,
+    schema: process.env.POSTGRES_SCHEMA || 'public',
+    entities: [UsersEntity, ArtistsEntity, ProductsEntity]
+  })
+
   return new DataSource({
     type: 'postgres',
     host: process.env.POSTGRES_HOST,
@@ -18,17 +28,17 @@ export const createDataSource = () => {
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DATABASE,
     schema: process.env.POSTGRES_SCHEMA || 'public',
-    entities: [User, Artist],
+    entities: [UsersEntity, ArtistsEntity, ProductsEntity],
     synchronize: false,
     logging: process.env.NODE_ENV === 'development',
-    migrations: [__dirname + '/migrations/*.ts'] // Verify this path
+    migrations: [__dirname + '/migrations/*.ts']
   })
 }
 
 export async function initializeDatabase(
   maxRetries: number = 5,
   retryDelay: number = 3000,
-  maxWaitTime: number = 60000 // Example: 1 minute max wait time
+  maxWaitTime: number = 60000
 ): Promise<void> {
   if (!dataSourceInstance || !dataSourceInstance.isInitialized) {
     let attempts = 0
@@ -37,29 +47,31 @@ export async function initializeDatabase(
     while (attempts < maxRetries && Date.now() - startTime < maxWaitTime) {
       attempts++
       try {
-        dataSourceInstance = createDataSource()
+        if (!dataSourceInstance) {
+          console.debug('Creating new DataSource instance')
+          dataSourceInstance = createDataSource()
+        }
 
-        await dataSourceInstance.initialize()
-        console.log('Database connection initialized')
-        return // Exit the function on successful connection
+        if (!dataSourceInstance.isInitialized) {
+          console.debug('Initializing DataSource')
+          await dataSourceInstance.initialize()
+
+          // Verify connection by running a test query
+          await dataSourceInstance.query('SELECT 1')
+          console.info('Database connection initialized and verified')
+          return
+        }
       } catch (error) {
         console.error(
-          `Failed to initialize database (attempt ${attempts}/${maxRetries}) using config: ${JSON.stringify(
-            {
-              host: process.env.POSTGRES_HOST,
-              port: process.env.POSTGRES_PORT,
-              username: process.env.POSTGRES_USER,
-              database: process.env.POSTGRES_DATABASE,
-              schema: process.env.POSTGRES_SCHEMA
-            }
-          )}:`,
+          `Failed to initialize database (attempt ${attempts}/${maxRetries}):`,
           error
         )
+
         if (attempts < maxRetries && Date.now() - startTime < maxWaitTime) {
-          console.log(`Retrying in ${retryDelay}ms...`)
+          console.debug(`Retrying in ${retryDelay}ms...`)
           await new Promise((resolve) => setTimeout(resolve, retryDelay))
         } else {
-          throw error // Re-throw the error after the final attempt
+          throw error
         }
       }
     }
@@ -73,8 +85,9 @@ export async function initializeDatabase(
 if (process.env.NODE_ENV === 'production') {
   process.on('SIGINT', async () => {
     if (dataSourceInstance?.isInitialized) {
+      console.info('Closing database connection...')
       await dataSourceInstance.destroy()
-      console.log('Database connection closed.')
+      console.info('Database connection closed.')
       process.exit(0)
     } else {
       process.exit(0)

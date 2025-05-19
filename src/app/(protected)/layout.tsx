@@ -3,7 +3,13 @@ import { AnimatePresence } from 'framer-motion'
 import { useIsMobile } from '@/hooks/use-mobile'
 import Sidebar from '@/components/layout/navigation/sidebar.component'
 import MobileNavbar from '@/components/layout/navigation/mobile-navbar.component'
-import { BarChart3, Palette, UserRound, UsersRound } from 'lucide-react'
+import {
+  BarChart3,
+  Package,
+  Palette,
+  UserRound,
+  UsersRound
+} from 'lucide-react'
 import { useState } from 'react'
 import { SessionProvider } from 'next-auth/react'
 
@@ -37,6 +43,11 @@ export default function DashboardLayout({
         </>
       ),
       path: '/admin/artists'
+    },
+    {
+      title: 'Products',
+      icon: <Package size={18} />,
+      path: '/admin/products'
     }
     // {
     //   title: 'Blog',
