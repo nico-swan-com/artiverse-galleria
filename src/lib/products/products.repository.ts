@@ -13,10 +13,10 @@ class ProductsRepository {
    * Injected by `@DatabaseRepository`.
    * The decorator returns a Promise that resolves to the actual repository.
    */
-  private repository!: Repository<ProductsEntity>
+  private repository!: Promise<Repository<ProductsEntity>>
 
   async getAll(
-    sortByField: ProductsSortBy = 'createdAt',
+    sortByField: ProductsSortBy = 'name',
     sortOrder: FindOptionsOrderValue = 'ASC'
   ): Promise<Products> {
     try {
@@ -26,17 +26,7 @@ class ProductsRepository {
       console.debug('Fetching all products', { sortByField, sortOrder })
 
       const [products, total] = await repository.findAndCount({
-        order: { [sortByField]: sortOrder },
-        // Explicitly select all columns to ensure we're getting all data
-        select: [
-          'id',
-          'name',
-          'description',
-          'price',
-          'category',
-          'createdAt',
-          'updatedAt'
-        ]
+        order: { [sortByField]: sortOrder }
       })
 
       // Add debug logging for the results
@@ -47,7 +37,7 @@ class ProductsRepository {
       }
 
       return {
-        products: plainToInstance(ProductsEntity, products) as Product[],
+        products: products as Product[],
         total
       }
     } catch (error) {

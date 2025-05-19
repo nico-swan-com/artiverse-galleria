@@ -17,8 +17,8 @@ const ProductsServerPage = async (props: { searchParams: SearchParams }) => {
   const order = (
     params.order === 'ASC' || params.order === 'DESC' ? params.order : 'DESC'
   ) as FindOptionsOrderValue
-
-  const { products } = await new ProductsService().getAll(sortBy, order)
+  const service = new ProductsService()
+  const { products } = await service.getAll(sortBy, order)
 
   console.log('products', products)
 

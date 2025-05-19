@@ -27,7 +27,7 @@ export class ArtistsController {
 
     const sanitizedArtists = artists.map(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      ({ createdAt, updatedAt, deletedAt, ...rest }) => rest
+      ({ createdAt, updatedAt, ...rest }) => rest
     )
     return NextResponse.json({
       artists: sanitizedArtists,

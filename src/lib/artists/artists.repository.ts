@@ -16,7 +16,7 @@ class ArtistsRepository {
    * Injected by `@DatabaseRepository`.
    * The decorator returns a Promise that resolves to the actual repository.
    */
-  private repository!: Promise<Repository<Artist>>
+  private repository!: Promise<Repository<ArtistsEntity>>
 
   async getAll(
     sortBy: ArtistsSortBy = 'name',
