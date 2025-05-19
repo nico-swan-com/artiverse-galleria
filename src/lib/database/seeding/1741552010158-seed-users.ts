@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
-import { User, UserRoles, UserStatus } from '../../users/model' // Import enums
+import { UsersEntity, UserRoles, UserStatus } from '../../users/model' // Import enums
 import { faker } from '@faker-js/faker' // Import Faker
 import { getAvatarUrl } from '../../utilities'
 
-export const users: User[] = [
+export const users: UsersEntity[] = [
   {
     email: 'nicoswan@gmail.com',
     name: 'Nico Swan',
@@ -13,11 +13,11 @@ export const users: User[] = [
     role: UserRoles.Admin,
     status: UserStatus.Active
   }
-] as User[]
+] as UsersEntity[]
 
 export class SeedUsers1741552010158 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const userRepository = queryRunner.manager.getRepository(User)
+    const userRepository = queryRunner.manager.getRepository(UsersEntity)
     const templateUser = users[0]
 
     const newUsers = Array.from({ length: 10 }, () => {
@@ -47,7 +47,7 @@ export class SeedUsers1741552010158 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    const userRepository = queryRunner.manager.getRepository(User)
+    const userRepository = queryRunner.manager.getRepository(UsersEntity)
 
     try {
       const usersToRemove = await userRepository.find()

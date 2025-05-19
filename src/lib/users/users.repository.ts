@@ -6,15 +6,15 @@ import {
   UpdateResult
 } from 'typeorm'
 import { DatabaseRepository } from '../data-access'
-import { Users, User, UsersSortBy } from './model'
+import { Users, UsersEntity, UsersSortBy } from './model'
 
-@DatabaseRepository(User, 'userRepository')
+@DatabaseRepository(UsersEntity, 'userRepository')
 class UsersRepository {
   /**
    * Injected by `@DatabaseRepository`.
    * The decorator returns a Promise that resolves to the actual repository.
    */
-  userRepository!: Promise<Repository<User>>
+  userRepository!: Promise<Repository<UsersEntity>>
 
   async getUsers(
     pagination: PaginationParams,
@@ -37,7 +37,7 @@ class UsersRepository {
     }
   }
 
-  async getUserById(id: string): Promise<User | null> {
+  async getUserById(id: string): Promise<UsersEntity | null> {
     try {
       const repository = await this.userRepository
       const found = await repository.findOne({ where: { id } })
@@ -47,7 +47,7 @@ class UsersRepository {
       return null
     }
   }
-  async getUserByEmail(email: string): Promise<User | null> {
+  async getUserByEmail(email: string): Promise<UsersEntity | null> {
     try {
       const repository = await this.userRepository
       const found = await repository.findOne({
@@ -60,7 +60,7 @@ class UsersRepository {
     }
   }
 
-  async create(user: User): Promise<User> {
+  async create(user: UsersEntity): Promise<UsersEntity> {
     try {
       const repository = await this.userRepository
       const created = await repository.save(user)
@@ -71,7 +71,7 @@ class UsersRepository {
     }
   }
 
-  async update(user: User): Promise<UpdateResult> {
+  async update(user: UsersEntity): Promise<UpdateResult> {
     try {
       const repository = await this.userRepository
       const updated = await repository.update(user.id, user)

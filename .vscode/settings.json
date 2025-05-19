@@ -19,7 +19,8 @@
     "authentication",
     "users",
     "artist-management",
-    "products-management"
+    "products-management",
+    "user-management"
   ],
   "cSpell.words": ["Artiverse", "sonner", "Uncategorized"]
 }

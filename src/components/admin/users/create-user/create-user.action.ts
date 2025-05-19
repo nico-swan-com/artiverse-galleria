@@ -3,7 +3,7 @@
 import { z } from 'zod'
 import {
   PasswordSchema,
-  User,
+  UsersEntity,
   UserRoles,
   UserSchema,
   UserStatus
@@ -40,7 +40,7 @@ async function createUserAction(prevState: any, formData: FormData) {
       status: UserStatus.Pending
     })
 
-    const user = new User()
+    const user = new UsersEntity()
     const newPassword = PasswordSchema.parse(password)
     await user.setPassword(newPassword)
 

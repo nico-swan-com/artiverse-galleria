@@ -12,7 +12,7 @@ import { UserStatus } from './user-status.enum'
 import { Exclude, instanceToPlain, Transform } from 'class-transformer'
 
 @Entity('users')
-export class User {
+export class UsersEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string
 

@@ -1,7 +1,12 @@
 'use server'
 
 import { z } from 'zod'
-import { PasswordSchema, User, UserSchema, UsersRepository } from '@/lib/users'
+import {
+  PasswordSchema,
+  UsersEntity,
+  UserSchema,
+  UsersRepository
+} from '@/lib/users'
 import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
 
@@ -60,7 +65,7 @@ async function editUserAction(
       avatar
     })
 
-    const user = new User()
+    const user = new UsersEntity()
     user.id = prevState.id
     user.name = name
     user.email = email
