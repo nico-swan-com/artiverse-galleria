@@ -1,26 +1,19 @@
 import { PaginationParams } from './../../types/common/pagination-params.type'
-import { FindOptionsOrderValue, ILike, Repository } from 'typeorm'
-import { DatabaseRepository } from '../data-access'
+import { FindOptionsOrderValue, ILike } from 'typeorm'
 import { plainToInstance } from 'class-transformer'
 import { ProductsEntity } from './model/products.entity'
 import { ProductsSortBy } from './model/products-sort-by.type'
 import { Products } from './model/products.type'
 import { Product, ProductCreate, ProductUpdate } from './model/product.schema'
+import { getRepository } from '../database'
 
-@DatabaseRepository(ProductsEntity, 'repository')
 class ProductsRepository {
-  /**
-   * Injected by `@DatabaseRepository`.
-   * The decorator returns a Promise that resolves to the actual repository.
-   */
-  private repository!: Promise<Repository<ProductsEntity>>
-
   async getAll(
     sortByField: ProductsSortBy = 'name',
     sortOrder: FindOptionsOrderValue = 'ASC'
   ): Promise<Products> {
     try {
-      const repository = await this.repository
+      const repository = await getRepository(ProductsEntity)
 
       // Add debug logging to verify we're getting to this point
       console.debug('Fetching all products', { sortByField, sortOrder })
@@ -64,7 +57,7 @@ class ProductsRepository {
         }
       : undefined
     try {
-      const repository = await this.repository
+      const repository = await getRepository(ProductsEntity)
       const [products, total] = await repository.findAndCount({
         skip,
         take: limit,
@@ -83,7 +76,7 @@ class ProductsRepository {
 
   async getById(id: string): Promise<Product | null> {
     try {
-      const repository = await this.repository
+      const repository = await getRepository(ProductsEntity)
       const found = await repository.findOne({ where: { id } })
       return found ? (plainToInstance(ProductsEntity, found) as Product) : null
     } catch (error) {
@@ -94,7 +87,7 @@ class ProductsRepository {
 
   async create(product: ProductCreate): Promise<Product> {
     try {
-      const repository = await this.repository
+      const repository = await getRepository(ProductsEntity)
       const created = await repository.save(product)
       return created as Product
     } catch (error) {
@@ -107,7 +100,7 @@ class ProductsRepository {
     try {
       if (!product.id) throw new Error('Product ID is required for update')
       console.log('Updating product:', product)
-      const repository = await this.repository
+      const repository = await getRepository(ProductsEntity)
       await repository.update(product.id, product)
       return
     } catch (error) {
@@ -118,7 +111,7 @@ class ProductsRepository {
 
   async delete(id: string): Promise<void> {
     try {
-      const repository = await this.repository
+      const repository = await getRepository(ProductsEntity)
       await repository.delete(id)
       return
     } catch (error) {

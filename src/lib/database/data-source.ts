@@ -1,13 +1,35 @@
 import 'reflect-metadata'
-import { DataSource } from 'typeorm'
-import { UsersEntity } from '../users'
+import { DataSource, EntityTarget, ObjectLiteral, Repository } from 'typeorm'
 import { ProductsEntity } from '../products'
 import { ArtistsEntity } from '../artists'
+import { UsersEntity } from '../users'
 
 let dataSourceInstance: DataSource
 
 export const getDataSourceInstance = () => {
   return dataSourceInstance
+}
+
+export class DatabaseConnectionError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'DatabaseConnectionError'
+  }
+}
+
+export const getRepository = async <T extends ObjectLiteral>(
+  entity: EntityTarget<T>
+): Promise<Repository<T>> => {
+  try {
+    await initializeDatabase()
+    const dataSourceInstance = getDataSourceInstance()
+    return dataSourceInstance.getRepository<T>(entity)
+  } catch (error) {
+    console.error('Error getting repository:', error)
+    throw new DatabaseConnectionError(
+      'Failed to get repository. Database connection might not be initialized.'
+    )
+  }
 }
 
 export const createDataSource = () => {

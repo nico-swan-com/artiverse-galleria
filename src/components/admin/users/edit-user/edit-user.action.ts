@@ -41,6 +41,8 @@ async function editUserAction(
   const name = formData.get('name')?.toString() || ''
   const email = formData.get('email')?.toString() || ''
   const newPassword = formData.get('newPassword')?.toString() || ''
+  const status = formData.get('status')?.toString() || ''
+  const role = formData.get('role')?.toString() || ''
   const password = !!newPassword
     ? PasswordSchema.parse(newPassword)
     : prevState.password
@@ -54,8 +56,8 @@ async function editUserAction(
     email,
     password,
     newPassword,
-    role: prevState.role || '',
-    status: prevState.status || '',
+    role,
+    status,
     errors: {}
   }
 
@@ -70,8 +72,8 @@ async function editUserAction(
     user.name = name
     user.email = email
     user.avatar = values.avatar
-    user.role = values.role
-    user.status = values.status
+    user.role = values.role || prevState.role
+    user.status = values.status || prevState.status
     if (password) await user.setPassword(password)
 
     const repository = new UsersRepository()

@@ -1,6 +1,5 @@
 import { PaginationParams } from './../../types/common/pagination-params.type'
-import { FindOptionsOrderValue, ILike, Repository } from 'typeorm'
-import { DatabaseRepository } from '../data-access'
+import { FindOptionsOrderValue, ILike } from 'typeorm'
 import {
   Artist,
   ArtistCreate,
@@ -9,21 +8,15 @@ import {
   ArtistsSortBy,
   ArtistUpdate
 } from './model'
+import { getRepository } from '../database'
 
-@DatabaseRepository(ArtistsEntity, 'repository')
 class ArtistsRepository {
-  /**
-   * Injected by `@DatabaseRepository`.
-   * The decorator returns a Promise that resolves to the actual repository.
-   */
-  private repository!: Promise<Repository<ArtistsEntity>>
-
   async getAll(
     sortBy: ArtistsSortBy = 'name',
     order: FindOptionsOrderValue = 'DESC'
   ): Promise<Artists> {
     try {
-      const repository = await this.repository
+      const repository = await getRepository(ArtistsEntity)
       console.debug('Getting repository for getAll query')
 
       console.debug('Executing findAndCount query', {
@@ -57,7 +50,7 @@ class ArtistsRepository {
     const skip = (page - 1) * limit
 
     try {
-      const repository = await this.repository
+      const repository = await getRepository(ArtistsEntity)
       console.debug('Getting repository for paged query')
 
       const searchFilter = searchQuery
@@ -99,7 +92,7 @@ class ArtistsRepository {
 
   async getById(id: string): Promise<Artist | null> {
     try {
-      const repository = await this.repository
+      const repository = await getRepository(ArtistsEntity)
       console.debug(`Getting artist by id: ${id}`)
 
       const found = await repository.findOne({
@@ -122,7 +115,7 @@ class ArtistsRepository {
 
   async create(artist: ArtistCreate): Promise<Artist> {
     try {
-      const repository = await this.repository
+      const repository = await getRepository(ArtistsEntity)
       console.debug('Creating new artist', { artist })
 
       const created = await repository.save(artist)
@@ -141,7 +134,7 @@ class ArtistsRepository {
         throw new Error('Artist ID is required for update')
       }
 
-      const repository = await this.repository
+      const repository = await getRepository(ArtistsEntity)
       console.debug('Updating artist', { id: artist.id })
 
       await repository.update(artist.id, artist)
@@ -156,7 +149,7 @@ class ArtistsRepository {
 
   async delete(id: string): Promise<void> {
     try {
-      const repository = await this.repository
+      const repository = await getRepository(ArtistsEntity)
       console.debug(`Deleting artist with id: ${id}`)
 
       await repository.delete(id)
