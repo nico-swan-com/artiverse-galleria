@@ -1,4 +1,4 @@
-import UsersPage from '@/components/admin/users/users-page.component'
+import UsersPage from '@/components/admin/users/UsersPage'
 import { isValidUsersSortKey, UsersSortBy } from '@/lib/users'
 import { getUsersUnstableCache } from '@/lib/users/users.actions'
 import { FindOptionsOrderValue } from 'typeorm'

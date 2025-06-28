@@ -4,6 +4,10 @@ import React from 'react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { format } from 'date-fns'
+import { Badge } from '@/components/ui/badge'
+import { User } from '@/types'
+import EditUserDialog from './edit-user/EditUserDialog'
+import DeleteUserDialog from './delete-user/DeleteUserDialog'
 import {
   Table,
   TableBody,
@@ -15,35 +19,34 @@ import {
 import { FindOptionsOrderValue } from 'typeorm'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowDown, ArrowUp } from 'lucide-react'
-import TablePagination from '@/components/common/ui/table-pagination.component'
-import DeleteArtistDialog from './delete-artist/delete-artist-dialog.component'
-import EditArtistDialog from './edit-artist/edit-artist-dialog.component'
-import { Artist, ArtistsSortBy } from '@/lib/artists'
+import TablePagination from '@/components/common/ui/TablePagination'
+import { UsersSortBy } from '@/lib/users'
+import { getAvatarUrl } from '@/lib/utilities/get-avatar-url'
 
-interface ArtistsListProps {
-  artists: Artist[]
+interface UsersListProps {
+  users: User[]
   total: number
   page: number
   limit: number
-  sortBy: ArtistsSortBy
+  sortBy: UsersSortBy
   order: FindOptionsOrderValue
 }
 
-const ArtistsList = ({
-  artists,
+const UsersList = ({
+  users,
   total,
   page,
   limit,
   sortBy,
   order
-}: ArtistsListProps) => {
+}: UsersListProps) => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const paramsURL = new URLSearchParams(Array.from(searchParams.entries()))
 
   const pages = Math.ceil(total / limit)
 
-  const createSortURL = (newSortBy: keyof Artist) => {
+  const createSortURL = (newSortBy: keyof User) => {
     const current = new URLSearchParams(paramsURL)
 
     current.set('page', '1')
@@ -56,10 +59,10 @@ const ArtistsList = ({
     return `?${current.toString()}`
   }
 
-  if (artists.length === 0) {
+  if (users.length === 0) {
     return (
       <div className='py-10 text-center'>
-        <p className='text-muted-foreground'>No artists found</p>
+        <p className='text-muted-foreground'>No users found</p>
       </div>
     )
   }
@@ -69,13 +72,14 @@ const ArtistsList = ({
       <div className='overflow-hidden rounded-md border'>
         <div className='overflow-x-auto'>
           <Table>
+            {/* <TableCaption></TableCaption> */}
             <TableHeader>
               <TableRow>
                 <TableHead
                   onClick={() => router.push(createSortURL('name'))}
                   className='cursor-pointer'
                 >
-                  Artist
+                  User
                   {sortBy === 'name' &&
                     (order === 'ASC' ? (
                       <ArrowUp className='ml-2 inline-block size-4' />
@@ -84,11 +88,23 @@ const ArtistsList = ({
                     ))}
                 </TableHead>
                 <TableHead
-                  onClick={() => router.push(createSortURL('featured'))}
+                  onClick={() => router.push(createSortURL('role'))}
                   className='cursor-pointer'
                 >
-                  Featured
-                  {sortBy === 'featured' &&
+                  Role
+                  {sortBy === 'role' &&
+                    (order === 'ASC' ? (
+                      <ArrowUp className='ml-2 inline-block size-4' />
+                    ) : (
+                      <ArrowDown className='ml-2 inline-block size-4' />
+                    ))}
+                </TableHead>
+                <TableHead
+                  onClick={() => router.push(createSortURL('status'))}
+                  className='cursor-pointer'
+                >
+                  Status
+                  {sortBy === 'status' &&
                     (order === 'ASC' ? (
                       <ArrowUp className='ml-2 inline-block size-4' />
                     ) : (
@@ -113,47 +129,45 @@ const ArtistsList = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {artists.map((artist) => (
-                <TableRow key={artist.id}>
+              {users.map((user) => (
+                <TableRow key={user.id}>
                   <TableCell>
                     <div className='flex items-center gap-3'>
-                      <Avatar className='size-20 rounded shadow-md shadow-gray-400'>
+                      <Avatar>
                         <AvatarImage
-                          className='object-cover'
-                          src={artist.photoUrl}
-                          alt={artist.name}
+                          src={
+                            user.avatar || getAvatarUrl(user.email, user.name)
+                          }
+                          alt={user.name}
                         />
                         <AvatarFallback>
-                          {artist.name.substring(0, 2).toUpperCase()}
+                          {user.name.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className='font-medium'>{artist.name}</p>
+                        <p className='font-medium'>{user.name}</p>
                         <p className='text-xs text-muted-foreground'>
-                          {artist.email}
+                          {user.email}
                         </p>
                       </div>
                     </div>
                   </TableCell>
+                  <TableCell>{user.role}</TableCell>
                   <TableCell>
-                    {artist.featured ? (
-                      <span className='inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800'>
-                        Featured
-                      </span>
-                    ) : (
-                      <span className='inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800'>
-                        Not Featured
-                      </span>
-                    )}
+                    <Badge
+                      variant={
+                        user.status === 'Active' ? 'default' : 'secondary'
+                      }
+                    >
+                      {user.status}
+                    </Badge>
                   </TableCell>
                   <TableCell className='px-4 py-3 text-muted-foreground'>
-                    {artist.createdAt
-                      ? format(new Date(artist.createdAt), 'MMM d, yyyy')
-                      : ''}
+                    {format(new Date(user.createdAt), 'MMM d, yyyy')}
                   </TableCell>
                   <TableCell className='text-end'>
-                    <EditArtistDialog artist={artist} />
-                    <DeleteArtistDialog artist={artist} />
+                    <EditUserDialog user={user} />
+                    <DeleteUserDialog user={user} />
                   </TableCell>
                 </TableRow>
               ))}
@@ -171,4 +185,4 @@ const ArtistsList = ({
   )
 }
 
-export default ArtistsList
+export default UsersList

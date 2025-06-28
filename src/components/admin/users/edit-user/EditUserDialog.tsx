@@ -1,5 +1,4 @@
 'use client'
-
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -9,32 +8,40 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-import { UserPlus } from 'lucide-react'
-import { useState, Suspense } from 'react'
-import CreateArtistForm from './create-artist-form.component'
 
-const CreateArtistDialog = () => {
+import { Pencil } from 'lucide-react'
+import { useState, Suspense } from 'react'
+import EditUserForm from './EditUserForm'
+import { User } from '@/types'
+import { Skeleton } from '@/components/ui/skeleton'
+
+type EditUserProps = {
+  user: User | null
+}
+
+const EditUserDialog = ({ user }: EditUserProps) => {
   const [isOpen, setOpen] = useState(false)
 
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <UserPlus className='mr-2 size-4' />
-          Add artist
+        <Button size='icon' variant='ghost'>
+          <Pencil className='size-4' />
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>Add new artist</DialogTitle>
+          <DialogTitle>Update user</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
-        <Suspense>
-          <CreateArtistForm onClose={() => setOpen(false)} />
+        <Suspense
+          fallback={<Skeleton className='h-[20px] w-full rounded-full' />}
+        >
+          {user && <EditUserForm user={user} onClose={() => setOpen(false)} />}
         </Suspense>
       </DialogContent>
     </Dialog>
   )
 }
 
-export default CreateArtistDialog
+export default EditUserDialog

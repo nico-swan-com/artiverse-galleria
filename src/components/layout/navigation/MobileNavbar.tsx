@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { LogOut, Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { INavbarProps } from './navbar-props.interface'
+import { INavbarProps } from './NavbarProps.interface'
 import { signOut, useSession } from 'next-auth/react'
 import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
 

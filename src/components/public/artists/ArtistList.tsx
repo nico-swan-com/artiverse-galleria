@@ -1,6 +1,6 @@
 'use client'
 
-import ArtistCard from '@/components/public/artists/artist-card.component'
+import ArtistCard from '@/components/public/artists/ArtistCard'
 import { Artist } from '@/lib/artists/model'
 import { startTransition, useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'

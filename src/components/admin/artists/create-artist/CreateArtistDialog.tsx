@@ -11,9 +11,9 @@ import {
 } from '@/components/ui/dialog'
 import { UserPlus } from 'lucide-react'
 import { useState, Suspense } from 'react'
-import CreateUserForm from './create-user-form.component'
+import CreateArtistForm from './CreateArtistForm'
 
-const CreateUserDialog = () => {
+const CreateArtistDialog = () => {
   const [isOpen, setOpen] = useState(false)
 
   return (
@@ -21,20 +21,20 @@ const CreateUserDialog = () => {
       <DialogTrigger asChild>
         <Button>
           <UserPlus className='mr-2 size-4' />
-          Add user
+          Add artist
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>Add new user</DialogTitle>
+          <DialogTitle>Add new artist</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <Suspense>
-          <CreateUserForm onClose={() => setOpen(false)} />
+          <CreateArtistForm onClose={() => setOpen(false)} />
         </Suspense>
       </DialogContent>
     </Dialog>
   )
 }
 
-export default CreateUserDialog
+export default CreateArtistDialog

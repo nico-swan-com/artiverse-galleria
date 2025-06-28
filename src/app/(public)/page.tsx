@@ -1,5 +1,5 @@
-import Hero from '@/components/public/sections/hero/hero.component'
-import ScrollButton from '@/components/public/sections/ui/scroll-button.component'
+import Hero from '@/components/public/sections/hero/Hero'
+import ScrollButton from '@/components/public/sections/ui/ScrollButton'
 import { artworks } from '@/lib/database/data/artworks'
 
 export default function Home() {

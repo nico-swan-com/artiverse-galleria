@@ -1,6 +1,6 @@
 import '../globals.css'
-import Navbar from '@/components/layout/navbar.component'
-import Footer from '@/components/layout/footer.component'
+import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
 import { CartProvider } from '@/contexts/cart.context'
 import { AnimatePresence } from 'framer-motion'
 

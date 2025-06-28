@@ -1,7 +1,7 @@
-import PageTransition from '@/components/common/utility/page-transition.component'
+import PageTransition from '@/components/common/utility/PageTransition'
 import { FindOptionsOrderValue } from 'typeorm'
-import ArtistsList from './artists-list.component'
-import CreateArtistDialog from './create-artist/create-artist-dialog.component'
+import ArtistsList from './ArtistsList'
+import CreateArtistDialog from './create-artist/CreateArtistDialog'
 import { Artist, ArtistsSortBy } from '@/lib/artists'
 
 interface ArtistsPageProps {

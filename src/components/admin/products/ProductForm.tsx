@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -8,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { useActionState } from 'react'
-import { productFormAction, ProductFormState } from './product-form.action'
+import { productFormAction, ProductFormState } from './productFormAction'
 
 interface ProductFormProps {
   initialProduct?: Partial<Product>
@@ -56,7 +57,6 @@ export default function ProductForm({
       initialProduct.images &&
       Array.isArray(initialProduct.images)
     ) {
-      // If editing, show previews for existing images (assume URLs)
       setImagePreviews(initialProduct.images as string[])
     }
   }, [initialProduct])
@@ -138,6 +138,10 @@ export default function ProductForm({
             value={product.description ?? ''}
             onChange={handleInputChange}
           />
+        </div>
+        <div className='grid gap-2'>
+          <Label htmlFor='image'>Feature Image</Label>
+          <Input id='image' name='image' type='file' accept='image/*' />
         </div>
         <div className='grid grid-cols-2 gap-4'>
           <div className='grid gap-2'>
@@ -226,16 +230,7 @@ export default function ProductForm({
             ))}
           </div>
         </div>
-        <div className='grid gap-2'>
-          <Label htmlFor='image'>Main Image URL</Label>
-          <Input
-            id='image-url'
-            name='image'
-            placeholder='Main image URL (optional)'
-            value={product.image ?? ''}
-            onChange={handleInputChange}
-          />
-        </div>
+
         <div className='grid gap-2'>
           <Label htmlFor='productType'>Product Type</Label>
           <Input

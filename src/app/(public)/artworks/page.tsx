@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { artworks } from '@/lib/database/data/artworks'
-import ArtworkCard from '@/components/public/artwork/artwork-card.component'
+import ArtworkCard from '@/components/public/artwork/ArtworkCard'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {

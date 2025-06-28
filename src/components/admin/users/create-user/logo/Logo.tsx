@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import LogoSVG from './logo.svg'
+import LogoSVG from './LogoSvg'
 
 const Logo = () => {
   return (

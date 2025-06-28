@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { PasswordInput } from '../create-user/password-input.component'
+import { PasswordInput } from '../create-user/PasswordInput'
 
 interface EditUserFormProps {
   user: User

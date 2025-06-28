@@ -11,14 +11,14 @@ import {
 
 import { Trash } from 'lucide-react'
 import { useState, Suspense } from 'react'
-import DeleteUserForm from './delete-user-form.component'
-import { User } from '@/types'
+import DeleteArtistForm from './DeleteArtistForm'
+import { Artist } from '@/lib/artists'
 
-type EditUserProps = {
-  user: User | null
+type DeleteArtistProps = {
+  artist: Artist | null
 }
 
-const DeleteUserDialog = ({ user }: EditUserProps) => {
+const DeleteArtistDialog = ({ artist }: DeleteArtistProps) => {
   const [isOpen, setOpen] = useState(false)
 
   return (
@@ -30,22 +30,28 @@ const DeleteUserDialog = ({ user }: EditUserProps) => {
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>Remove user</DialogTitle>
+          <DialogTitle>Remove artist</DialogTitle>
           <DialogDescription>
             <div className='rounded-md bg-red-100 p-4 text-sm text-red-500'>
               <p>
-                Warning: This action cannot be undone. The user and all
+                Warning: This action cannot be undone. The artist and all
                 associated data will be permanently deleted.
               </p>
               <p className='mt-3'>
-                <strong>Are you sure you want to remove this user?</strong>
+                <strong>Are you sure you want to remove this artist?</strong>
               </p>
             </div>
           </DialogDescription>
         </DialogHeader>
-        <Suspense>
-          {user && (
-            <DeleteUserForm user={user} onClose={() => setOpen(false)} />
+        <Suspense
+          fallback={
+            <div className='py-4 text-center text-sm text-muted-foreground'>
+              Loading...
+            </div>
+          }
+        >
+          {artist && (
+            <DeleteArtistForm artist={artist} onClose={() => setOpen(false)} />
           )}
         </Suspense>
       </DialogContent>
@@ -53,4 +59,4 @@ const DeleteUserDialog = ({ user }: EditUserProps) => {
   )
 }
 
-export default DeleteUserDialog
+export default DeleteArtistDialog

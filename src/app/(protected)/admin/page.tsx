@@ -1,4 +1,4 @@
-import Dashboard from '@/components/admin/dashboard.component'
+import Dashboard from '@/components/admin/Dashboard'
 import { auth } from '@/lib/authentication'
 import { redirect } from 'next/navigation'
 

@@ -1,9 +1,9 @@
 'use client'
 
-import PageTransition from '@/components/common/utility/page-transition.component'
-import UsersList from './users-list.component'
+import PageTransition from '@/components/common/utility/PageTransition'
+import UsersList from './UsersList'
 import { User } from '@/types'
-import CreateUserDialog from './create-user/create-user-dialog.component'
+import CreateUserDialog from './create-user/CreateUserDialog'
 import { FindOptionsOrderValue } from 'typeorm'
 import { UsersSortBy } from '@/lib/users'
 

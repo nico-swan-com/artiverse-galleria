@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog'
 import { Pencil } from 'lucide-react'
 import { useState, Suspense } from 'react'
-import EditArtistForm from './edit-artist-form.component'
+import EditArtistForm from './EditArtistForm'
 import { Artist } from '@/lib/artists'
 import { Skeleton } from '@/components/ui/skeleton'
 

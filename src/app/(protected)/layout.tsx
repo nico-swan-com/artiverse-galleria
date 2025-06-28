@@ -1,8 +1,8 @@
 'use client'
 import { AnimatePresence } from 'framer-motion'
 import { useIsMobile } from '@/hooks/use-mobile'
-import Sidebar from '@/components/layout/navigation/sidebar.component'
-import MobileNavbar from '@/components/layout/navigation/mobile-navbar.component'
+import Sidebar from '@/components/layout/navigation/Sidebar'
+import MobileNavbar from '@/components/layout/navigation/MobileNavbar'
 import {
   BarChart3,
   Package,

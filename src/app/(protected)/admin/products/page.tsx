@@ -1,4 +1,4 @@
-import ProductsPage from '@/components/admin/products/products-page.component'
+import ProductsPage from '@/components/admin/products/ProductsPage'
 import { isValidProductsSortKey, Product, ProductsSortBy } from '@/lib/products'
 import ProductsService from '@/lib/products/products.service'
 import { instanceToPlain } from 'class-transformer'

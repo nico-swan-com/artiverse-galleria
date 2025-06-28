@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ShoppingCart, Search, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import Logo from '../admin/users/create-user/logo/logo.component'
+import Logo from '../admin/users/create-user/logo/Logo'
 
 const Navbar = () => {
   const { getItemCount } = useCart()

@@ -1,4 +1,4 @@
-import ArtistsList from '@/components/public/artists/artist-list.component'
+import ArtistsList from '@/components/public/artists/ArtistList'
 import { Artist } from '@/lib/artists'
 import Artists from '@/lib/artists/artists.service'
 import { instanceToPlain } from 'class-transformer'

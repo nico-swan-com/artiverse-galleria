@@ -20,7 +20,9 @@ const ArtistCard = ({ artist, className }: ArtistCardProps) => {
       {/* Artist Photo */}
       <div className='lazy-image-container relative mb-4 aspect-square overflow-hidden rounded-full'>
         <Image
-          src={artist.photoUrl}
+          src={
+            typeof artist.image === 'string' ? artist.image : '/placeholder.png'
+          }
           alt={artist.name}
           className={cn(
             'lazy-image h-full w-full object-cover transition-all duration-400',

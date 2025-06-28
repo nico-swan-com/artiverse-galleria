@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import MetricCard from '@/components/admin/metric-card.component'
+import MetricCard from '@/components/admin/MetricCard'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   BarChart,
@@ -13,7 +13,7 @@ import {
   ResponsiveContainer
 } from 'recharts'
 import { CreditCard, DollarSign, FileText, TrendingUp } from 'lucide-react'
-import PageTransition from '@/components/common/utility/page-transition.component'
+import PageTransition from '@/components/common/utility/PageTransition'
 import { useSession } from 'next-auth/react'
 
 const Dashboard = () => {

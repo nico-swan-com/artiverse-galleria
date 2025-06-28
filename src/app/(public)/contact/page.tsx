@@ -1,6 +1,6 @@
 import React from 'react'
 import { MapPin, Phone, Mail, Clock } from 'lucide-react'
-import ContactForm from '@/components/public/contact/contact-form.component'
+import ContactForm from '@/components/public/contact/ContactForm'
 
 const Contact = () => {
   return (

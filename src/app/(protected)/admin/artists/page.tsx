@@ -1,4 +1,4 @@
-import ArtistsPage from '@/components/admin/artists/artists-page.component'
+import ArtistsPage from '@/components/admin/artists/ArtistsPage'
 import { Artist, ArtistsSortBy, isValidArtistsSortKey } from '@/lib/artists'
 import Artists from '@/lib/artists/artists.service'
 import { instanceToPlain } from 'class-transformer'

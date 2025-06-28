@@ -1,3 +1,3 @@
-export * from './ui/table-pagination.component'
-export * from './utility/page-transition.component'
-export * from './utility/qr.code.component'
+export * from './ui/TablePagination'
+export * from './utility/PageTransition'
+export * from './utility/QrCode'

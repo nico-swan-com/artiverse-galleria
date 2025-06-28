@@ -25,9 +25,9 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-import ArtworkCard from '@/components/public/artwork/artwork-card.component'
+import ArtworkCard from '@/components/public/artwork/ArtworkCard'
 import { toast } from 'sonner'
-import QRCode from '@/components/common/utility/qr.code.component'
+import QRCode from '@/components/common/utility/QrCode'
 
 const ArtworkDetail = () => {
   const { id } = useParams<{ id: string }>()
