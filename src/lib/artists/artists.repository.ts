@@ -36,7 +36,7 @@ class ArtistsRepository {
       }
     } catch (error) {
       console.error('Error getting artists:', error)
-      throw error // Let the service layer handle the error
+      throw error
     }
   }
 
@@ -118,7 +118,14 @@ class ArtistsRepository {
       const repository = await getRepository(ArtistsEntity)
       console.debug('Creating new artist', { artist })
 
-      const created = await repository.save(artist)
+      if (artist.image instanceof File) {
+        const arrayBuffer = await artist.image.arrayBuffer()
+        artist.image = Buffer.from<ArrayBuffer>(arrayBuffer)
+      } else if (artist.image instanceof ArrayBuffer) {
+        artist.image = Buffer.from(artist.image)
+      }
+
+      const created = await repository.save(artist as Partial<ArtistsEntity>)
       console.debug('Artist created successfully', { id: created.id })
 
       return created as Artist
@@ -137,7 +144,14 @@ class ArtistsRepository {
       const repository = await getRepository(ArtistsEntity)
       console.debug('Updating artist', { id: artist.id })
 
-      await repository.update(artist.id, artist)
+      if (artist.image instanceof File) {
+        const arrayBuffer = await artist.image.arrayBuffer()
+        artist.image = Buffer.from<ArrayBuffer>(arrayBuffer)
+      } else if (artist.image instanceof ArrayBuffer) {
+        artist.image = Buffer.from(artist.image)
+      }
+
+      await repository.update(artist.id, artist as Partial<ArtistsEntity>)
       console.debug('Artist updated successfully', { id: artist.id })
 
       return

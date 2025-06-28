@@ -5,21 +5,17 @@ import { Button } from '@/components/ui/button'
 import { Pencil, Trash2 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { Product } from '@/lib/products'
+import Link from 'next/link'
 
 interface ProductItemProps {
   product: Product
-  onEdit: (product: Product) => void
   onDelete: (id: string) => void
 }
 
-const ProductItem: React.FC<ProductItemProps> = ({
-  product,
-  onEdit,
-  onDelete
-}) => {
+const ProductItem: React.FC<ProductItemProps> = ({ product, onDelete }) => {
   return (
     <Card className='overflow-hidden transition-all duration-300 hover:shadow-md'>
-      {product.image ? (
+      {typeof product.image === 'string' && product.image ? (
         <Image
           src={product.image}
           alt={product.name}
@@ -60,10 +56,12 @@ const ProductItem: React.FC<ProductItemProps> = ({
             : 'Unknown'}
         </div>
         <div className='flex space-x-2'>
-          <Button size='icon' variant='outline' onClick={() => onEdit(product)}>
-            <Pencil size={16} />
-            <span className='sr-only'>Edit</span>
-          </Button>
+          <Link href={`/admin/products/${product.id}/edit`} passHref>
+            <Button size='icon' variant='outline'>
+              <Pencil size={16} />
+              <span className='sr-only'>Edit</span>
+            </Button>
+          </Link>
           <Button
             size='icon'
             variant='outline'

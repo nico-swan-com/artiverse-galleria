@@ -16,6 +16,7 @@ export type EditUserFieldErrors = {
   email?: string[]
   password?: string[]
   newPassword?: string[]
+  avatar?: string[]
   role?: string[]
   status?: string[]
   database?: string[]
@@ -46,7 +47,20 @@ async function editUserAction(
   const password = !!newPassword
     ? PasswordSchema.parse(newPassword)
     : prevState.password
-  const avatar = formData.get('avatar')?.toString() || getAvatarUrl(email, name)
+  const avatarFile = formData.get('avatar') as File | null
+  let avatarBuffer: Buffer | null = null
+  if (avatarFile && typeof avatarFile !== 'string') {
+    if (avatarFile.size > 5 * 1024 * 1024) {
+      return {
+        ...prevState,
+        success: false,
+        message: 'Avatar file size exceeds the limit of 5MB.',
+        errors: { avatar: ['Avatar file size exceeds the limit of 5MB.'] }
+      }
+    }
+    const arrayBuffer = await avatarFile.arrayBuffer()
+    avatarBuffer = Buffer.from(arrayBuffer)
+  }
 
   const state: EditUserState = {
     id: prevState.id,
@@ -64,16 +78,18 @@ async function editUserAction(
   try {
     const values = UserSchema.parse({
       ...state,
-      avatar
+      avatar: avatarBuffer ? avatarBuffer : getAvatarUrl(email, name)
     })
 
     const user = new UsersEntity()
     user.id = prevState.id
     user.name = name
     user.email = email
-    user.avatar = values.avatar
     user.role = values.role || prevState.role
     user.status = values.status || prevState.status
+    user.avatar = avatarBuffer || undefined
+    user.role = values.role
+    user.status = values.status
     if (password) await user.setPassword(password)
 
     const repository = new UsersRepository()

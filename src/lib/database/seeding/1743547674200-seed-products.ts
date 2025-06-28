@@ -7,8 +7,7 @@ const productData = [
       'Wireless noise-cancelling headphones with exceptional sound quality.',
     price: 299.99,
     stock: 45,
-    image:
-      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    image: null,
     sales: 128,
     category: 'Electronics',
     created_at: '2023-06-12'
@@ -18,8 +17,7 @@ const productData = [
     description: 'Health and fitness tracking with smart notifications.',
     price: 199.99,
     stock: 32,
-    image:
-      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    image: null,
     sales: 97,
     category: 'Electronics',
     created_at: '2023-07-23'
@@ -30,8 +28,7 @@ const productData = [
       'Water-resistant backpack with multiple compartments and USB charging port.',
     price: 79.99,
     stock: 58,
-    image:
-      'https://images.unsplash.com/photo-1491637639811-60e2756cc1c7?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    image: null,
     sales: 83,
     category: 'Accessories',
     created_at: '2023-08-04'
@@ -41,8 +38,7 @@ const productData = [
     description: 'Ergonomic keyboard with customizable RGB lighting.',
     price: 129.99,
     stock: 21,
-    image:
-      'https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    image: null,
     sales: 65,
     category: 'Electronics',
     created_at: '2023-09-15'
@@ -52,8 +48,7 @@ const productData = [
     description: 'Adjustable aluminum stand for smartphones and tablets.',
     price: 24.99,
     stock: 76,
-    image:
-      'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    image: null,
     sales: 52,
     category: 'Accessories',
     created_at: '2023-10-26'
@@ -64,8 +59,7 @@ const productData = [
       'True wireless earbuds with long battery life and water resistance.',
     price: 149.99,
     stock: 38,
-    image:
-      'https://images.unsplash.com/photo-1606220838315-056192d5e927?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    image: null,
     sales: 114,
     category: 'Electronics',
     created_at: '2023-11-07'
@@ -76,8 +70,7 @@ const productData = [
       'Modern LED desk lamp with adjustable brightness and color temperature.',
     price: 49.99,
     stock: 64,
-    image:
-      'https://images.unsplash.com/photo-1507643179773-3e975d7ac515?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    image: null,
     sales: 41,
     category: 'Home',
     created_at: '2023-12-18'
@@ -87,8 +80,7 @@ const productData = [
     description: 'Fast and compact external solid-state drive.',
     price: 179.99,
     stock: 27,
-    image:
-      'https://images.unsplash.com/photo-1600003263720-95b45a4035d5?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    image: null,
     sales: 77,
     category: 'Electronics',
     created_at: '2024-01-29'

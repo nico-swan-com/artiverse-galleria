@@ -33,7 +33,8 @@ export class Products1743547674199 implements MigrationInterface {
           },
           {
             name: 'image',
-            type: 'text'
+            type: 'bytea',
+            isNullable: true
           },
           {
             name: 'sales',

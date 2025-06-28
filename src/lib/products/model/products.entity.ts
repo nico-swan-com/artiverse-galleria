@@ -1,3 +1,4 @@
+import { encodeImageBufferToDataUrl } from '../../utilities'
 import { instanceToPlain, Transform } from 'class-transformer'
 import {
   Entity,
@@ -25,14 +26,60 @@ export class ProductsEntity {
   @Column({ type: 'int' })
   stock!: number
 
-  @Column({ type: 'text' })
-  image!: string
+  @Column({ type: 'bytea', nullable: true })
+  @Transform(
+    ({ value }) => {
+      if (value === null) return undefined
+      const buf = Buffer.from(value)
+      return encodeImageBufferToDataUrl(buf)
+    },
+    { toPlainOnly: true }
+  )
+  image!: Buffer
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   sales!: number
 
   @Column({ type: 'varchar', length: 50 })
   category!: string
+
+  @Column({
+    name: 'product_type',
+    type: 'varchar',
+    length: 50,
+    default: 'physical'
+  })
+  productType!: string
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  title?: string
+
+  @Column({ name: 'artist_id', type: 'uuid', nullable: true })
+  artistId?: string
+
+  @Column({ type: 'text', array: true, nullable: true })
+  images?: string[]
+
+  @Column({ name: 'year_created', type: 'int', nullable: true })
+  yearCreated?: number
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  medium?: string
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  dimensions?: string
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  weight?: string
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  style?: string
+
+  @Column({ type: 'varchar', length: 50, nullable: true, default: 'Available' })
+  availability?: string
+
+  @Column({ type: 'boolean', default: false })
+  featured!: boolean
 
   @CreateDateColumn({ name: 'created_at' })
   @Transform(({ value }) => (value === null ? undefined : value))

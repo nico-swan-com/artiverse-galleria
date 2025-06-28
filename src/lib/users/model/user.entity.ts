@@ -10,6 +10,7 @@ import bcrypt from 'bcryptjs'
 import { UserRoles } from './user-roles.enum'
 import { UserStatus } from './user-status.enum'
 import { Exclude, instanceToPlain, Transform } from 'class-transformer'
+import { encodeImageBufferToDataUrl } from '../../utilities'
 
 @Entity('users')
 export class UsersEntity {
@@ -22,8 +23,16 @@ export class UsersEntity {
   @Column()
   name!: string
 
-  @Column()
-  avatar!: string
+  @Column({ type: 'bytea', nullable: true })
+  @Transform(
+    ({ value }) => {
+      if (value === null) return undefined
+      const buf = Buffer.from(value)
+      return encodeImageBufferToDataUrl(buf)
+    },
+    { toPlainOnly: true }
+  )
+  avatar?: Buffer
 
   @Exclude()
   @Column()

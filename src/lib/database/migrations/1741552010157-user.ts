@@ -23,7 +23,8 @@ export class User1741552010157 implements MigrationInterface {
           },
           {
             name: 'avatar',
-            type: 'varchar'
+            type: 'bytea',
+            isNullable: true
           },
           {
             name: 'password',

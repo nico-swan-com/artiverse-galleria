@@ -41,5 +41,5 @@ export const UserSchema = z.object({
     .nativeEnum(UserStatus, { message: 'Missing user status.' })
     .optional()
     .default(UserStatus.Pending),
-  avatar: z.string().optional().default('/placeholder.svg')
+  avatar: z.instanceof(Buffer).or(z.instanceof(File))
 })

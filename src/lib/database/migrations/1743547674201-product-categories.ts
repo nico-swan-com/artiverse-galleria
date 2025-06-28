@@ -1,117 +1,43 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  TableColumn,
-  TableForeignKey
-} from 'typeorm'
+import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm'
 
-export class ArtworkFields1743547674200 implements MigrationInterface {
+export class ProductCategories1743547674201 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Add product_type enum
-    await queryRunner.query(`
-      CREATE TYPE product_type AS ENUM ('physical', 'digital', 'service', 'artwork');
-    `)
-
-    // Add new columns to products table
-    await queryRunner.addColumns('products', [
-      new TableColumn({
-        name: 'product_type',
-        type: 'product_type',
-        default: "'physical'",
-        isNullable: false
-      }),
-      new TableColumn({
-        name: 'title',
-        type: 'varchar',
-        length: '255',
-        isNullable: true
-      }),
-      new TableColumn({
-        name: 'artist_id',
-        type: 'uuid',
-        isNullable: true
-      }),
-      new TableColumn({
-        name: 'images',
-        type: 'text[]',
-        isNullable: true
-      }),
-      new TableColumn({
-        name: 'year_created',
-        type: 'int',
-        isNullable: true
-      }),
-      new TableColumn({
-        name: 'medium',
-        type: 'varchar',
-        length: '100',
-        isNullable: true
-      }),
-      new TableColumn({
-        name: 'dimensions',
-        type: 'varchar',
-        length: '100',
-        isNullable: true
-      }),
-      new TableColumn({
-        name: 'weight',
-        type: 'varchar',
-        length: '50',
-        isNullable: true
-      }),
-      new TableColumn({
-        name: 'style',
-        type: 'varchar',
-        length: '50',
-        isNullable: true
-      }),
-      new TableColumn({
-        name: 'availability',
-        type: 'varchar',
-        length: '50',
-        isNullable: true,
-        default: "'Available'"
-      }),
-      new TableColumn({
-        name: 'featured',
-        type: 'boolean',
-        default: false
+    await queryRunner.createTable(
+      new Table({
+        name: 'product_categories',
+        columns: [
+          {
+            name: 'id',
+            type: 'int',
+            isPrimary: true,
+            isGenerated: true,
+            generationStrategy: 'increment'
+          },
+          {
+            name: 'name',
+            type: 'varchar',
+            length: '50',
+            isNullable: false,
+            isUnique: true
+          }
+        ]
       })
-    ])
+    )
 
-    // Add foreign key for artist relationship
-    await queryRunner.createForeignKey(
-      'products',
-      new TableForeignKey({
-        name: 'FK_product_artist',
-        columnNames: ['artist_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'artists',
-        onDelete: 'SET NULL'
+    await queryRunner.createIndex(
+      'product_categories',
+      new TableIndex({
+        name: 'IDX_product_categories_name',
+        columnNames: ['name']
       })
     )
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Drop foreign key first
-    await queryRunner.dropForeignKey('products', 'FK_product_artist')
-
-    // Drop the new columns
-    await queryRunner.dropColumns('products', [
-      'product_type',
-      'title',
-      'artist_id',
-      'images',
-      'year_created',
-      'medium',
-      'dimensions',
-      'weight',
-      'style',
-      'availability',
-      'featured'
-    ])
-
-    // Drop the product_type enum
-    await queryRunner.query(`DROP TYPE IF EXISTS product_type;`)
+    await queryRunner.dropIndex(
+      'product_categories',
+      'IDX_product_categories_name'
+    )
+    await queryRunner.dropTable('product_categories')
   }
 }

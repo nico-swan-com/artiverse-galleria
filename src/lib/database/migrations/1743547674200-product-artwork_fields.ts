@@ -5,18 +5,13 @@ import {
   TableForeignKey
 } from 'typeorm'
 
-export class ArtworkFields1743547674200 implements MigrationInterface {
+export class ProductsArtworkFields1743547674200 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Add product_type enum
-    await queryRunner.query(`
-      CREATE TYPE product_type AS ENUM ('physical', 'digital', 'service', 'artwork');
-    `)
-
-    // Add new columns to products table
     await queryRunner.addColumns('products', [
       new TableColumn({
         name: 'product_type',
-        type: 'product_type',
+        type: 'varchar',
+        length: '50',
         default: "'physical'",
         isNullable: false
       }),
@@ -79,7 +74,6 @@ export class ArtworkFields1743547674200 implements MigrationInterface {
       })
     ])
 
-    // Add foreign key for artist relationship
     await queryRunner.createForeignKey(
       'products',
       new TableForeignKey({
@@ -93,10 +87,7 @@ export class ArtworkFields1743547674200 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Drop foreign key first
     await queryRunner.dropForeignKey('products', 'FK_product_artist')
-
-    // Drop the new columns
     await queryRunner.dropColumns('products', [
       'product_type',
       'title',

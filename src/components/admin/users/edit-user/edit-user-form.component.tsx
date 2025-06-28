@@ -128,6 +128,11 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
         )}
       </div>
 
+      <div className='space-y-2'>
+        <Label htmlFor='avatar'>Avatar</Label>
+        <Input id='avatar' name='avatar' type='file' accept='image/*' />
+      </div>
+
       {!showPasswordFields && (
         <Button
           className='w-full'

@@ -21,6 +21,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowDown, ArrowUp } from 'lucide-react'
 import TablePagination from '@/components/common/ui/table-pagination.component'
 import { UsersSortBy } from '@/lib/users'
+import { getAvatarUrl } from '@/lib/utilities/get-avatar-url'
 
 interface UsersListProps {
   users: User[]
@@ -133,7 +134,12 @@ const UsersList = ({
                   <TableCell>
                     <div className='flex items-center gap-3'>
                       <Avatar>
-                        <AvatarImage src={user.avatar} alt={user.name} />
+                        <AvatarImage
+                          src={
+                            user.avatar || getAvatarUrl(user.email, user.name)
+                          }
+                          alt={user.name}
+                        />
                         <AvatarFallback>
                           {user.name.substring(0, 2).toUpperCase()}
                         </AvatarFallback>

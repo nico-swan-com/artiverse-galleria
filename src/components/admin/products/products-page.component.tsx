@@ -1,102 +1,21 @@
 'use client'
 
-import PageTransition from '@/components/common/utility/page-transition.component'
-import { Product } from '@/lib/products'
-import { Button } from '@/components/ui/button'
-import { DialogHeader, DialogFooter } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogDescription
-} from '@radix-ui/react-dialog'
+import Link from 'next/link'
 import { Search, PlusCircle } from 'lucide-react'
-import { Label } from '@/components/ui/label'
-import { useState } from 'react'
-import { toast } from 'sonner'
+import { Input } from '@/components/ui/input'
+import PageTransition from '@/components/common/utility/page-transition.component'
 import ProductsGridList from './products-grid-list.component'
+import { Product } from '@/lib/products'
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
 
 type ProductsPageProps = {
   products: Product[]
 }
 
 const ProductsPage = ({ products }: ProductsPageProps) => {
-  const [productsList, setProductsList] = useState<Product[]>(products)
+  const [productsList] = useState<Product[]>(products)
   const [searchTerm, setSearchTerm] = useState('')
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-  const [newProduct, setNewProduct] = useState<Partial<Product>>({
-    name: '',
-    description: '',
-    price: 0,
-    stock: 0,
-    image: '',
-    category: ''
-  })
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null)
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    isEditing = false
-  ) => {
-    const value =
-      e.target.name === 'price' || e.target.name === 'stock'
-        ? Number(e.target.value)
-        : e.target.value
-
-    if (isEditing && editingProduct) {
-      setEditingProduct({
-        ...editingProduct,
-        [e.target.name]: value
-      })
-    } else {
-      setNewProduct({
-        ...newProduct,
-        [e.target.name]: value
-      })
-    }
-  }
-
-  const handleAddProduct = () => {
-    if (!newProduct.name || !newProduct.price || newProduct.price <= 0) {
-      toast.error('Missing information', {
-        description: 'Please fill all required fields with valid values.'
-      })
-      return
-    }
-
-    const defaultImage =
-      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
-
-    const product: Product = {
-      id: `p${productsList.length + 1}`,
-      name: newProduct.name!,
-      description: newProduct.description || 'No description provided.',
-      price: newProduct.price!,
-      stock: newProduct.stock || 0,
-      image: newProduct.image || defaultImage,
-      sales: 0,
-      category: newProduct.category || 'Uncategorized',
-      createdAt: new Date()
-    }
-
-    setProductsList([product, ...productsList])
-    setNewProduct({
-      name: '',
-      description: '',
-      price: 0,
-      stock: 0,
-      image: '',
-      category: ''
-    })
-    setIsAddDialogOpen(false)
-
-    toast.success('Product added', {
-      description: 'The product has been added successfully.'
-    })
-  }
 
   const filteredProducts = productsList.filter(
     (product) =>
@@ -124,101 +43,12 @@ const ProductsPage = ({ products }: ProductsPageProps) => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <PlusCircle size={16} className='mr-2' />
-                  Add Product
-                </Button>
-              </DialogTrigger>
-              <DialogContent className='sm:max-w-[600px]'>
-                <DialogHeader>
-                  <DialogTitle>Add New Product</DialogTitle>
-                  <DialogDescription>
-                    Add a new product to your inventory.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className='grid gap-4 py-4'>
-                  <div className='grid gap-2'>
-                    <Label htmlFor='name'>Product Name *</Label>
-                    <Input
-                      id='name'
-                      name='name'
-                      placeholder='Enter product name'
-                      value={newProduct.name}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className='grid gap-2'>
-                    <Label htmlFor='description'>Description</Label>
-                    <Textarea
-                      id='description'
-                      name='description'
-                      placeholder='Product description'
-                      rows={3}
-                      value={newProduct.description}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className='grid grid-cols-2 gap-4'>
-                    <div className='grid gap-2'>
-                      <Label htmlFor='price'>Price ($) *</Label>
-                      <Input
-                        id='price'
-                        name='price'
-                        type='number'
-                        min='0'
-                        step='0.01'
-                        placeholder='0.00'
-                        value={newProduct.price === 0 ? '' : newProduct.price}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                    <div className='grid gap-2'>
-                      <Label htmlFor='stock'>Stock Quantity</Label>
-                      <Input
-                        id='stock'
-                        name='stock'
-                        type='number'
-                        min='0'
-                        placeholder='0'
-                        value={newProduct.stock === 0 ? '' : newProduct.stock}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                  </div>
-                  <div className='grid gap-2'>
-                    <Label htmlFor='category'>Category</Label>
-                    <Input
-                      id='category'
-                      name='category'
-                      placeholder='Product category'
-                      value={newProduct.category}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className='grid gap-2'>
-                    <Label htmlFor='image'>Image URL</Label>
-                    <Input
-                      id='image'
-                      name='image'
-                      placeholder='Enter image URL (optional)'
-                      value={newProduct.image}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button
-                    variant='outline'
-                    onClick={() => setIsAddDialogOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button onClick={handleAddProduct}>Add Product</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            <Link href='/admin/products/new'>
+              <Button>
+                <PlusCircle size={16} className='mr-2' />
+                Add Product
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

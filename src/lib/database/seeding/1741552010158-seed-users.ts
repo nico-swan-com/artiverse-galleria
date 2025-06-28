@@ -1,14 +1,11 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 import { UsersEntity, UserRoles, UserStatus } from '../../users/model' // Import enums
 import { faker } from '@faker-js/faker' // Import Faker
-import { getAvatarUrl } from '../../utilities'
 
 export const users: UsersEntity[] = [
   {
     email: 'nicoswan@gmail.com',
     name: 'Nico Swan',
-    avatar:
-      'https://www.gravatar.com/avatar/0524df0fd1ea610c64dd2fb1d5e7dea130afa2948f3fce50c9998aa944269a37?d=https%3A%2F%2Fui-avatars.com%2Fapi%2F/Nico%20Swan/128',
     password: '$2b$10$6MtYzTCwOIC1q4XtoiN3NevsXBXrv0aqsVC2yKxf1YUcAmtY4IxEK', // password is 12345
     role: UserRoles.Admin,
     status: UserStatus.Active
@@ -31,7 +28,7 @@ export class SeedUsers1741552010158 implements MigrationInterface {
       return {
         email,
         name,
-        avatar: getAvatarUrl(email, name),
+        avatar: undefined,
         password: templateUser.password,
         role: randomRole,
         status: randomStatus

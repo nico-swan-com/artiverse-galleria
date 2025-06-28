@@ -5,6 +5,6 @@ export interface User {
   name: string
   role: string
   createdAt: Date
-  avatar: string
+  avatar: string | null // can be a base64 string, URL, or null
   status: string
 }
