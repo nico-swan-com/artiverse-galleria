@@ -1,15 +1,10 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableForeignKey
-} from 'typeorm'
+import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
-export class Products1743547674199 implements MigrationInterface {
+export class ProductVariations1743547674200 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'products',
+        name: 'product_variations',
         columns: [
           {
             name: 'id',
@@ -18,11 +13,21 @@ export class Products1743547674199 implements MigrationInterface {
             default: 'uuid_generate_v4()'
           },
           {
+            name: 'product_id',
+            type: 'uuid',
+            isNullable: false
+          },
+          {
+            name: 'variation_id',
+            type: 'uuid',
+            isPrimary: true,
+            default: 'uuid_generate_v4()'
+          },
+          {
             name: 'sku',
-            type: 'int',
-            isUnique: true,
-            isGenerated: true,
-            generationStrategy: 'increment'
+            type: 'varchar',
+            length: '50',
+            isUnique: true
           },
           {
             name: 'title',
@@ -44,25 +49,10 @@ export class Products1743547674199 implements MigrationInterface {
             type: 'int'
           },
           {
-            name: 'feature_image',
-            type: 'text',
-            isNullable: true
-          },
-          {
-            name: 'images',
-            type: 'text[]',
-            isNullable: true
-          },
-          {
             name: 'sales',
             type: 'decimal',
             precision: 10,
             scale: 2
-          },
-          {
-            name: 'featured',
-            type: 'boolean',
-            default: false
           },
           {
             name: 'product_type',
@@ -75,11 +65,6 @@ export class Products1743547674199 implements MigrationInterface {
             name: 'category',
             type: 'varchar',
             length: '50'
-          },
-          {
-            name: 'artist_id',
-            type: 'uuid',
-            isNullable: true
           },
           {
             name: 'year_created',
@@ -130,20 +115,9 @@ export class Products1743547674199 implements MigrationInterface {
       }),
       true
     )
-    await queryRunner.createForeignKey(
-      'products',
-      new TableForeignKey({
-        name: 'FK_product_artist',
-        columnNames: ['artist_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'artists',
-        onDelete: 'SET NULL'
-      })
-    )
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKey('products', 'FK_product_artist')
-    await queryRunner.dropTable('products')
+    await queryRunner.dropTable('product_variations')
   }
 }

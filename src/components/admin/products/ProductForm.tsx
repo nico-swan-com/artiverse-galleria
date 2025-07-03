@@ -9,7 +9,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { useActionState } from 'react'
-import { productFormAction, ProductFormState } from './productFormAction'
+import { productFormAction, ProductFormState } from './product-form.action'
+import { ArtistSelect } from '@/components/common/artists/ArtistSelect'
 
 interface ProductFormProps {
   initialProduct?: Partial<Product>
@@ -44,8 +45,10 @@ export default function ProductForm({
     initialProduct || defaultProduct
   )
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
+  const [artist, setArtist] = useState<string | undefined>()
   const router = useRouter()
   const [state, formAction, isPending] = useActionState(productFormAction, {
+    ...product,
     success: false,
     message: '',
     errors: {}
@@ -61,18 +64,17 @@ export default function ProductForm({
     }
   }, [initialProduct])
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const value =
-      e.target.name === 'price' || e.target.name === 'stock'
-        ? Number(e.target.value)
-        : e.target.value
-    setProduct({
-      ...product,
-      [e.target.name]: value
-    })
-  }
+  useEffect(() => {
+    if (state.success) {
+      router.push('/admin/products')
+    }
+  }, [state, router])
+
+  useEffect(() => {
+    if (artist) {
+      setProduct((prev) => ({ ...prev, artistId: artist }))
+    }
+  }, [artist, state])
 
   const handleImageRemove = (idx: number) => {
     if (Array.isArray(product.images)) {
@@ -109,14 +111,16 @@ export default function ProductForm({
   }
 
   return (
-    <form
-      className='mx-auto max-w-xl py-8'
-      action={formAction}
-      encType='multipart/form-data'
-    >
+    <form className='mx-auto max-w-xl py-8' action={formAction}>
       <h2 className='mb-4 text-2xl font-bold'>
         {isEdit ? 'Edit Product' : 'Add Product'}
       </h2>
+      {isEdit && (
+        <>
+          <input type='hidden' name='id' defaultValue={state.id ?? ''} />
+          <input type='hidden' name='isEdit' defaultValue='true' />
+        </>
+      )}
       <div className='grid gap-4'>
         <div className='grid gap-2'>
           <Label htmlFor='name'>Product Name *</Label>
@@ -124,9 +128,13 @@ export default function ProductForm({
             id='name'
             name='name'
             placeholder='Enter product name'
-            value={product.name ?? ''}
-            onChange={handleInputChange}
+            defaultValue={state.name ?? ''}
           />
+          {state?.errors?.name && (
+            <p className='text-xs text-red-500'>
+              {state.errors.name.join(', ')}
+            </p>
+          )}
         </div>
         <div className='grid gap-2'>
           <Label htmlFor='description'>Description</Label>
@@ -135,13 +143,22 @@ export default function ProductForm({
             name='description'
             placeholder='Product description'
             rows={3}
-            value={product.description ?? ''}
-            onChange={handleInputChange}
+            defaultValue={state.description ?? ''}
           />
+          {state?.errors?.description && (
+            <p className='text-xs text-red-500'>
+              {state.errors.description.join(', ')}
+            </p>
+          )}
         </div>
         <div className='grid gap-2'>
           <Label htmlFor='image'>Feature Image</Label>
           <Input id='image' name='image' type='file' accept='image/*' />
+          {state?.errors?.images && (
+            <p className='text-xs text-red-500'>
+              {state.errors.images.join(', ')}
+            </p>
+          )}
         </div>
         <div className='grid grid-cols-2 gap-4'>
           <div className='grid gap-2'>
@@ -153,9 +170,15 @@ export default function ProductForm({
               min='0'
               step='0.01'
               placeholder='0.00'
-              value={product.price === 0 ? '' : product.price}
-              onChange={handleInputChange}
+              defaultValue={
+                Number(state.price) === 0 ? '' : (state.price ?? '')
+              }
             />
+            {state?.errors?.price && (
+              <p className='text-xs text-red-500'>
+                {state.errors.price.join(', ')}
+              </p>
+            )}
           </div>
           <div className='grid gap-2'>
             <Label htmlFor='stock'>Stock Quantity</Label>
@@ -165,9 +188,15 @@ export default function ProductForm({
               type='number'
               min='0'
               placeholder='0'
-              value={product.stock === 0 ? '' : product.stock}
-              onChange={handleInputChange}
+              defaultValue={
+                Number(state.stock) === 0 ? '' : (state.stock ?? '')
+              }
             />
+            {state?.errors?.stock && (
+              <p className='text-xs text-red-500'>
+                {state.errors.stock.join(', ')}
+              </p>
+            )}
           </div>
         </div>
         <div className='grid gap-2'>
@@ -176,9 +205,13 @@ export default function ProductForm({
             id='category'
             name='category'
             placeholder='Product category'
-            value={product.category ?? ''}
-            onChange={handleInputChange}
+            defaultValue={state.category ?? ''}
           />
+          {state?.errors?.category && (
+            <p className='text-xs text-red-500'>
+              {state.errors.category.join(', ')}
+            </p>
+          )}
         </div>
         <div className='grid gap-2'>
           <Label htmlFor='image'>Images</Label>
@@ -233,13 +266,17 @@ export default function ProductForm({
 
         <div className='grid gap-2'>
           <Label htmlFor='productType'>Product Type</Label>
-          <Input
+          <select
             id='productType'
             name='productType'
-            placeholder='physical, digital, service, artwork'
-            value={product.productType}
-            onChange={handleInputChange}
-          />
+            className='block w-full rounded border border-gray-300 bg-white p-2 text-sm shadow-sm focus:border-primary focus:outline-none'
+            defaultValue={state.productType}
+          >
+            <option value='physical'>Physical</option>
+            <option value='digital'>Digital</option>
+            <option value='service'>Service</option>
+            <option value='artwork'>Artwork</option>
+          </select>
         </div>
         <div className='grid gap-2'>
           <Label htmlFor='title'>Title</Label>
@@ -247,19 +284,16 @@ export default function ProductForm({
             id='title'
             name='title'
             placeholder='Product title (optional)'
-            value={product.title ?? ''}
-            onChange={handleInputChange}
+            defaultValue={state.title ?? ''}
           />
         </div>
         <div className='grid gap-2'>
-          <Label htmlFor='artistId'>Artist ID</Label>
-          <Input
-            id='artistId'
-            name='artistId'
-            placeholder='Artist ID (optional)'
-            value={product.artistId ?? ''}
-            onChange={handleInputChange}
+          <Label htmlFor='artistId'>Artist</Label>
+          <ArtistSelect
+            artistId={product.artistId || ''}
+            onChange={(val) => setArtist(val)}
           />
+          <input type='hidden' name='artistId' value={product.artistId ?? ''} />
         </div>
         <div className='grid gap-2'>
           <Label htmlFor='yearCreated'>Year Created</Label>
@@ -268,8 +302,7 @@ export default function ProductForm({
             name='yearCreated'
             type='number'
             placeholder='Year created (optional)'
-            value={product.yearCreated || ''}
-            onChange={handleInputChange}
+            defaultValue={state.yearCreated || ''}
           />
         </div>
         <div className='grid gap-2'>
@@ -278,8 +311,7 @@ export default function ProductForm({
             id='medium'
             name='medium'
             placeholder='Medium (optional)'
-            value={product.medium ?? ''}
-            onChange={handleInputChange}
+            defaultValue={state.medium ?? ''}
           />
         </div>
         <div className='grid gap-2'>
@@ -288,8 +320,7 @@ export default function ProductForm({
             id='dimensions'
             name='dimensions'
             placeholder='Dimensions (optional)'
-            value={product.dimensions ?? ''}
-            onChange={handleInputChange}
+            defaultValue={state.dimensions ?? ''}
           />
         </div>
         <div className='grid gap-2'>
@@ -298,8 +329,7 @@ export default function ProductForm({
             id='weight'
             name='weight'
             placeholder='Weight (optional)'
-            value={product.weight ?? ''}
-            onChange={handleInputChange}
+            defaultValue={state.weight ?? ''}
           />
         </div>
         <div className='grid gap-2'>
@@ -308,8 +338,7 @@ export default function ProductForm({
             id='style'
             name='style'
             placeholder='Style (optional)'
-            value={product.style ?? ''}
-            onChange={handleInputChange}
+            defaultValue={state.style ?? ''}
           />
         </div>
         <div className='grid gap-2'>
@@ -318,8 +347,7 @@ export default function ProductForm({
             id='availability'
             name='availability'
             placeholder='Available, Sold, etc.'
-            value={product.availability ?? ''}
-            onChange={handleInputChange}
+            defaultValue={state.availability ?? ''}
           />
         </div>
         <div className='flex items-center gap-2'>

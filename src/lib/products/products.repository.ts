@@ -6,10 +6,9 @@ import { ProductsSortBy } from './model/products-sort-by.type'
 import { Products } from './model/products.type'
 import { Product, ProductCreate, ProductUpdate } from './model/product.schema'
 import { getRepository } from '../database'
-import { encodeImageBufferToDataUrl } from '../utilities'
 class ProductsRepository {
   async getAll(
-    sortByField: ProductsSortBy = 'name',
+    sortByField: ProductsSortBy = 'title',
     sortOrder: FindOptionsOrderValue = 'ASC'
   ): Promise<Products> {
     try {
@@ -80,28 +79,6 @@ class ProductsRepository {
   async create(product: ProductCreate): Promise<Product> {
     try {
       const repository = await getRepository(ProductsEntity)
-      if (product.image instanceof File) {
-        const arrayBuffer = await product.image.arrayBuffer()
-        product.image = Buffer.from<ArrayBuffer>(arrayBuffer)
-      } else if (product.image instanceof ArrayBuffer) {
-        product.image = Buffer.from(product.image)
-      }
-      if (Array.isArray(product.images)) {
-        product.images = await Promise.all(
-          product.images.map(async (img) => {
-            if (img instanceof File) {
-              const arrayBuffer = await img.arrayBuffer()
-              const buffer = Buffer.from(arrayBuffer)
-              return encodeImageBufferToDataUrl(buffer)
-            } else if (img instanceof ArrayBuffer) {
-              const buffer = Buffer.from(img)
-              return encodeImageBufferToDataUrl(buffer)
-            }
-            return img
-          })
-        )
-      }
-      // Ensure all new fields are included in the save
       const created = await repository.save(product as Partial<ProductsEntity>)
       return created as Product
     } catch (error) {
@@ -113,27 +90,6 @@ class ProductsRepository {
   async update(product: ProductUpdate): Promise<void> {
     try {
       if (!product.id) throw new Error('Product ID is required for update')
-      if (product.image instanceof File) {
-        const arrayBuffer = await product.image.arrayBuffer()
-        product.image = Buffer.from<ArrayBuffer>(arrayBuffer)
-      } else if (product.image instanceof ArrayBuffer) {
-        product.image = Buffer.from(product.image)
-      }
-      if (Array.isArray(product.images)) {
-        product.images = await Promise.all(
-          product.images.map(async (img) => {
-            if (img instanceof File) {
-              const arrayBuffer = await img.arrayBuffer()
-              const buffer = Buffer.from(arrayBuffer)
-              return encodeImageBufferToDataUrl(buffer)
-            } else if (img instanceof ArrayBuffer) {
-              const buffer = Buffer.from(img)
-              return encodeImageBufferToDataUrl(buffer)
-            }
-            return img
-          })
-        )
-      }
       const repository = await getRepository(ProductsEntity)
       await repository.update(product.id, product as Partial<ProductsEntity>)
       return

@@ -2,12 +2,22 @@ import { z } from 'zod'
 
 export const ProductSchema = z.object({
   id: z.string().uuid(),
-  name: z.string().min(1, 'Name is required').max(100, 'Name is too long'),
+  sku: z.number().int().positive().optional(),
+  title: z.string().min(1, 'Name is required').max(255, 'Name is too long'),
   description: z.string().max(500, 'Description is too long'),
-  image: z.instanceof(Buffer).or(z.instanceof(File)).optional(),
+  featureImage: z.string().url().optional(),
   price: z.number().min(0, 'Price must be a positive number'),
   stock: z.number().min(0, 'Stock must be a positive number'),
   sales: z.number().min(0, 'Sales must be a positive number'),
+  productType: z.string().min(1).max(50).default('physical'),
+  artistId: z.string().uuid().optional(),
+  images: z.array(z.string()).optional(),
+  yearCreated: z.number().int().optional(),
+  medium: z.string().max(100).optional(),
+  dimensions: z.string().max(100).optional(),
+  weight: z.string().max(50).optional(),
+  style: z.string().max(50).optional(),
+  featured: z.boolean().default(false),
   category: z
     .string()
     .min(1, 'Category is required')
@@ -19,20 +29,7 @@ export const ProductSchema = z.object({
   updatedAt: z
     .date()
     .default(() => new Date())
-    .optional(),
-  productType: z.string().min(1).max(50).default('physical'),
-  title: z.string().max(255).optional(),
-  artistId: z.string().uuid().optional(),
-  images: z
-    .array(z.instanceof(Buffer).or(z.instanceof(File)).or(z.string()))
-    .optional(),
-  yearCreated: z.number().int().optional(),
-  medium: z.string().max(100).optional(),
-  dimensions: z.string().max(100).optional(),
-  weight: z.string().max(50).optional(),
-  style: z.string().max(50).optional(),
-  availability: z.string().max(50).default('Available').optional(),
-  featured: z.boolean().default(false)
+    .optional()
 })
 
 export type Product = z.infer<typeof ProductSchema>
@@ -58,3 +55,9 @@ export const ProductUpdateListPartialSchema = z.array(
 export type ProductUpdateListPartial = z.infer<
   typeof ProductUpdateListPartialSchema
 >
+export const ProductDeleteSchema = ProductSchema.pick({
+  id: true,
+  title: true,
+  description: true
+})
+export type ProductDelete = z.infer<typeof ProductDeleteSchema>

@@ -19,7 +19,7 @@ const ProductsPage = ({ products }: ProductsPageProps) => {
 
   const filteredProducts = productsList.filter(
     (product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.category.toLowerCase().includes(searchTerm.toLowerCase())
   )
 

@@ -1,4 +1,3 @@
-import { encodeImageBufferToDataUrl } from '../../utilities'
 import { instanceToPlain, Transform } from 'class-transformer'
 import {
   Entity,
@@ -14,8 +13,11 @@ export class ProductsEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string
 
+  @Column({ type: 'int', unique: true, generated: 'increment' })
+  sku!: number
+
   @Column({ type: 'varchar', length: 255 })
-  name!: string
+  title!: string
 
   @Column({ type: 'text' })
   description!: string
@@ -26,22 +28,17 @@ export class ProductsEntity {
   @Column({ type: 'int' })
   stock!: number
 
-  @Column({ type: 'bytea', nullable: true })
-  @Transform(
-    ({ value }) => {
-      if (value === null) return undefined
-      const buf = Buffer.from(value)
-      return encodeImageBufferToDataUrl(buf)
-    },
-    { toPlainOnly: true }
-  )
-  image!: Buffer
+  @Column({ name: 'feature_image', type: 'text', nullable: true })
+  featureImage?: string
+
+  @Column({ type: 'text', array: true, nullable: true })
+  images?: string[]
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   sales!: number
 
-  @Column({ type: 'varchar', length: 50 })
-  category!: string
+  @Column({ type: 'boolean', default: false })
+  featured!: boolean
 
   @Column({
     name: 'product_type',
@@ -51,14 +48,11 @@ export class ProductsEntity {
   })
   productType!: string
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  title?: string
+  @Column({ type: 'varchar', length: 50 })
+  category!: string
 
   @Column({ name: 'artist_id', type: 'uuid', nullable: true })
   artistId?: string
-
-  @Column({ type: 'text', array: true, nullable: true })
-  images?: string[]
 
   @Column({ name: 'year_created', type: 'int', nullable: true })
   yearCreated?: number
@@ -75,20 +69,18 @@ export class ProductsEntity {
   @Column({ type: 'varchar', length: 50, nullable: true })
   style?: string
 
-  @Column({ type: 'varchar', length: 50, nullable: true, default: 'Available' })
-  availability?: string
-
-  @Column({ type: 'boolean', default: false })
-  featured!: boolean
-
   @CreateDateColumn({ name: 'created_at' })
   @Transform(({ value }) => (value === null ? undefined : value))
-  @Transform(({ value }) => value.toISOString(), { toPlainOnly: true })
+  @Transform(({ value }) => (value ? value.toISOString() : undefined), {
+    toPlainOnly: true
+  })
   createdAt?: Date
 
   @UpdateDateColumn({ name: 'updated_at' })
   @Transform(({ value }) => (value === null ? undefined : value))
-  @Transform(({ value }) => value.toISOString(), { toPlainOnly: true })
+  @Transform(({ value }) => (value ? value.toISOString() : undefined), {
+    toPlainOnly: true
+  })
   updatedAt?: Date
 
   @DeleteDateColumn({ name: 'deleted_at' })

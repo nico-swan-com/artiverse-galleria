@@ -2,23 +2,23 @@ import React from 'react'
 import Image from 'next/image'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Pencil, Trash2 } from 'lucide-react'
+import { Pencil } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { Product } from '@/lib/products'
 import Link from 'next/link'
+import DeleteProductDialog from './ProductDeleteDialog'
 
 interface ProductItemProps {
   product: Product
-  onDelete: (id: string) => void
 }
 
-const ProductItem: React.FC<ProductItemProps> = ({ product, onDelete }) => {
+const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
   return (
     <Card className='overflow-hidden transition-all duration-300 hover:shadow-md'>
-      {typeof product.image === 'string' && product.image ? (
+      {typeof product.featureImage === 'string' && product.featureImage ? (
         <Image
-          src={product.image}
-          alt={product.name}
+          src={product.featureImage}
+          alt={product.title}
           width={400}
           height={300}
           className='transition-transform duration-300 hover:scale-105'
@@ -34,7 +34,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ product, onDelete }) => {
       <CardContent className='p-4'>
         <div className='flex items-start justify-between gap-2'>
           <div>
-            <h3 className='text-base font-medium'>{product.name}</h3>
+            <h3 className='text-base font-medium'>{product.title}</h3>
             <p className='text-sm text-muted-foreground'>{product.category}</p>
           </div>
           <div className='text-base font-semibold'>
@@ -62,15 +62,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ product, onDelete }) => {
               <span className='sr-only'>Edit</span>
             </Button>
           </Link>
-          <Button
-            size='icon'
-            variant='outline'
-            className='text-destructive'
-            onClick={() => onDelete(product.id)}
-          >
-            <Trash2 size={16} />
-            <span className='sr-only'>Delete</span>
-          </Button>
+          <DeleteProductDialog product={product} />
         </div>
       </CardFooter>
     </Card>

@@ -12,7 +12,7 @@ const ProductsServerPage = async (props: { searchParams: SearchParams }) => {
   const sortBy = (
     typeof params.sortBy === 'string' && isValidProductsSortKey(params.sortBy)
       ? params.sortBy
-      : 'name'
+      : 'title'
   ) as ProductsSortBy
   const order = (
     params.order === 'ASC' || params.order === 'DESC' ? params.order : 'DESC'

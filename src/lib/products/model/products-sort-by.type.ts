@@ -1,6 +1,6 @@
 export type ProductsSortBy =
   | 'id'
-  | 'name'
+  | 'title'
   | 'description'
   | 'price'
   | 'stock'
@@ -13,7 +13,7 @@ export type ProductsSortBy =
 export function isValidProductsSortKey(key: string): key is ProductsSortBy {
   return [
     'id',
-    'name',
+    'title',
     'description',
     'price',
     'stock',
