@@ -46,10 +46,7 @@ async function createUserAction(prevState: any, formData: FormData) {
 
     user.name = name
     user.email = email
-    user.avatar =
-      typeof values.avatar === 'object' && values.avatar instanceof Buffer
-        ? values.avatar
-        : undefined
+    user.avatar = values.avatar
     user.role = values.role
     user.status = values.status
 

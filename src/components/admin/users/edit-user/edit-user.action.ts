@@ -16,7 +16,6 @@ export type EditUserFieldErrors = {
   email?: string[]
   password?: string[]
   newPassword?: string[]
-  avatar?: string[]
   role?: string[]
   status?: string[]
   database?: string[]
@@ -42,25 +41,10 @@ async function editUserAction(
   const name = formData.get('name')?.toString() || ''
   const email = formData.get('email')?.toString() || ''
   const newPassword = formData.get('newPassword')?.toString() || ''
-  const status = formData.get('status')?.toString() || ''
-  const role = formData.get('role')?.toString() || ''
   const password = !!newPassword
     ? PasswordSchema.parse(newPassword)
     : prevState.password
-  const avatarFile = formData.get('avatar') as File | null
-  let avatarBuffer: Buffer | null = null
-  if (avatarFile && typeof avatarFile !== 'string') {
-    if (avatarFile.size > 5 * 1024 * 1024) {
-      return {
-        ...prevState,
-        success: false,
-        message: 'Avatar file size exceeds the limit of 5MB.',
-        errors: { avatar: ['Avatar file size exceeds the limit of 5MB.'] }
-      }
-    }
-    const arrayBuffer = await avatarFile.arrayBuffer()
-    avatarBuffer = Buffer.from(arrayBuffer)
-  }
+  const avatar = formData.get('avatar')?.toString() || getAvatarUrl(email, name)
 
   const state: EditUserState = {
     id: prevState.id,
@@ -70,24 +54,22 @@ async function editUserAction(
     email,
     password,
     newPassword,
-    role,
-    status,
+    role: prevState.role || '',
+    status: prevState.status || '',
     errors: {}
   }
 
   try {
     const values = UserSchema.parse({
       ...state,
-      avatar: avatarBuffer ? avatarBuffer : getAvatarUrl(email, name)
+      avatar
     })
 
     const user = new UsersEntity()
     user.id = prevState.id
     user.name = name
     user.email = email
-    user.role = values.role || prevState.role
-    user.status = values.status || prevState.status
-    user.avatar = avatarBuffer || undefined
+    user.avatar = values.avatar
     user.role = values.role
     user.status = values.status
     if (password) await user.setPassword(password)
