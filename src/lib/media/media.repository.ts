@@ -1,0 +1,38 @@
+import { getRepository } from '../database'
+import { MediaEntity } from './model/media.entity'
+import { Media } from './model/media.schema'
+
+export class MediaRepository {
+  async getById(id: string): Promise<Media | null> {
+    try {
+      const repository = await getRepository(MediaEntity)
+      const media = await repository.findOne({ where: { id } })
+      return media as Media
+    } catch (error) {
+      console.error(`Error getting image by ID:${id}`, { error })
+      throw error
+    }
+  }
+
+  async createAndSave(media: MediaEntity): Promise<Media> {
+    try {
+      const repository = await getRepository(MediaEntity)
+      const saved = await repository.save(media)
+      return saved as Media
+    } catch (error) {
+      console.error('Error saving media', { error })
+      throw error
+    }
+  }
+
+  async deleteById(id: string): Promise<boolean> {
+    try {
+      const repository = await getRepository(MediaEntity)
+      const result = await repository.delete(id)
+      return result.affected !== 0
+    } catch (error) {
+      console.error(`Error deleting image by ID:${id}`, { error })
+      throw error
+    }
+  }
+}

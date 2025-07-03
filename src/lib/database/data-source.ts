@@ -3,6 +3,7 @@ import { DataSource, EntityTarget, ObjectLiteral, Repository } from 'typeorm'
 import { ProductsEntity } from '../products'
 import { ArtistsEntity } from '../artists'
 import { UsersEntity } from '../users'
+import { MediaEntity } from '../media'
 
 let dataSourceInstance: DataSource
 
@@ -49,7 +50,7 @@ export const createDataSource = () => {
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DATABASE,
     schema: process.env.POSTGRES_SCHEMA || 'public',
-    entities: [UsersEntity, ArtistsEntity, ProductsEntity],
+    entities: [UsersEntity, ArtistsEntity, ProductsEntity, MediaEntity],
     synchronize: false,
     logging: process.env.NODE_ENV === 'development',
     migrations: [__dirname + '/migrations/*.ts']

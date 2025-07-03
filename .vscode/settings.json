@@ -21,7 +21,8 @@
     "artist-management",
     "products-management",
     "user-management",
-    "data-access"
+    "data-access",
+    "media-management"
   ],
   "cSpell.words": ["Artiverse", "sonner", "Uncategorized"]
 }
