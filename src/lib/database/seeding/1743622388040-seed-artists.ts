@@ -7,8 +7,9 @@ export class SeedArtists1743622388040 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const artistRepository = queryRunner.manager.getRepository(ArtistsEntity)
     const newArtists = artistData.map((artist) => ({
+      id: artist.id, // Ensure the UUID is set explicitly
       name: artist.name,
-      photoUrl: artist.photoUrl,
+      image: artist.image,
       featured: artist.featured,
       styles: artist.styles,
       biography: artist.biography,

@@ -1,23 +1,15 @@
-import { Artist } from '../../../types'
+import { ArtistsEntity } from '../../artists/model/artist.entity'
+
+export type Artist = Omit<ArtistsEntity, 'toPlain'>
 
 export const artists: Artist[] = [
   {
     id: 'c9de4b7f-5765-460a-9528-e86a12784777',
     name: 'Sophia Chen',
-    bio: 'Sophia Chen is a contemporary abstract artist based in San Francisco. Her work explores the relationship between urban environments and natural elements, creating harmonious compositions that bridge the gap between the man-made and the organic.',
-    photoUrl:
+    image:
       'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3024&q=80',
-    coverImageUrl:
-      'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3015&q=80',
     featured: true,
     styles: ['Abstract', 'Contemporary', 'Mixed Media'],
-    contact: {
-      email: 'sophia@example.com',
-      website: 'https://example.com/sophia',
-      instagram: '@sophiachen_art'
-    },
-    profileImage:
-      'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3024&q=80',
     biography:
       'Sophia Chen is a contemporary abstract artist based in San Francisco. Her work explores the relationship between urban environments and natural elements, creating harmonious compositions that bridge the gap between the man-made and the organic.',
     specialization: 'Contemporary Abstract Art',
@@ -35,20 +27,10 @@ export const artists: Artist[] = [
   {
     id: 'd073bf5c-4369-40b3-b47f-ff500d079e97',
     name: 'Marcus Rivera',
-    bio: 'Marcus Rivera is a minimalist photographer who captures the essence of architectural forms through his lens. His work emphasizes clean lines, geometric patterns, and the interplay of light and shadow in urban spaces.',
-    photoUrl:
+    image:
       'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80',
-    coverImageUrl:
-      'https://images.unsplash.com/photo-1509023464722-18d996393ca8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3000&q=80',
     featured: true,
     styles: ['Photography', 'Minimalist', 'Architectural'],
-    contact: {
-      email: 'marcus@example.com',
-      website: 'https://example.com/marcus',
-      instagram: '@marcusrivera_photo'
-    },
-    profileImage:
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80',
     biography:
       'Marcus Rivera is a minimalist photographer who captures the essence of architectural forms through his lens. His work emphasizes clean lines, geometric patterns, and the interplay of light and shadow in urban spaces.',
     specialization: 'Architectural Photography',
@@ -66,25 +48,16 @@ export const artists: Artist[] = [
   {
     id: 'c5a30a5f-cd8e-4715-8a3f-762a32e6e6ff',
     name: 'Amara Johnson',
-    bio: "Amara Johnson's sculptures blend traditional craftsmanship with contemporary concepts. Working primarily with wood and metal, she creates pieces that challenge perceptions of form and space while honoring the intrinsic qualities of her materials.",
-    photoUrl:
+    image:
       'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80',
-    coverImageUrl:
-      'https://images.unsplash.com/photo-1502204267133-2a1edefce2c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3000&q=80',
     featured: false,
     styles: ['Sculpture', 'Mixed Media', 'Modern'],
-    contact: {
-      email: 'amara@example.com',
-      website: 'https://example.com/amara',
-      instagram: '@amarajohnson_art'
-    },
-    profileImage:
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80',
     biography:
       "Amara Johnson's sculptures blend traditional craftsmanship with contemporary concepts. Working primarily with wood and metal, she creates pieces that challenge perceptions of form and space while honoring the intrinsic qualities of her materials.",
     specialization: 'Contemporary Sculpture',
     location: 'Portland, OR',
     email: 'amara@example.com',
+    website: 'https://example.com/amara',
     exhibitions: [
       'Form & Function, Portland Museum of Art, 2023',
       'Material Matters, Seattle Art Gallery, 2022'
@@ -95,25 +68,16 @@ export const artists: Artist[] = [
   {
     id: 'bce3d76c-f26b-4dd2-8c46-84f19ee8fcb2',
     name: 'Hiroshi Tanaka',
-    bio: 'Hiroshi Tanaka merges traditional Japanese painting techniques with digital media to create ethereal landscapes that exist between reality and imagination. His work invites viewers to contemplate the boundaries between natural and digital worlds.',
-    photoUrl:
+    image:
       'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80',
-    coverImageUrl:
-      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2088&q=80',
     featured: true,
     styles: ['Digital', 'Traditional', 'Landscape'],
-    contact: {
-      email: 'hiroshi@example.com',
-      website: 'https://example.com/hiroshi',
-      instagram: '@hiroshitanaka_art'
-    },
-    profileImage:
-      'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80',
     biography:
       'Hiroshi Tanaka merges traditional Japanese painting techniques with digital media to create ethereal landscapes that exist between reality and imagination. His work invites viewers to contemplate the boundaries between natural and digital worlds.',
     specialization: 'Digital Japanese Art',
     location: 'Tokyo, Japan',
     email: 'hiroshi@example.com',
+    website: 'https://example.com/hiroshi',
     exhibitions: [
       'Digital Horizons, Tokyo Contemporary Art Museum, 2023',
       'Nature & Technology, Kyoto Gallery, 2022'
@@ -124,25 +88,16 @@ export const artists: Artist[] = [
   {
     id: '66321c80-625b-47bb-a194-2aee8b80978d',
     name: 'Elena Petrov',
-    bio: "Elena Petrov's oil paintings capture the emotional essence of human experiences through masterful use of color and light. Her portraits and figurative works reveal the complexities of human psychology with both sensitivity and boldness.",
-    photoUrl:
+    image:
       'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80',
-    coverImageUrl:
-      'https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3174&q=80',
     featured: false,
     styles: ['Portraiture', 'Oil Painting', 'Figurative'],
-    contact: {
-      email: 'elena@example.com',
-      website: 'https://example.com/elena',
-      instagram: '@elenapetrova_art'
-    },
-    profileImage:
-      'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80',
     biography:
       "Elena Petrov's oil paintings capture the emotional essence of human experiences through masterful use of color and light. Her portraits and figurative works reveal the complexities of human psychology with both sensitivity and boldness.",
     specialization: 'Portrait Oil Painting',
     location: 'Paris, France',
     email: 'elena@example.com',
+    website: 'https://example.com/elena',
     exhibitions: [
       'Human Nature, Louvre Contemporary Wing, 2023',
       'Colors of Emotion, Berlin Gallery, 2022'
@@ -153,25 +108,16 @@ export const artists: Artist[] = [
   {
     id: '615641d0-1aea-4eb8-8730-2c82b7b1f29d',
     name: 'James Wilson',
-    bio: 'James Wilson transforms reclaimed materials into thought-provoking installations that comment on environmental issues and consumer culture. His work challenges viewers to reconsider their relationship with everyday objects and waste.',
-    photoUrl:
+    image:
       'https://images.unsplash.com/photo-1504257432389-52343af06ae3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80',
-    coverImageUrl:
-      'https://images.unsplash.com/photo-1480796927426-f609979314bd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
     featured: false,
     styles: ['Installation', 'Eco-Art', 'Conceptual'],
-    contact: {
-      email: 'james@example.com',
-      website: 'https://example.com/james',
-      instagram: '@jameswilson_art'
-    },
-    profileImage:
-      'https://images.unsplash.com/photo-1504257432389-52343af06ae3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80',
     biography:
       'James Wilson transforms reclaimed materials into thought-provoking installations that comment on environmental issues and consumer culture. His work challenges viewers to reconsider their relationship with everyday objects and waste.',
     specialization: 'Environmental Installation Art',
     location: 'London, UK',
     email: 'james@example.com',
+    website: 'https://example.com/james',
     exhibitions: [
       'Waste Not, Tate Modern, 2023',
       'Consumer Culture, Manchester Art Gallery, 2022'

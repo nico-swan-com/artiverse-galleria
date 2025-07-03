@@ -3,10 +3,7 @@ import { z } from 'zod'
 export const ArtistSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1, 'Name is required').max(100, 'Name is too long'),
-  image: z
-    .string()
-    .or(z.instanceof(Buffer).or(z.instanceof(File)))
-    .optional(),
+  image: z.string().min(1, 'Image is required'),
   featured: z.boolean().default(false),
   styles: z.array(z.string()).default([]),
   biography: z

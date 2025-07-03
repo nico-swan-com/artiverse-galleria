@@ -18,7 +18,12 @@ export class Artists1743547674198 implements MigrationInterface {
           },
           {
             name: 'image',
-            type: 'bytea',
+            type: 'text',
+            isNullable: false
+          },
+          {
+            name: 'logo',
+            type: 'text',
             isNullable: true
           },
           {

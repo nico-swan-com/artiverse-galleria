@@ -1,4 +1,3 @@
-import { encodeImageBufferToDataUrl } from '../../utilities'
 import { instanceToPlain, Transform } from 'class-transformer'
 import {
   Entity,
@@ -17,16 +16,8 @@ export class ArtistsEntity {
   @Column()
   name!: string
 
-  @Column({ type: 'bytea', nullable: true })
-  @Transform(
-    ({ value }) => {
-      if (value === null) return undefined
-      const buf = Buffer.from(value)
-      return encodeImageBufferToDataUrl(buf)
-    },
-    { toPlainOnly: true }
-  )
-  image!: Buffer
+  @Column({ type: 'text' })
+  image!: string
 
   @Column({ default: false })
   featured!: boolean

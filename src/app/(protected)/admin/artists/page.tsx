@@ -26,6 +26,8 @@ const ArtistServerPage = async (props: { searchParams: SearchParams }) => {
     order
   )
 
+  console.log(artists)
+
   return (
     <ArtistsPage
       artists={instanceToPlain(artists) as Artist[]}
