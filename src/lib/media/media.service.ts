@@ -1,5 +1,5 @@
 import { MediaRepository } from './media.repository'
-import { Media } from './model/media.schema'
+import { Media, MediaCreate } from './model/media.schema'
 import { MediaEntity } from './model/media.entity'
 
 export class MediaService {
@@ -34,17 +34,22 @@ export class MediaService {
    * @param data Buffer containing image data
    * @returns The created Media entity
    */
-  async uploadImage(
-    fileName: string,
-    mimeType: string,
-    fileSize: number,
-    data: Buffer
-  ): Promise<Media> {
+  async uploadImage(file: MediaCreate): Promise<Media> {
+    if (!file.fileName || !file.mimeType || !file.fileSize || !file.data) {
+      throw new Error('Invalid media file data')
+    }
+
+    let bufferData: Buffer
+    if (file.data instanceof File) {
+      bufferData = Buffer.from(await file.data.arrayBuffer())
+    } else {
+      bufferData = file.data
+    }
     const media = new MediaEntity()
-    media.fileName = fileName
-    media.mimeType = mimeType
-    media.fileSize = fileSize
-    media.data = data
+    media.fileName = file.fileName
+    media.mimeType = file.mimeType
+    media.fileSize = file.fileSize
+    media.data = bufferData
     return this.mediaRepository.createAndSave(media)
   }
 

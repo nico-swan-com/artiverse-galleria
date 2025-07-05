@@ -6,6 +6,7 @@ import { ProductsSortBy } from './model/products-sort-by.type'
 import { Products } from './model/products.type'
 import { Product, ProductCreate, ProductUpdate } from './model/product.schema'
 import { getRepository } from '../database'
+
 class ProductsRepository {
   async getAll(
     sortByField: ProductsSortBy = 'title',
@@ -14,7 +15,8 @@ class ProductsRepository {
     try {
       const repository = await getRepository(ProductsEntity)
       const [products, total] = await repository.findAndCount({
-        order: { [sortByField]: sortOrder }
+        order: { [sortByField]: sortOrder },
+        relations: ['artist']
       })
       if (!products.length) {
         console.warn('No products found in database')
@@ -53,7 +55,8 @@ class ProductsRepository {
         skip,
         take: limit,
         order: { [sortByField]: sortOrder },
-        where: searchFilter?.where
+        where: searchFilter?.where,
+        relations: ['artist']
       })
       return {
         products: plainToInstance(ProductsEntity, products) as Product[],
@@ -68,11 +71,32 @@ class ProductsRepository {
   async getById(id: string): Promise<Product | null> {
     try {
       const repository = await getRepository(ProductsEntity)
-      const found = await repository.findOne({ where: { id } })
+      const found = await repository.findOne({
+        where: { id },
+        relations: ['artist']
+      })
       return found ? (plainToInstance(ProductsEntity, found) as Product) : null
     } catch (error) {
       console.error('Error getting product by id:', error)
       return null
+    }
+  }
+
+  async getFeaturedProducts(): Promise<Product[]> {
+    try {
+      const repository = await getRepository(ProductsEntity)
+      const found = await repository.find({
+        where: { featured: true },
+        relations: ['artist']
+      })
+      return found.length
+        ? found.map(
+            (product) => plainToInstance(ProductsEntity, product) as Product
+          )
+        : []
+    } catch (error) {
+      console.error('Error getting product by id:', error)
+      return []
     }
   }
 

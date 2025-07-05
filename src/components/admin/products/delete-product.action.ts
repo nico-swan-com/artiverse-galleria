@@ -4,8 +4,16 @@ import { z } from 'zod'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { ProductsRepository } from '@/lib/products/products.repository'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function deleteUserAction(prevState: any, formData: FormData) {
+export type DeleteProductState = {
+  success: boolean
+  message: string
+  errors?: Record<string, string[]>
+}
+
+export async function deleteProductAction(
+  prevState: DeleteProductState,
+  formData: FormData
+): Promise<DeleteProductState> {
   try {
     const ProductIdSchema = z
       .string()
@@ -22,25 +30,24 @@ async function deleteUserAction(prevState: any, formData: FormData) {
     revalidatePath('/admin/products')
 
     return { success: true, message: 'Product removed successfully!' }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        errors: error.flatten().fieldErrors,
+        errors: error.flatten().fieldErrors as Record<string, string[]>,
         message: 'Validation error. Please check the fields.'
       }
     } else {
-      console.error(error)
+      console.error('Failed to delete product:', error)
       return {
         success: false,
         message: 'Failed to remove product.',
         errors: {
-          database: [error.message]
+          database: [error instanceof Error ? error.message : 'Unknown error']
         }
       }
     }
   }
 }
 
-export default deleteUserAction
+export default deleteProductAction

@@ -1,15 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { ProductDelete } from '@/lib/products'
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-  DialogHeader
-} from '@/components/ui/dialog'
 import { Trash } from 'lucide-react'
-import React, { Suspense, useState } from 'react'
+import React, { useState } from 'react'
+import ConfirmDialog from './ConfirmDialog'
 import DeleteProductForm from './ProductDeleteForm'
 
 type DeleteProductProps = {
@@ -20,38 +13,27 @@ const DeleteProductDialog = ({ product }: DeleteProductProps) => {
   const [isOpen, setOpen] = useState(false)
 
   return (
-    <Dialog open={isOpen} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size='icon' variant='outline'>
+    <ConfirmDialog
+      trigger={
+        <Button size='icon' variant='outline' aria-label='Delete product'>
           <Trash className='size-4 text-red-500' />
         </Button>
-      </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px]'>
-        <DialogHeader>
-          <DialogTitle>Remove product</DialogTitle>
-          <DialogDescription>
-            <span
-              className='rounded-md bg-red-100 p-4 text-sm text-red-500'
-              style={{ display: 'block' }}
-            >
-              Warning: This action cannot be undone. The product and all
-              associated data will be permanently deleted.
-              <br />
-              <br />
-              <strong>Are you sure you want to remove this product?</strong>
-            </span>
-          </DialogDescription>
-        </DialogHeader>
-        <Suspense>
-          {product && (
-            <DeleteProductForm
-              product={product}
-              onClose={() => setOpen(false)}
-            />
-          )}
-        </Suspense>
-      </DialogContent>
-    </Dialog>
+      }
+      title='Remove product'
+      description='Warning: This action cannot be undone. The product and all associated data will be permanently deleted. Are you sure you want to remove this product?'
+      confirmText='Remove product'
+      cancelText='Cancel'
+      variant='destructive'
+      isOpen={isOpen}
+      onOpenChange={setOpen}
+      onConfirm={() => {
+        // The actual deletion is handled by the form inside
+      }}
+    >
+      {product && (
+        <DeleteProductForm product={product} onClose={() => setOpen(false)} />
+      )}
+    </ConfirmDialog>
   )
 }
 

@@ -18,19 +18,25 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
       {typeof product.featureImage === 'string' && product.featureImage ? (
         <Image
           src={product.featureImage}
-          alt={product.title}
+          alt={`${product.title} - Product image`}
           width={400}
           height={300}
           className='transition-transform duration-300 hover:scale-105'
           loading='lazy'
           style={{ objectFit: 'cover', width: '100%', height: '200px' }}
           sizes='(max-width: 768px) 100vw, 33vw'
+          onError={(e) => {
+            const target = e.target as HTMLImageElement
+            target.style.display = 'none'
+            target.nextElementSibling?.classList.remove('hidden')
+          }}
         />
-      ) : (
-        <div className='flex h-[200px] w-full items-center justify-center bg-muted'>
-          <span className='text-muted-foreground'>No image available</span>
-        </div>
-      )}
+      ) : null}
+      <div
+        className={`flex h-[200px] w-full items-center justify-center bg-muted ${typeof product.featureImage === 'string' && product.featureImage ? 'hidden' : ''}`}
+      >
+        <span className='text-muted-foreground'>No image available</span>
+      </div>
       <CardContent className='p-4'>
         <div className='flex items-start justify-between gap-2'>
           <div>

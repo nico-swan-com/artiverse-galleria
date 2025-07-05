@@ -5,8 +5,11 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn
 } from 'typeorm'
+import { ArtistsEntity } from '@/lib/artists/model/artist.entity'
 
 @Entity('products')
 export class ProductsEntity {
@@ -53,6 +56,10 @@ export class ProductsEntity {
 
   @Column({ name: 'artist_id', type: 'uuid', nullable: true })
   artistId?: string
+
+  @ManyToOne(() => ArtistsEntity, { eager: false, nullable: true })
+  @JoinColumn({ name: 'artist_id' })
+  artist?: ArtistsEntity
 
   @Column({ name: 'year_created', type: 'int', nullable: true })
   yearCreated?: number

@@ -82,6 +82,20 @@ export default class ProductsService {
     return getById(id)
   }
 
+  async getFeaturedProducts(): Promise<Product[]> {
+    const tag = `featured-products`
+    const getFeaturedProductsCached = unstable_cache(
+      async (): Promise<Product[]> => {
+        return this.repository.getFeaturedProducts()
+      },
+      [tag],
+      {
+        tags: [tag]
+      }
+    )
+    return getFeaturedProductsCached()
+  }
+
   async create(product: ProductCreate): Promise<Product> {
     try {
       const result = await this.repository.create(product)

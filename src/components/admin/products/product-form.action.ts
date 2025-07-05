@@ -4,22 +4,22 @@ import { z } from 'zod'
 import ProductsService from '@/lib/products/products.service'
 import { revalidateTag } from 'next/cache'
 import { ProductCreateSchema, ProductUpdateSchema } from '@/lib/products'
+import { MediaCreate, MediaService } from '@/lib/media'
 
 export type ProductFormFieldErrors = {
-  name?: string[]
+  title?: string[]
+  featureImage?: string[]
   price?: string[]
   stock?: string[]
   category?: string[]
   database?: string[]
   productType?: string[]
-  title?: string[]
   artistId?: string[]
   yearCreated?: string[]
   medium?: string[]
   dimensions?: string[]
   weight?: string[]
   style?: string[]
-  availability?: string[]
   featured?: string[]
   images?: string[]
   description?: string[]
@@ -28,13 +28,14 @@ export type ProductFormFieldErrors = {
 
 export type ProductFormState = {
   id?: string
-  name?: string
+  sku?: number
+  title?: string
+  featureImage?: File | string
   price?: number
   stock?: number
   category?: string
   database?: string
   productType?: string
-  title?: string
   artistId?: string
   yearCreated?: number
   medium?: string
@@ -43,7 +44,7 @@ export type ProductFormState = {
   style?: string
   availability?: string
   featured?: boolean
-  images?: File[]
+  images?: File[] | string[]
   description?: string
   sales?: number
   success: boolean
@@ -57,9 +58,8 @@ export async function productFormAction(
 ): Promise<ProductFormState> {
   const id = formData.get('id')?.toString() || ''
   const isEdit = formData.get('isEdit') === 'true'
-  const name = formData.get('name')?.toString() || ''
+  const title = formData.get('title')?.toString() || ''
   const description = formData.get('description')?.toString() || ''
-  const image = formData.get('image') as File | null
   const price = formData.get('price')
     ? Number(formData.get('price'))
     : undefined
@@ -68,33 +68,62 @@ export async function productFormAction(
     : undefined
   const category = formData.get('category')?.toString() || ''
   const productType = formData.get('productType')?.toString() || 'physical'
-  const title = formData.get('title')?.toString() || ''
   const artistId = formData.get('artistId')?.toString() || ''
   const yearCreated = formData.get('yearCreated')?.toString() || ''
   const medium = formData.get('medium')?.toString() || ''
   const dimensions = formData.get('dimensions')?.toString() || ''
   const weight = formData.get('weight')?.toString() || ''
   const style = formData.get('style')?.toString() || ''
-  const availability = formData.get('availability')?.toString() || 'Available'
   const featured =
     formData.get('featured') === 'true' || formData.get('featured') === 'on'
-  const images = formData.getAll('images') as File[]
+  const sku = formData.get('sku') ? Number(formData.get('sku')) : undefined
+
+  const featureImageFile = formData.get('featureImage') as File | undefined
+  const imageFiles = formData.getAll('images') as File[]
+  let featureImage: string | undefined
+  const service = new MediaService()
+  if (featureImageFile && featureImageFile instanceof File) {
+    const newMedia: MediaCreate = {
+      data: featureImageFile,
+      mimeType: featureImageFile?.type || '',
+      fileSize: featureImageFile?.size || 0,
+      fileName: featureImageFile?.name || ''
+    }
+    const media = await service.uploadImage(newMedia)
+    featureImage = media.id ? `/api/media/${media.id}` : undefined
+  } else if (typeof featureImageFile === 'string') {
+    featureImage = featureImageFile
+  }
+
+  const images: string[] = []
+
+  for (const file of imageFiles) {
+    if (!(file instanceof File)) {
+      images.push(file)
+    } else {
+      const image = await service.uploadImage({
+        data: file,
+        mimeType: file.type,
+        fileSize: file.size,
+        fileName: file.name
+      })
+      images.push(`/api/media/${image.id}`)
+    }
+  }
 
   const values = {
-    name,
-    image,
+    title,
+    featureImage,
     price,
     stock,
     category,
     productType,
-    title,
     artistId,
     yearCreated: yearCreated ? Number(yearCreated) : undefined,
     medium,
     dimensions,
     weight,
     style,
-    availability,
     featured,
     images,
     description,
@@ -104,7 +133,7 @@ export async function productFormAction(
   try {
     const service = new ProductsService()
     if (isEdit) {
-      const updateValues = ProductUpdateSchema.parse({ ...values, id })
+      const updateValues = ProductUpdateSchema.parse({ ...values, id, sku })
       await service.update(updateValues)
     } else {
       const createValues = ProductCreateSchema.parse({ ...values })

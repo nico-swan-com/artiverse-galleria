@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -8,9 +7,14 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { useActionState } from 'react'
-import { productFormAction, ProductFormState } from './product-form.action'
-import { ArtistSelect } from '@/components/common/artists/ArtistSelect'
+import {
+  productFormAction,
+  ProductFormState as OrigProductFormState
+} from './product-form.action'
+import ProductArtistSelect from '@/components/admin/products/ProductArtistSelect'
+import MultipleImageInput from '@/components/admin/media/MultipleImageInput'
+import FeatureImageInput from '@/components/admin/media/FeatureImageInput'
+import MediaPickerModal from '@/components/admin/media/MediaPickerModal'
 
 interface ProductFormProps {
   initialProduct?: Partial<Product>
@@ -18,14 +22,13 @@ interface ProductFormProps {
 }
 
 const defaultProduct: Partial<Product> = {
-  name: '',
+  title: '',
   description: '',
   price: 0,
   stock: 0,
-  image: undefined,
+  featureImage: undefined,
   category: '',
   productType: 'physical',
-  title: '',
   artistId: '',
   images: [],
   yearCreated: undefined,
@@ -33,8 +36,11 @@ const defaultProduct: Partial<Product> = {
   dimensions: '',
   weight: '',
   style: '',
-  availability: 'Available',
   featured: false
+}
+
+type ProductFormState = Omit<OrigProductFormState, 'images'> & {
+  images?: (File | string)[]
 }
 
 export default function ProductForm({
@@ -44,25 +50,16 @@ export default function ProductForm({
   const [product, setProduct] = useState<Partial<Product>>(
     initialProduct || defaultProduct
   )
-  const [imagePreviews, setImagePreviews] = useState<string[]>([])
   const [artist, setArtist] = useState<string | undefined>()
   const router = useRouter()
-  const [state, formAction, isPending] = useActionState(productFormAction, {
+  const [state, setState] = useState<ProductFormState>({
     ...product,
     success: false,
     message: '',
     errors: {}
-  } as ProductFormState)
-
-  useEffect(() => {
-    if (
-      initialProduct &&
-      initialProduct.images &&
-      Array.isArray(initialProduct.images)
-    ) {
-      setImagePreviews(initialProduct.images as string[])
-    }
-  }, [initialProduct])
+  })
+  const [isPending, setIsPending] = useState(false)
+  const [mediaModalOpen, setMediaModalOpen] = useState(false)
 
   useEffect(() => {
     if (state.success) {
@@ -76,316 +73,463 @@ export default function ProductForm({
     }
   }, [artist, state])
 
-  const handleImageRemove = (idx: number) => {
-    if (Array.isArray(product.images)) {
-      const newImages = [...product.images]
-      newImages.splice(idx, 1)
-      setProduct({ ...product, images: newImages })
+  // Custom form submit handler
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setIsPending(true)
+    const formData = new FormData(e.currentTarget)
+    // Separate new files and existing URLs
+    const filesOrUrls = product.images || []
+    const newFiles: File[] = filesOrUrls.filter(
+      (img): img is File => img instanceof File
+    )
+    const existingUrls: string[] = filesOrUrls.filter(
+      (img): img is string => typeof img === 'string'
+    )
+    let uploadedUrls: string[] = []
+    // Upload new files if any
+    if (newFiles.length > 0) {
+      const uploadForm = new FormData()
+      newFiles.forEach((file) => uploadForm.append('file', file))
+      const res = await fetch('/api/media/upload', {
+        method: 'POST',
+        body: uploadForm
+      })
+      if (res.ok) {
+        const data = await res.json()
+        uploadedUrls = data.files.map((f: { url: string }) => f.url)
+      } else {
+        setState({
+          ...state,
+          success: false,
+          message: 'Failed to upload images',
+          errors: {}
+        })
+        setIsPending(false)
+        return
+      }
     }
-    const newPreviews = [...imagePreviews]
-    newPreviews.splice(idx, 1)
-    setImagePreviews(newPreviews)
+    // Merge and normalize all image URLs
+    const images = [...existingUrls, ...uploadedUrls]
+      .filter(Boolean)
+      .map((url) => {
+        if (typeof url === 'string' && url.startsWith('/api/media/')) return url
+        if (typeof url === 'string' && /^[a-f0-9-]{36}$/.test(url))
+          return `/api/media/${url}`
+        return ''
+      })
+      .filter(Boolean)
+    // Set images in formData
+    formData.delete('images')
+    images.forEach((url) => formData.append('images', url))
+    // Call server action
+    const result = await productFormAction(
+      {
+        ...state,
+        images
+      },
+      formData
+    )
+    setState(result)
+    setIsPending(false)
   }
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    const files = Array.from(e.dataTransfer.files).filter((f) =>
-      f.type.startsWith('image/')
-    )
-    if (!files.length) return
-    const allFiles = [
-      ...(Array.isArray(product.images) ? product.images : []),
-      ...files
-    ]
-    setProduct({ ...product, images: allFiles })
-    const readers = files.map((file) => {
-      return new Promise<string>((resolve) => {
-        const reader = new FileReader()
-        reader.onload = (ev) => resolve(ev.target?.result as string)
-        reader.readAsDataURL(file)
-      })
-    })
-    Promise.all(readers).then((newImgs) =>
-      setImagePreviews([...imagePreviews, ...newImgs])
-    )
+  // Add images from media picker
+  const handleAddFromMedia = (ids: string[]) => {
+    setProduct((prev) => ({
+      ...prev,
+      images: Array.from(
+        new Set([
+          ...(prev.images || []),
+          ...ids.map((id) => `/api/media/${id}`)
+        ])
+      )
+    }))
   }
 
   return (
-    <form className='mx-auto max-w-xl py-8' action={formAction}>
-      <h2 className='mb-4 text-2xl font-bold'>
-        {isEdit ? 'Edit Product' : 'Add Product'}
-      </h2>
-      {isEdit && (
-        <>
-          <input type='hidden' name='id' defaultValue={state.id ?? ''} />
-          <input type='hidden' name='isEdit' defaultValue='true' />
-        </>
-      )}
-      <div className='grid gap-4'>
-        <div className='grid gap-2'>
-          <Label htmlFor='name'>Product Name *</Label>
-          <Input
-            id='name'
-            name='name'
-            placeholder='Enter product name'
-            defaultValue={state.name ?? ''}
-          />
-          {state?.errors?.name && (
-            <p className='text-xs text-red-500'>
-              {state.errors.name.join(', ')}
-            </p>
+    <form
+      className='min-h-screen bg-white px-4 py-12 sm:px-6 lg:px-8'
+      onSubmit={handleSubmit}
+    >
+      <MediaPickerModal
+        open={mediaModalOpen}
+        onClose={() => setMediaModalOpen(false)}
+        onSelect={handleAddFromMedia}
+        selectedImages={(product.images || [])
+          .filter((img) => typeof img === 'string')
+          .map((img) =>
+            typeof img === 'string' && img.startsWith('/api/media/')
+              ? img.replace('/api/media/', '')
+              : img
           )}
-        </div>
-        <div className='grid gap-2'>
-          <Label htmlFor='description'>Description</Label>
-          <Textarea
-            id='description'
-            name='description'
-            placeholder='Product description'
-            rows={3}
-            defaultValue={state.description ?? ''}
-          />
-          {state?.errors?.description && (
-            <p className='text-xs text-red-500'>
-              {state.errors.description.join(', ')}
-            </p>
-          )}
-        </div>
-        <div className='grid gap-2'>
-          <Label htmlFor='image'>Feature Image</Label>
-          <Input id='image' name='image' type='file' accept='image/*' />
-          {state?.errors?.images && (
-            <p className='text-xs text-red-500'>
-              {state.errors.images.join(', ')}
-            </p>
-          )}
-        </div>
-        <div className='grid grid-cols-2 gap-4'>
-          <div className='grid gap-2'>
-            <Label htmlFor='price'>Price ($) *</Label>
+      />
+      <div className='mx-auto max-w-7xl'>
+        <h2 className='mb-8 text-3xl font-bold text-gray-900'>
+          {isEdit ? 'Edit Product' : 'Add Product'}
+        </h2>
+        <Input
+          id='isEdit'
+          name='isEdit'
+          type='hidden'
+          defaultValue={String(isEdit)}
+        />
+        {isEdit && (
+          <>
             <Input
-              id='price'
-              name='price'
-              type='number'
-              min='0'
-              step='0.01'
-              placeholder='0.00'
-              defaultValue={
-                Number(state.price) === 0 ? '' : (state.price ?? '')
-              }
+              id='id'
+              name='id'
+              type='hidden'
+              defaultValue={product.id ?? ''}
             />
-            {state?.errors?.price && (
-              <p className='text-xs text-red-500'>
-                {state.errors.price.join(', ')}
-              </p>
-            )}
-          </div>
-          <div className='grid gap-2'>
-            <Label htmlFor='stock'>Stock Quantity</Label>
             <Input
-              id='stock'
-              name='stock'
-              type='number'
-              min='0'
-              placeholder='0'
-              defaultValue={
-                Number(state.stock) === 0 ? '' : (state.stock ?? '')
-              }
+              id='sku'
+              name='sku'
+              type='hidden'
+              defaultValue={product.sku ?? ''}
             />
-            {state?.errors?.stock && (
-              <p className='text-xs text-red-500'>
-                {state.errors.stock.join(', ')}
-              </p>
-            )}
-          </div>
-        </div>
-        <div className='grid gap-2'>
-          <Label htmlFor='category'>Category</Label>
-          <Input
-            id='category'
-            name='category'
-            placeholder='Product category'
-            defaultValue={state.category ?? ''}
-          />
-          {state?.errors?.category && (
-            <p className='text-xs text-red-500'>
-              {state.errors.category.join(', ')}
-            </p>
-          )}
-        </div>
-        <div className='grid gap-2'>
-          <Label htmlFor='image'>Images</Label>
-          <div
-            className='mb-2 cursor-pointer rounded border-2 border-dashed border-gray-300 p-4 text-center transition hover:bg-gray-50'
-            onDrop={handleDrop}
-            onDragOver={(e) => e.preventDefault()}
-          >
-            <Input
-              id='image'
-              name='image'
-              type='file'
-              accept='image/*'
-              multiple
-              onChange={(e) => {
-                const files = e.target.files ? Array.from(e.target.files) : []
-                setProduct({ ...product, images: files })
-                const readers = files.map((file) => {
-                  return new Promise<string>((resolve) => {
-                    const reader = new FileReader()
-                    reader.onload = (ev) => resolve(ev.target?.result as string)
-                    reader.readAsDataURL(file)
-                  })
-                })
-                Promise.all(readers).then(setImagePreviews)
-              }}
-            />
-            <div className='mt-2 text-xs text-muted-foreground'>
-              Drag and drop images here or click to select
+          </>
+        )}
+        <div className='grid grid-cols-1 gap-12 lg:grid-cols-2'>
+          {/* Feature Image & Gallery Section */}
+          <div className='space-y-6'>
+            <div>
+              <Label
+                className='mb-2 block text-lg font-semibold'
+                htmlFor='featureImage'
+              >
+                Feature Image
+              </Label>
+              <FeatureImageInput
+                initialImage={product.featureImage as string | undefined}
+                onChangeAction={(img) => {
+                  if (img instanceof File || typeof img === 'string') {
+                    setProduct((prev) => ({ ...prev, featureImage: img }))
+                  }
+                }}
+                name='featureImage'
+              />
+              {state?.errors?.featureImage && (
+                <p className='mt-2 text-xs text-red-500'>
+                  {state.errors.featureImage.join(', ')}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label
+                className='mb-2 block text-lg font-semibold'
+                htmlFor='images'
+              >
+                Gallery Images
+              </Label>
+              <div className='mb-2 flex gap-2'>
+                <Button
+                  type='button'
+                  variant='outline'
+                  onClick={() => setMediaModalOpen(true)}
+                >
+                  Add from Media Library
+                </Button>
+              </div>
+              <MultipleImageInput
+                images={product.images as (File | string)[]}
+                onChangeAction={(imgs) =>
+                  setProduct((prev) => ({ ...prev, images: imgs }))
+                }
+              />
+              {state?.errors?.images && (
+                <p className='mt-2 text-xs text-red-500'>
+                  {state.errors.images.join(', ')}
+                </p>
+              )}
             </div>
           </div>
-          <div className='mt-2 flex flex-wrap gap-2'>
-            {imagePreviews.map((src, idx) => (
-              <div key={idx} className='relative'>
-                <img
-                  src={src}
-                  alt={`Preview ${idx + 1}`}
-                  className='size-16 rounded border object-cover'
-                />
-                <button
-                  type='button'
-                  className='absolute -right-2 -top-2 rounded-full border border-gray-300 bg-white p-1 text-xs hover:bg-red-100'
-                  onClick={() => handleImageRemove(idx)}
-                  aria-label='Remove image'
+
+          {/* Product Details Section */}
+          <div className='space-y-6'>
+            <div>
+              <Label
+                className='mb-2 block text-lg font-semibold'
+                htmlFor='title'
+              >
+                Product Title *
+              </Label>
+              <Input
+                id='title'
+                name='title'
+                placeholder='Enter product name'
+                defaultValue={state.title ?? ''}
+                className='mb-1'
+              />
+              {state?.errors?.title && (
+                <p className='text-xs text-red-500'>
+                  {state.errors.title.join(', ')}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label
+                className='mb-2 block text-lg font-semibold'
+                htmlFor='description'
+              >
+                Description
+              </Label>
+              <Textarea
+                id='description'
+                name='description'
+                placeholder='Product description'
+                rows={3}
+                defaultValue={state.description ?? ''}
+                className='mb-1'
+              />
+              {state?.errors?.description && (
+                <p className='text-xs text-red-500'>
+                  {state.errors.description.join(', ')}
+                </p>
+              )}
+            </div>
+            <div className='grid grid-cols-2 gap-4'>
+              <div>
+                <Label
+                  className='mb-2 block text-lg font-semibold'
+                  htmlFor='price'
                 >
-                  ×
-                </button>
+                  Price ($) *
+                </Label>
+                <Input
+                  id='price'
+                  name='price'
+                  type='number'
+                  min='0'
+                  step='0.01'
+                  placeholder='0.00'
+                  defaultValue={
+                    Number(state.price) === 0 ? '' : (state.price ?? '')
+                  }
+                  className='mb-1'
+                />
+                {state?.errors?.price && (
+                  <p className='text-xs text-red-500'>
+                    {state.errors.price.join(', ')}
+                  </p>
+                )}
               </div>
-            ))}
+              <div>
+                <Label
+                  className='mb-2 block text-lg font-semibold'
+                  htmlFor='stock'
+                >
+                  Stock Quantity
+                </Label>
+                <Input
+                  id='stock'
+                  name='stock'
+                  type='number'
+                  min='0'
+                  placeholder='0'
+                  defaultValue={
+                    Number(state.stock) === 0 ? '' : (state.stock ?? '')
+                  }
+                  className='mb-1'
+                />
+                {state?.errors?.stock && (
+                  <p className='text-xs text-red-500'>
+                    {state.errors.stock.join(', ')}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div>
+              <Label
+                className='mb-2 block text-lg font-semibold'
+                htmlFor='category'
+              >
+                Category *
+              </Label>
+              <Input
+                id='category'
+                name='category'
+                placeholder='Product category'
+                defaultValue={state.category ?? ''}
+                className='mb-1'
+                required
+                aria-describedby={
+                  state?.errors?.category ? 'category-error' : 'category-help'
+                }
+              />
+              {state?.errors?.category && (
+                <p id='category-error' className='text-xs text-red-500'>
+                  {state.errors.category.join(', ')}
+                </p>
+              )}
+              <p id='category-help' className='text-xs text-muted-foreground'>
+                The category helps organize and filter products
+              </p>
+            </div>
+            <div className='grid grid-cols-2 gap-4'>
+              <div>
+                <Label
+                  className='mb-2 block text-lg font-semibold'
+                  htmlFor='productType'
+                >
+                  Product Type
+                </Label>
+                <select
+                  id='productType'
+                  name='productType'
+                  className='block w-full rounded border border-gray-300 bg-white p-2 text-sm shadow-sm focus:border-primary focus:outline-none'
+                  defaultValue={state.productType}
+                >
+                  <option value='physical'>Physical</option>
+                  <option value='digital'>Digital</option>
+                  <option value='service'>Service</option>
+                  <option value='artwork'>Artwork</option>
+                </select>
+              </div>
+              <div>
+                <ProductArtistSelect
+                  artistId={product.artistId || ''}
+                  onChange={(val: string) => setArtist(val)}
+                  error={state?.errors?.artistId?.join(', ')}
+                />
+              </div>
+            </div>
+            <div className='grid grid-cols-2 gap-4'>
+              <div>
+                <Label
+                  className='mb-2 block text-lg font-semibold'
+                  htmlFor='yearCreated'
+                >
+                  Year Created
+                </Label>
+                <Input
+                  id='yearCreated'
+                  name='yearCreated'
+                  type='number'
+                  placeholder='Year created (optional)'
+                  defaultValue={state.yearCreated || ''}
+                  className='mb-1'
+                />
+              </div>
+              <div>
+                <Label
+                  className='mb-2 block text-lg font-semibold'
+                  htmlFor='medium'
+                >
+                  Medium
+                </Label>
+                <Input
+                  id='medium'
+                  name='medium'
+                  placeholder='Medium (optional)'
+                  defaultValue={state.medium ?? ''}
+                  className='mb-1'
+                />
+              </div>
+            </div>
+            <div className='grid grid-cols-2 gap-4'>
+              <div>
+                <Label
+                  className='mb-2 block text-lg font-semibold'
+                  htmlFor='dimensions'
+                >
+                  Dimensions
+                </Label>
+                <Input
+                  id='dimensions'
+                  name='dimensions'
+                  placeholder='Dimensions (optional)'
+                  defaultValue={state.dimensions ?? ''}
+                  className='mb-1'
+                />
+              </div>
+              <div>
+                <Label
+                  className='mb-2 block text-lg font-semibold'
+                  htmlFor='weight'
+                >
+                  Weight
+                </Label>
+                <Input
+                  id='weight'
+                  name='weight'
+                  placeholder='Weight (optional)'
+                  defaultValue={state.weight ?? ''}
+                  className='mb-1'
+                />
+              </div>
+            </div>
+            <div>
+              <Label
+                className='mb-2 block text-lg font-semibold'
+                htmlFor='style'
+              >
+                Style
+              </Label>
+              <Input
+                id='style'
+                name='style'
+                placeholder='Style (optional)'
+                defaultValue={state.style ?? ''}
+                className='mb-1'
+              />
+            </div>
+            <div>
+              <Label
+                className='mb-2 block text-lg font-semibold'
+                htmlFor='availability'
+              >
+                Availability
+              </Label>
+              <Input
+                id='availability'
+                name='availability'
+                placeholder='Available, Sold, etc.'
+                defaultValue={state.availability ?? ''}
+                className='mb-1'
+              />
+            </div>
+            <div className='mt-2 flex items-center gap-2'>
+              <input
+                id='featured'
+                name='featured'
+                type='checkbox'
+                checked={!!product.featured}
+                onChange={(e) =>
+                  setProduct({ ...product, featured: e.target.checked })
+                }
+                className='size-4 rounded border-gray-300 text-primary focus:ring-primary'
+              />
+              <Label htmlFor='featured' className='text-sm font-medium'>
+                Featured
+              </Label>
+            </div>
+            <div className='mt-6 flex gap-2'>
+              <Button
+                type='button'
+                variant='outline'
+                onClick={() => router.push('/admin/products')}
+              >
+                Cancel
+              </Button>
+              <Button type='submit' disabled={isPending}>
+                {isPending
+                  ? isEdit
+                    ? 'Saving...'
+                    : 'Adding...'
+                  : isEdit
+                    ? 'Save Changes'
+                    : 'Add Product'}
+              </Button>
+            </div>
+            {state?.success === false && (
+              <p className='mt-2 text-red-500'>{state.message}</p>
+            )}
+            {state?.success && (
+              <p className='mt-2 text-green-600'>{state.message}</p>
+            )}
           </div>
         </div>
-
-        <div className='grid gap-2'>
-          <Label htmlFor='productType'>Product Type</Label>
-          <select
-            id='productType'
-            name='productType'
-            className='block w-full rounded border border-gray-300 bg-white p-2 text-sm shadow-sm focus:border-primary focus:outline-none'
-            defaultValue={state.productType}
-          >
-            <option value='physical'>Physical</option>
-            <option value='digital'>Digital</option>
-            <option value='service'>Service</option>
-            <option value='artwork'>Artwork</option>
-          </select>
-        </div>
-        <div className='grid gap-2'>
-          <Label htmlFor='title'>Title</Label>
-          <Input
-            id='title'
-            name='title'
-            placeholder='Product title (optional)'
-            defaultValue={state.title ?? ''}
-          />
-        </div>
-        <div className='grid gap-2'>
-          <Label htmlFor='artistId'>Artist</Label>
-          <ArtistSelect
-            artistId={product.artistId || ''}
-            onChange={(val) => setArtist(val)}
-          />
-          <input type='hidden' name='artistId' value={product.artistId ?? ''} />
-        </div>
-        <div className='grid gap-2'>
-          <Label htmlFor='yearCreated'>Year Created</Label>
-          <Input
-            id='yearCreated'
-            name='yearCreated'
-            type='number'
-            placeholder='Year created (optional)'
-            defaultValue={state.yearCreated || ''}
-          />
-        </div>
-        <div className='grid gap-2'>
-          <Label htmlFor='medium'>Medium</Label>
-          <Input
-            id='medium'
-            name='medium'
-            placeholder='Medium (optional)'
-            defaultValue={state.medium ?? ''}
-          />
-        </div>
-        <div className='grid gap-2'>
-          <Label htmlFor='dimensions'>Dimensions</Label>
-          <Input
-            id='dimensions'
-            name='dimensions'
-            placeholder='Dimensions (optional)'
-            defaultValue={state.dimensions ?? ''}
-          />
-        </div>
-        <div className='grid gap-2'>
-          <Label htmlFor='weight'>Weight</Label>
-          <Input
-            id='weight'
-            name='weight'
-            placeholder='Weight (optional)'
-            defaultValue={state.weight ?? ''}
-          />
-        </div>
-        <div className='grid gap-2'>
-          <Label htmlFor='style'>Style</Label>
-          <Input
-            id='style'
-            name='style'
-            placeholder='Style (optional)'
-            defaultValue={state.style ?? ''}
-          />
-        </div>
-        <div className='grid gap-2'>
-          <Label htmlFor='availability'>Availability</Label>
-          <Input
-            id='availability'
-            name='availability'
-            placeholder='Available, Sold, etc.'
-            defaultValue={state.availability ?? ''}
-          />
-        </div>
-        <div className='flex items-center gap-2'>
-          <input
-            id='featured'
-            name='featured'
-            type='checkbox'
-            checked={!!product.featured}
-            onChange={(e) =>
-              setProduct({ ...product, featured: e.target.checked })
-            }
-          />
-          <Label htmlFor='featured'>Featured</Label>
-        </div>
-        <div className='mt-4 flex gap-2'>
-          <Button
-            type='button'
-            variant='outline'
-            onClick={() => router.push('/admin/products')}
-          >
-            Cancel
-          </Button>
-          <Button type='submit' disabled={isPending}>
-            {isPending
-              ? isEdit
-                ? 'Saving...'
-                : 'Adding...'
-              : isEdit
-                ? 'Save Changes'
-                : 'Add Product'}
-          </Button>
-        </div>
-        {state?.success === false && (
-          <p className='mt-2 text-red-500'>{state.message}</p>
-        )}
-        {state?.success && (
-          <p className='mt-2 text-green-600'>{state.message}</p>
-        )}
       </div>
     </form>
   )

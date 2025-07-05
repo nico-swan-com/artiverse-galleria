@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import PageTransition from '@/components/common/utility/PageTransition'
 import ProductsGridList from './ProductsGridList'
 import { Product } from '@/lib/products'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 
 type ProductsPageProps = {
@@ -14,13 +14,16 @@ type ProductsPageProps = {
 }
 
 const ProductsPage = ({ products }: ProductsPageProps) => {
-  const [productsList] = useState<Product[]>(products)
   const [searchTerm, setSearchTerm] = useState('')
 
-  const filteredProducts = productsList.filter(
-    (product) =>
-      product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProducts = useMemo(
+    () =>
+      products.filter(
+        (product) =>
+          product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          product.category.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    [products, searchTerm]
   )
 
   return (
@@ -41,10 +44,11 @@ const ProductsPage = ({ products }: ProductsPageProps) => {
                 className='pl-8'
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                aria-label='Search products by title or category'
               />
             </div>
             <Link href='/admin/products/new'>
-              <Button>
+              <Button aria-label='Add new product'>
                 <PlusCircle size={16} className='mr-2' />
                 Add Product
               </Button>
