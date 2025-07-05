@@ -1,26 +1,19 @@
-'use client'
-
-import { useState, useEffect } from 'react'
-import { artists } from '@/lib/database/data/artists'
-import { artworks } from '@/lib/database/data/artworks'
+import ProductsService from '@/lib/products/products.service'
+import ArtistArtworksClient from './ArtistArtworksClient'
 import { Button } from '@/components/ui/button'
-import ArtworkCard from '@/components/public/artwork/ArtworkCard'
 import { ChevronLeft, Mail, ExternalLink, MapPin } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useParams } from 'next/navigation'
+import ArtistsService from '@/lib/artists/artists.service'
 
-const ArtistDetail = () => {
-  const { id } = useParams<{ id: string }>()
-  const [artist] = useState(artists.find((a) => a.id === id))
-  const [artistArtworks] = useState(artworks.filter((a) => a.artistId === id))
-
-  useEffect(() => {
-    if (!artist) {
-      console.error('Artist not found')
-    }
-  }, [id, artist])
-
+export default async function ArtistDetailPage({
+  params
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
+  const artistsService = new ArtistsService()
+  const artist = await artistsService.getById(id)
   if (!artist) {
     return (
       <div className='flex min-h-screen items-center justify-center'>
@@ -33,6 +26,10 @@ const ArtistDetail = () => {
       </div>
     )
   }
+
+  // Fetch all products and filter by artistId
+  const { products } = await new ProductsService().getAll('createdAt', 'DESC')
+  const artistArtworks = products.filter((a) => a.artistId === id)
 
   return (
     <div className='min-h-screen bg-white px-4 py-12 sm:px-6 lg:px-8'>
@@ -128,24 +125,9 @@ const ArtistDetail = () => {
           <h2 className='mb-6 text-2xl font-bold text-gray-900'>
             Artworks by {artist.name}
           </h2>
-
-          {artistArtworks.length > 0 ? (
-            <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-              {artistArtworks.map((artwork) => (
-                <ArtworkCard key={artwork.id} artwork={artwork} />
-              ))}
-            </div>
-          ) : (
-            <div className='py-12 text-center'>
-              <p className='text-lg text-gray-600'>
-                No artworks currently available from this artist.
-              </p>
-            </div>
-          )}
+          <ArtistArtworksClient artistArtworks={artistArtworks} />
         </div>
       </div>
     </div>
   )
 }
-
-export default ArtistDetail

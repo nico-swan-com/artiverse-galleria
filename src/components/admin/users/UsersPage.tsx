@@ -2,10 +2,9 @@
 
 import PageTransition from '@/components/common/utility/PageTransition'
 import UsersList from './UsersList'
-import { User } from '@/types'
 import CreateUserDialog from './create-user/CreateUserDialog'
 import { FindOptionsOrderValue } from 'typeorm'
-import { UsersSortBy } from '@/lib/users'
+import { User, UsersSortBy } from '@/lib/users'
 
 interface UsersProps {
   users: User[]

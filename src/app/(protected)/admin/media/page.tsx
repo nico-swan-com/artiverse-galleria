@@ -3,6 +3,9 @@ import React, { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
 import { Media } from '@/lib/media/model/media.schema'
 
+// Disable static generation for this page
+export const dynamic = 'force-dynamic'
+
 async function fetchMediaList(): Promise<Media[]> {
   const res = await fetch('/api/media', { cache: 'no-store' })
   if (!res.ok) throw new Error('Failed to fetch media')

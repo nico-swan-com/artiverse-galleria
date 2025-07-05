@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image' // Import Next.js Image component
-import { Artwork } from '@/types/artwork'
+import Image from 'next/image'
 import { useCart } from '@/contexts/cart.context'
 import { ShoppingCart, Heart } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatPrice } from '@/lib/database/data/artworks'
+import { Product } from '@/lib/products/model'
 
 interface ArtworkCardProps {
-  artwork: Artwork
+  artwork: Product
   className?: string
 }
 
@@ -32,7 +32,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({ artwork, className }) => {
         {/* Image */}
         <div className='relative mb-4 aspect-[4/5] overflow-hidden rounded-sm'>
           <Image
-            src={artwork.images[0]}
+            src={(artwork.featureImage as string) || ''}
             alt={artwork.title}
             fill
             className={cn(
@@ -62,9 +62,9 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({ artwork, className }) => {
           </div>
 
           {/* Status tag */}
-          {artwork.availability !== 'Available' && (
+          {artwork.stock === 0 && (
             <div className='absolute left-4 top-4 rounded-sm bg-black px-2 py-1 text-xs font-medium text-white'>
-              {artwork.availability}
+              Sold Out
             </div>
           )}
         </div>
@@ -77,9 +77,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({ artwork, className }) => {
           <p className='mt-1 text-sm text-gray-600'>{artistName}</p>
           <div className='mt-2 flex items-center justify-between'>
             <p className='font-medium'>{formatPrice(artwork.price)}</p>
-            <div className='text-xs text-gray-500'>
-              {artwork.medium.split(' ')[0]}
-            </div>
+            <div className='text-xs text-gray-500'>{artwork?.medium}</div>
           </div>
         </div>
       </Link>

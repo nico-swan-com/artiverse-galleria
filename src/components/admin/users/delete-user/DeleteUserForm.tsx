@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { User, formInitialState } from '@/types'
+import { formInitialState } from '@/types'
 import deleteUserAction from './delete-user.action'
-import { UserRoles, UserStatus } from '@/lib/users'
+import { User, UserRoles, UserStatus } from '@/lib/users'
 import {
   Select,
   SelectContent,

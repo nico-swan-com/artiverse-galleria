@@ -5,7 +5,6 @@ import React from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { format } from 'date-fns'
 import { Badge } from '@/components/ui/badge'
-import { User } from '@/types'
 import EditUserDialog from './edit-user/EditUserDialog'
 import DeleteUserDialog from './delete-user/DeleteUserDialog'
 import {
@@ -20,7 +19,7 @@ import { FindOptionsOrderValue } from 'typeorm'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowDown, ArrowUp } from 'lucide-react'
 import TablePagination from '@/components/common/ui/TablePagination'
-import { UsersSortBy } from '@/lib/users'
+import { User, UsersSortBy } from '@/lib/users'
 import { getAvatarUrl } from '@/lib/utilities/get-avatar-url'
 
 interface UsersListProps {

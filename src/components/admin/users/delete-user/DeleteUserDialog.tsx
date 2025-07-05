@@ -12,7 +12,7 @@ import {
 import { Trash } from 'lucide-react'
 import { useState, Suspense } from 'react'
 import DeleteUserForm from './DeleteUserForm'
-import { User } from '@/types'
+import { User } from '@/lib/users'
 
 type EditUserProps = {
   user: User | null

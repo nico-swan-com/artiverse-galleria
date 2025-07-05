@@ -5,9 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { User } from '@/types'
 import editUserAction, { EditUserState } from './edit-user.action'
-import { UserRoles, UserStatus } from '@/lib/users'
+import { User, UserRoles, UserStatus } from '@/lib/users'
 import {
   Select,
   SelectContent,
@@ -42,10 +41,10 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
     FormData
   >(editUserAction, {
     ...initialFormState,
-    id: user.id,
+    id: user.id!,
     name: user.name,
     email: user.email,
-    password: user.password,
+    password: user.password!,
     role: user.role,
     status: user.status
   })

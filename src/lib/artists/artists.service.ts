@@ -10,7 +10,7 @@ import {
   ArtistUpdate
 } from './model'
 
-export default class Artists {
+export default class ArtistsService {
   repository: ArtistsRepository
 
   constructor() {

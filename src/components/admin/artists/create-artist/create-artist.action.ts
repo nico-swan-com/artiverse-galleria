@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
 import { ArtistCreateSchema } from '@/lib/artists'
-import Artists from '@/lib/artists/artists.service'
+import ArtistsService from '@/lib/artists/artists.service'
 
 export type CreateArtistFieldErrors = {
   name?: string[]
@@ -87,7 +87,7 @@ async function createArtistAction(
       statement
     })
 
-    const services = new Artists()
+    const services = new ArtistsService()
     await services.create(values)
     revalidateTag('artists')
 

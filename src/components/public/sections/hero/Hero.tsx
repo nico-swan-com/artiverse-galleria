@@ -1,12 +1,21 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext
+} from '@/components/ui/carousel'
 
-interface HeroProps {
-  featureImageUrl: string
-}
+import { Product } from '@/lib/products/model/product.schema'
+import ProductsService from '@/lib/products/products.service'
 
-const Hero = ({ featureImageUrl }: HeroProps) => {
+const Hero = async () => {
+  const productService = new ProductsService()
+  const featuredArtworks = await productService.getFeaturedProducts()
+
   return (
     <section className='relative bg-gray-50 px-4 py-20 sm:px-6 lg:px-8'>
       <div className='mx-auto max-w-7xl'>
@@ -30,15 +39,30 @@ const Hero = ({ featureImageUrl }: HeroProps) => {
             </div>
           </div>
           <div className='relative overflow-hidden rounded-lg shadow-xl'>
-            {featureImageUrl && (
-              <Image
-                src={featureImageUrl}
-                alt='Featured artwork'
-                className='aspect-[4/3] size-full object-cover'
-                width={800}
-                height={600}
-              />
-            )}
+            <Carousel>
+              <CarouselContent>
+                {featuredArtworks.map(
+                  (artwork: Product) =>
+                    artwork.featureImage && (
+                      <CarouselItem key={artwork.id}>
+                        <Link href={`/artworks/${artwork.id}`}>
+                          <div className='group relative aspect-[4/3] w-full overflow-hidden rounded-lg'>
+                            <Image
+                              src={artwork.featureImage as string}
+                              alt={artwork.title}
+                              fill
+                              className='object-cover transition-transform duration-300 ease-in-out group-hover:scale-105'
+                              sizes='(max-width: 768px) 100vw, 50vw'
+                            />
+                          </div>
+                        </Link>
+                      </CarouselItem>
+                    )
+                )}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
           </div>
         </div>
       </div>

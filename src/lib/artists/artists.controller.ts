@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { FindOptionsOrderValue } from 'typeorm'
 import { ArtistsSortBy } from './model'
-import Artists from './artists.service'
+import ArtistsService from './artists.service'
 
 export class ArtistsController {
   async getAllArtistsPublic(request: NextRequest): Promise<Response> {
-    const artistsService = new Artists()
+    const artistsService = new ArtistsService()
     const searchParams = request.nextUrl.searchParams
     const sortBy = (searchParams.get('sortBy') || 'name') as ArtistsSortBy
     const order = (searchParams.get('order') || 'DESC') as FindOptionsOrderValue
@@ -23,7 +23,7 @@ export class ArtistsController {
   }
 
   async getArtistsPublic(request: NextRequest): Promise<Response> {
-    const artistsService = new Artists()
+    const artistsService = new ArtistsService()
     const searchParams = request.nextUrl.searchParams
     const sortBy = (searchParams.get('sortBy') || 'name') as ArtistsSortBy
     const page = parseInt(searchParams.get('page') || '1', 10)

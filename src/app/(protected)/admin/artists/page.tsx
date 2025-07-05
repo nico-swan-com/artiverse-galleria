@@ -1,6 +1,6 @@
 import ArtistsPage from '@/components/admin/artists/ArtistsPage'
 import { Artist, ArtistsSortBy, isValidArtistsSortKey } from '@/lib/artists'
-import Artists from '@/lib/artists/artists.service'
+import ArtistsService from '@/lib/artists/artists.service'
 import { instanceToPlain } from 'class-transformer'
 import { FindOptionsOrderValue } from 'typeorm'
 
@@ -20,7 +20,7 @@ const ArtistServerPage = async (props: { searchParams: SearchParams }) => {
     params.order === 'ASC' || params.order === 'DESC' ? params.order : 'DESC'
   ) as FindOptionsOrderValue
 
-  const { artists, total } = await new Artists().getPaged(
+  const { artists, total } = await new ArtistsService().getPaged(
     { page, limit },
     sortBy,
     order

@@ -12,8 +12,8 @@ import {
 import { Pencil } from 'lucide-react'
 import { useState, Suspense } from 'react'
 import EditUserForm from './EditUserForm'
-import { User } from '@/types'
 import { Skeleton } from '@/components/ui/skeleton'
+import { User } from '@/lib/users'
 
 type EditUserProps = {
   user: User | null
