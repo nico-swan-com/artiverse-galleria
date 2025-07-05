@@ -1,7 +1,7 @@
 'use client'
 
+import { Product } from '@/lib/products'
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { Artwork } from '@/types/artwork' // Adjust the import path as needed
 import { toast } from 'sonner'
 
 interface ChildrenProps {
@@ -10,14 +10,14 @@ interface ChildrenProps {
 
 // Define cart item type
 export type CartItem = {
-  artwork: Artwork
+  artwork: Product
   quantity: number
 }
 
 // Define context type
 type CartContextType = {
   cart: CartItem[]
-  addToCart: (artwork: Artwork, quantity?: number) => void
+  addToCart: (artwork: Product, quantity?: number) => void
   removeFromCart: (artworkId: string) => void
   updateQuantity: (artworkId: string, quantity: number) => void
   clearCart: () => void
@@ -80,7 +80,7 @@ export const CartProvider = ({ children }: ChildrenProps) => {
   }, [cart, getItemCount]) // Removed getItemCount from dependency array.
 
   // Add item to cart
-  const addToCart = (artwork: Artwork, quantity = 1) => {
+  const addToCart = (artwork: Product, quantity = 1) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find(
         (item) => item.artwork.id === artwork.id

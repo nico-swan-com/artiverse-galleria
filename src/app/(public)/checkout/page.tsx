@@ -340,7 +340,7 @@ const Checkout = () => {
                     >
                       <div className='relative size-16 shrink-0 overflow-hidden rounded-md'>
                         <Image
-                          src={item.artwork.images[0]}
+                          src={item.artwork.featureImage! as string}
                           alt={item.artwork.title}
                           layout='fill'
                           objectFit='cover'
