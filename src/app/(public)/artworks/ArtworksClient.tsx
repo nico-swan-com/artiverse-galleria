@@ -22,10 +22,9 @@ import {
   SheetTrigger
 } from '@/components/ui/sheet'
 import { Product } from '@/lib/products/model/product.schema'
-import { Artist } from '@/lib/artists'
 
 type ArtworksClientProps = {
-  artworks: (Product & { artist?: Artist })[]
+  artworks: Product[]
   categories: string[]
   styles: string[]
 }

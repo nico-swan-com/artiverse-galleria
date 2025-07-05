@@ -17,6 +17,17 @@ export default class ProductsService {
     sortBy: ProductsSortBy,
     order: FindOptionsOrderValue
   ): Promise<Products> {
+    // Return empty result during build time
+    if (
+      process.env.NODE_ENV === 'production' &&
+      process.env.NEXT_PHASE === 'phase-production-build'
+    ) {
+      return {
+        products: [],
+        total: 0
+      }
+    }
+
     const tag = `products-${sortBy}-${order}`
     const getAll = unstable_cache(
       async (
@@ -42,6 +53,17 @@ export default class ProductsService {
     order: FindOptionsOrderValue,
     searchQuery?: string
   ): Promise<Products> {
+    // Return empty result during build time
+    if (
+      process.env.NODE_ENV === 'production' &&
+      process.env.NEXT_PHASE === 'phase-production-build'
+    ) {
+      return {
+        products: [],
+        total: 0
+      }
+    }
+
     const tag = `products-page-${pagination.page}-limit-${pagination.limit}-${sortBy}-${order}`
     const getPaged = unstable_cache(
       async (
@@ -68,6 +90,14 @@ export default class ProductsService {
   }
 
   async getById(id: string): Promise<Product | null> {
+    // Return null during build time
+    if (
+      process.env.NODE_ENV === 'production' &&
+      process.env.NEXT_PHASE === 'phase-production-build'
+    ) {
+      return null
+    }
+
     const tag = `product-${id}`
     const getById = unstable_cache(
       async (id: string): Promise<Product | null> => {
@@ -83,6 +113,14 @@ export default class ProductsService {
   }
 
   async getFeaturedProducts(): Promise<Product[]> {
+    // Return empty result during build time
+    if (
+      process.env.NODE_ENV === 'production' &&
+      process.env.NEXT_PHASE === 'phase-production-build'
+    ) {
+      return []
+    }
+
     const tag = `featured-products`
     const getFeaturedProductsCached = unstable_cache(
       async (): Promise<Product[]> => {

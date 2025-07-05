@@ -12,7 +12,7 @@ import {
 import { Product } from '@/lib/products/model/product.schema'
 import ProductsService from '@/lib/products/products.service'
 
-const Hero = async () => {
+export default async function Hero() {
   const productService = new ProductsService()
   const featuredArtworks = await productService.getFeaturedProducts()
 
@@ -69,5 +69,3 @@ const Hero = async () => {
     </section>
   )
 }
-
-export default Hero

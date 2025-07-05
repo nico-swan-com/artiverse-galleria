@@ -22,6 +22,14 @@ export const getRepository = async <T extends ObjectLiteral>(
   entity: EntityTarget<T>
 ): Promise<Repository<T>> => {
   try {
+    // Skip database operations during build time
+    if (
+      process.env.NODE_ENV === 'production' &&
+      process.env.NEXT_PHASE === 'phase-production-build'
+    ) {
+      throw new Error('Database operations not available during build phase')
+    }
+
     await initializeDatabase()
     const dataSourceInstance = getDataSourceInstance()
     return dataSourceInstance.getRepository<T>(entity)
@@ -62,6 +70,15 @@ export async function initializeDatabase(
   retryDelay: number = 3000,
   maxWaitTime: number = 60000
 ): Promise<void> {
+  // Skip database initialization during build time
+  if (
+    process.env.NODE_ENV === 'production' &&
+    process.env.NEXT_PHASE === 'phase-production-build'
+  ) {
+    console.debug('Skipping database initialization during build phase')
+    return
+  }
+
   if (!dataSourceInstance || !dataSourceInstance.isInitialized) {
     let attempts = 0
     const startTime = Date.now()

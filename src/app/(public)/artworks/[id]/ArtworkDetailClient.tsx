@@ -24,8 +24,8 @@ import { Product } from '@/lib/products/model/product.schema'
 import { Artist } from '@/lib/artists/model/artist.schema'
 
 interface ArtworkDetailClientProps {
-  artwork: Product & { artist?: Artist }
-  relatedArtworks: (Product & { artist?: Artist })[]
+  artwork: Product
+  relatedArtworks: Product[]
 }
 
 export default function ArtworkDetailClient({
@@ -63,7 +63,6 @@ export default function ArtworkDetailClient({
   // }
 
   const handleAddToCart = () => {
-    // TODO: Quick fix for type conflict. Unify Artist type definitions in the future.
     const defaultArtist: Artist = {
       id: '',
       name: 'Unknown Artist',
@@ -169,7 +168,7 @@ export default function ArtworkDetailClient({
               <div className='flex space-x-2 overflow-x-auto pb-2'>
                 {imageUrls.map((image, index) => (
                   <button
-                    key={index}
+                    key={image + index}
                     onClick={() => setSelectedImage(image)}
                     className={`size-20 shrink-0 overflow-hidden rounded-md border-2 ${
                       selectedImage === image

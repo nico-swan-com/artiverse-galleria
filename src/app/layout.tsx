@@ -1,11 +1,10 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
-import { AnimatePresence } from 'framer-motion'
 import { SessionProvider } from 'next-auth/react'
 import QueryProvider from '@/contexts/query-provider.context'
-import { initializeDatabase } from '@/lib/database/data-source'
 import { Toaster } from 'sonner'
+import AnimatePresenceWrapper from '@/components/common/utility/AnimatePresenceWrapper'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -22,13 +21,12 @@ export const metadata: Metadata = {
   description:
     'Explore our curated collection of original artworks from talented artists around the world. Each piece comes with its own story and identity.'
 }
+
 export default async function RootLayout({
   children
 }: {
   children: React.ReactNode
 }) {
-  await initializeDatabase()
-
   return (
     <html lang='en'>
       <body
@@ -36,10 +34,12 @@ export default async function RootLayout({
       >
         <SessionProvider>
           <QueryProvider>
-            <AnimatePresence mode='wait'>{children}</AnimatePresence>
+            <AnimatePresenceWrapper mode='wait'>
+              {children}
+            </AnimatePresenceWrapper>
+            <Toaster />
           </QueryProvider>
         </SessionProvider>
-        <Toaster />
       </body>
     </html>
   )

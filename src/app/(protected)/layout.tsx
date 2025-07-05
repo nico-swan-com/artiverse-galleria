@@ -7,6 +7,7 @@ import {
   BarChart3,
   Package,
   Palette,
+  Images,
   UserRound,
   UsersRound
 } from 'lucide-react'
@@ -23,16 +24,19 @@ export default function DashboardLayout({
 
   const menuItems = [
     {
+      id: 'dashboard',
       title: 'Dashboard',
       icon: <BarChart3 size={18} />,
       path: '/admin'
     },
     {
+      id: 'users',
       title: 'Users',
       icon: <UsersRound size={18} />,
       path: '/admin/users'
     },
     {
+      id: 'artists',
       title: 'Artists',
       icon: (
         <>
@@ -45,9 +49,16 @@ export default function DashboardLayout({
       path: '/admin/artists'
     },
     {
+      id: 'products',
       title: 'Products',
       icon: <Package size={18} />,
       path: '/admin/products'
+    },
+    {
+      id: 'media',
+      title: 'Media',
+      icon: <Images size={18} />,
+      path: '/admin/media'
     }
     // {
     //   title: 'Blog',

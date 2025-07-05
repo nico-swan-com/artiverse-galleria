@@ -21,6 +21,17 @@ export default class ArtistsService {
     sortBy: ArtistsSortBy,
     order: FindOptionsOrderValue
   ): Promise<ArtistsResult> {
+    // Return empty result during build time
+    if (
+      process.env.NODE_ENV === 'production' &&
+      process.env.NEXT_PHASE === 'phase-production-build'
+    ) {
+      return {
+        artists: [],
+        total: 0
+      }
+    }
+
     const tag = `artists-${sortBy}-${order}`
     const getAll = unstable_cache(
       async (
@@ -44,6 +55,17 @@ export default class ArtistsService {
     order: FindOptionsOrderValue,
     searchQuery?: string
   ): Promise<ArtistsResult> {
+    // Return empty result during build time
+    if (
+      process.env.NODE_ENV === 'production' &&
+      process.env.NEXT_PHASE === 'phase-production-build'
+    ) {
+      return {
+        artists: [],
+        total: 0
+      }
+    }
+
     const tag = `artists-page-${pagination.page}-limit-${pagination.limit}-${sortBy}-${order}`
     const getPaged = unstable_cache(
       async (
@@ -70,6 +92,14 @@ export default class ArtistsService {
   }
 
   async getById(id: string): Promise<Artist | null> {
+    // Return null during build time
+    if (
+      process.env.NODE_ENV === 'production' &&
+      process.env.NEXT_PHASE === 'phase-production-build'
+    ) {
+      return null
+    }
+
     const tag = `artist-${id}`
     const getById = unstable_cache(
       async (id: string): Promise<Artist | null> => {
