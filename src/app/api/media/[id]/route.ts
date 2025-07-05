@@ -6,9 +6,9 @@ import { MediaService } from '@/lib/media/media.service'
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params
+  const { id } = await params
   const mediaService = new MediaService()
   try {
     const media = await mediaService.getImageById(id)
@@ -31,10 +31,11 @@ export async function GET(
  */
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const service = new (await import('@/lib/media/media.service')).MediaService()
-  const ok = await service.deleteImage(params.id)
+  const service = new MediaService()
+  const { id } = await params
+  const ok = await service.deleteImage(id)
   if (ok) return new Response(null, { status: 204 })
   return new Response('Not found', { status: 404 })
 }

@@ -1,5 +1,6 @@
 'use client'
 import React, { useEffect, useState, useRef } from 'react'
+import Image from 'next/image'
 import { Media } from '@/lib/media/model/media.schema'
 
 async function fetchMediaList(): Promise<Media[]> {
@@ -34,6 +35,7 @@ export default function MediaAdminPage() {
     try {
       const data = await fetchMediaList()
       setMediaList(data)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       setError(e.message)
     } finally {
@@ -51,6 +53,7 @@ export default function MediaAdminPage() {
     try {
       await deleteMedia(id)
       await loadMedia()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       setError(e.message)
     } finally {
@@ -67,6 +70,7 @@ export default function MediaAdminPage() {
       await uploadMedia(formData)
       if (fileInputRef.current) fileInputRef.current.value = ''
       await loadMedia()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       setError(e.message)
     } finally {
@@ -102,10 +106,13 @@ export default function MediaAdminPage() {
             key={media.id}
             className='flex flex-col items-center rounded border p-2'
           >
-            <img
+            <Image
               src={`/api/media/${media.id}`}
               alt={media.fileName}
+              width={320}
+              height={160}
               className='mb-2 h-40 w-full bg-gray-100 object-contain'
+              style={{ objectFit: 'contain' }}
             />
             <div className='w-full truncate text-xs text-gray-700'>
               {media.fileName}

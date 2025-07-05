@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { MediaService } from '@/lib/media/media.service'
-import { MediaCreateSchema } from '@/lib/media/model/media.schema'
+import { MediaService, MediaCreate } from '@/lib/media'
 
 // GET /api/media - List all media
 export async function GET() {
   const service = new MediaService()
-  // For demo: fetch all (consider pagination for production)
-  const repo = service['mediaRepository']
-  const repository = await (
-    await import('@/lib/database')
-  ).getRepository((await import('@/lib/media/model/media.entity')).MediaEntity)
-  const all = await repository.find()
+  const all = await service.getAll()
   return NextResponse.json(all)
 }
 
@@ -21,15 +15,14 @@ export async function POST(req: NextRequest) {
   if (!file || typeof file === 'string') {
     return new NextResponse('No file uploaded', { status: 400 })
   }
-  const arrayBuffer = await file.arrayBuffer()
-  const buffer = Buffer.from(arrayBuffer)
   const service = new MediaService()
-  const media = await service.uploadImage(
-    file.name,
-    file.type,
-    buffer.length,
-    buffer
-  )
+  const mediaFile: MediaCreate = {
+    fileName: file.name,
+    mimeType: file.type,
+    fileSize: file.size,
+    data: file
+  }
+  const media = await service.uploadImage(mediaFile)
   return NextResponse.json(media)
 }
 

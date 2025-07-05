@@ -3,6 +3,16 @@ import { MediaEntity } from './model/media.entity'
 import { Media } from './model/media.schema'
 
 export class MediaRepository {
+  async getAll(): Promise<Media[]> {
+    try {
+      const repository = await getRepository(MediaEntity)
+      const all = await repository.find()
+      return all as Media[]
+    } catch (error) {
+      console.error('Error getting all media', { error })
+      throw error
+    }
+  }
   async getById(id: string): Promise<Media | null> {
     try {
       const repository = await getRepository(MediaEntity)

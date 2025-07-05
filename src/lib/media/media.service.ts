@@ -10,6 +10,14 @@ export class MediaService {
   }
 
   /**
+   * Get all media records.
+   * @returns Array of Media entities
+   */
+  async getAll(): Promise<Media[]> {
+    return this.mediaRepository.getAll()
+  }
+
+  /**
    * Get a media record by its ID.
    * @param id Media UUID
    * @returns Media entity or null

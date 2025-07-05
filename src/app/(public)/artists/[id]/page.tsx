@@ -49,7 +49,7 @@ const ArtistDetail = () => {
           <div className='lg:col-span-1'>
             <div className='mb-6 overflow-hidden rounded-lg bg-gray-100'>
               <Image
-                src={artist.profileImage}
+                src={artist.image}
                 alt={artist.name}
                 className='aspect-square h-auto w-full object-cover'
                 width={500}
