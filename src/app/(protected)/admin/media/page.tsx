@@ -1,7 +1,12 @@
 'use client'
-import React, { useEffect, useState, useRef } from 'react'
-import Image from 'next/image'
+import React, { useEffect, useState } from 'react'
 import { Media } from '@/lib/media/model/media.schema'
+import MediaUploadForm from '@/components/admin/media/MediaUploadForm'
+import MediaGridItem from '@/components/admin/media/MediaGridItem'
+import EditImageDialogRedesign from '@/components/admin/media/EditImageDialog'
+import PageTransition from '@/components/common/utility/PageTransition'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
 
 // Disable static generation for this page
 export const dynamic = 'force-dynamic'
@@ -30,7 +35,9 @@ export default function MediaAdminPage() {
   const [mediaList, setMediaList] = useState<Media[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [editMedia, setEditMedia] = useState<Media | null>(null)
+  const [search, setSearch] = useState('')
+  const [selectedTag, setSelectedTag] = useState<string | null>(null)
 
   const loadMedia = async () => {
     setLoading(true)
@@ -38,9 +45,9 @@ export default function MediaAdminPage() {
     try {
       const data = await fetchMediaList()
       setMediaList(data)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
-      setError(e.message)
+    } catch (e: unknown) {
+      const error = e as Error
+      setError(error.message)
     } finally {
       setLoading(false)
     }
@@ -56,80 +63,132 @@ export default function MediaAdminPage() {
     try {
       await deleteMedia(id)
       await loadMedia()
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
-      setError(e.message)
+    } catch (e: unknown) {
+      const error = e as Error
+      setError(error.message)
     } finally {
       setLoading(false)
     }
   }
 
-  const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const handleUpload = async (formData: FormData, reset: () => void) => {
     setLoading(true)
     setError(null)
-    const formData = new FormData(e.currentTarget)
     try {
       await uploadMedia(formData)
-      if (fileInputRef.current) fileInputRef.current.value = ''
+      reset()
       await loadMedia()
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
-      setError(e.message)
+    } catch (e: unknown) {
+      const error = e as Error
+      setError(error.message)
     } finally {
       setLoading(false)
     }
   }
 
+  const handleEdit = (media: Media) => setEditMedia(media)
+  const handleEditDialogClose = () => setEditMedia(null)
+
+  // Compute filtered media
+  const filteredMedia = mediaList.filter((media) => {
+    const matchesSearch =
+      !search ||
+      media.fileName.toLowerCase().includes(search.toLowerCase()) ||
+      (media.tags &&
+        media.tags.some((tag) =>
+          tag.toLowerCase().includes(search.toLowerCase())
+        ))
+    const matchesTag =
+      !selectedTag || (media.tags && media.tags.includes(selectedTag))
+    return matchesSearch && matchesTag
+  })
+
+  // Collect all tags for filter dropdown
+  const allTags = Array.from(new Set(mediaList.flatMap((m) => m.tags || [])))
+
   return (
-    <div className='mx-auto max-w-2xl p-4'>
-      <h1 className='mb-4 text-2xl font-bold'>Media Manager</h1>
-      <form onSubmit={handleUpload} className='mb-6 flex items-center gap-2'>
-        <input
-          ref={fileInputRef}
-          type='file'
-          name='file'
-          accept='image/*'
-          required
-          className='rounded border px-2 py-1'
-        />
-        <button
-          type='submit'
-          className='rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'
-          disabled={loading}
-        >
-          Upload
-        </button>
-      </form>
-      {error && <div className='mb-2 text-red-600'>{error}</div>}
-      {loading && <div>Loading...</div>}
-      <div className='grid grid-cols-2 gap-4'>
-        {mediaList.map((media) => (
-          <div
-            key={media.id}
-            className='flex flex-col items-center rounded border p-2'
-          >
-            <Image
-              src={`/api/media/${media.id}`}
-              alt={media.fileName}
-              width={320}
-              height={160}
-              className='mb-2 h-40 w-full bg-gray-100 object-contain'
-              style={{ objectFit: 'contain' }}
-            />
-            <div className='w-full truncate text-xs text-gray-700'>
-              {media.fileName}
-            </div>
-            <button
-              onClick={() => handleDelete(media.id)}
-              className='mt-2 text-xs text-red-600 hover:underline'
-              disabled={loading}
-            >
-              Delete
-            </button>
+    <PageTransition>
+      <div className='space-y-6'>
+        <div className='flex flex-col items-center justify-between gap-4 sm:flex-row'>
+          <div>
+            <h1 className='text-3xl font-bold tracking-tight'>Media Manager</h1>
+            <p className='mt-1 text-muted-foreground'>Manage your images.</p>
           </div>
-        ))}
+        </div>
+        <div className='flex flex-col items-center justify-between gap-2 sm:flex-row'>
+          <Input
+            type='text'
+            placeholder='Search by file name or tag...'
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className='max-w-xs'
+          />
+          <div className='flex flex-wrap gap-2'>
+            <Badge
+              variant={!selectedTag ? 'default' : 'secondary'}
+              className='cursor-pointer'
+              onClick={() => setSelectedTag(null)}
+            >
+              All Tags
+            </Badge>
+            {allTags.map((tag) => (
+              <Badge
+                key={tag}
+                variant={selectedTag === tag ? 'default' : 'secondary'}
+                className='cursor-pointer'
+                onClick={() => setSelectedTag(tag)}
+              >
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        </div>
+        <MediaUploadForm
+          onUpload={handleUpload}
+          loading={loading}
+          existingMedia={mediaList}
+        />
+        {error && <div className='mb-2 text-red-600'>{error}</div>}
+        {loading && <div>Loading...</div>}
+        <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+          {filteredMedia.map((media) => (
+            <MediaGridItem
+              key={media.id}
+              media={media}
+              onEdit={() => handleEdit(media)}
+              onDelete={handleDelete}
+              loading={loading}
+            />
+          ))}
+        </div>
+        {editMedia && (
+          <EditImageDialogRedesign
+            open={!!editMedia}
+            onOpenChange={handleEditDialogClose}
+            media={editMedia}
+            onSave={async (meta: {
+              fileName?: string
+              title?: string
+              alt?: string
+              altText?: string
+              tags: string[]
+            }) => {
+              if (!editMedia) return
+              await fetch(`/api/media/${editMedia.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  fileName: meta.fileName || meta.title,
+                  alt: meta.alt || meta.altText,
+                  tags: meta.tags
+                })
+              })
+              handleEditDialogClose()
+              await loadMedia()
+            }}
+          />
+        )}
       </div>
-    </div>
+    </PageTransition>
   )
 }

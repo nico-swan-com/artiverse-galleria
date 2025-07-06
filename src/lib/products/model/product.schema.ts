@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { ArtistSchema } from '@/lib/artists/model/artist.schema'
+import { ArtistSchema } from '../../artists/model/artist.schema'
 
 export const ProductSchema = z.object({
   id: z.string().uuid(),
