@@ -31,11 +31,12 @@ function isPlainBufferObject(
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+
+  { params }: { params: { id: string } }
 ) {
-  const { id } = await params
   const mediaService = new MediaService()
   try {
+    const { id } = params
     const media = await mediaService.getImageById(id)
     if (!media) {
       return new NextResponse('Not Found', { status: 404 })
