@@ -85,7 +85,7 @@ const Cart = () => {
                     >
                       <div className='mb-4 shrink-0 overflow-hidden rounded-md sm:mb-0 sm:size-24'>
                         <Image
-                          src={item.artwork.images[0]}
+                          src={item.artwork.featureImage! as string}
                           alt={item.artwork.title}
                           className='size-full object-cover'
                           width={200}
@@ -105,7 +105,7 @@ const Cart = () => {
                               </Link>
                             </h3>
                             <p className='text-sm text-gray-500'>
-                              By {item.artwork.artist.name}
+                              By {item.artwork?.artist?.name}
                             </p>
                           </div>
                           <div className='mt-2 sm:mt-0'>

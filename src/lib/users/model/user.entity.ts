@@ -10,9 +10,8 @@ import bcrypt from 'bcryptjs'
 import { UserRoles } from './user-roles.enum'
 import { UserStatus } from './user-status.enum'
 import { Exclude, instanceToPlain, Transform } from 'class-transformer'
-
 @Entity('users')
-export class User {
+export class UsersEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string
 
@@ -22,8 +21,8 @@ export class User {
   @Column()
   name!: string
 
-  @Column()
-  avatar!: string
+  @Column({ type: 'text', nullable: true })
+  avatar?: string
 
   @Exclude()
   @Column()

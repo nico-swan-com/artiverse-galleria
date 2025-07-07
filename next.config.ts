@@ -19,7 +19,7 @@ const defaultConfig: NextConfig = {
     ]
   },
   experimental: {
-    serverMinification: false,
+    serverMinification: true,
     authInterrupts: true,
     nodeMiddleware: true
   }

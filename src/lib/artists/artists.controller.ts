@@ -1,16 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { FindOptionsOrderValue } from 'typeorm'
 import { ArtistsSortBy } from './model'
-import Artists from './artists.service'
+import ArtistsService from './artists.service'
 
 export class ArtistsController {
-  private artistsService: Artists
+  async getAllArtistsPublic(request: NextRequest): Promise<Response> {
+    const artistsService = new ArtistsService()
+    const searchParams = request.nextUrl.searchParams
+    const sortBy = (searchParams.get('sortBy') || 'name') as ArtistsSortBy
+    const order = (searchParams.get('order') || 'DESC') as FindOptionsOrderValue
 
-  constructor(artistsService?: Artists) {
-    this.artistsService = artistsService || new Artists()
+    const { artists, total } = await artistsService.getAll(sortBy, order)
+
+    const sanitizedArtists = artists.map(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ({ createdAt, updatedAt, ...rest }) => rest
+    )
+    return NextResponse.json({
+      artists: sanitizedArtists,
+      total
+    })
   }
 
   async getArtistsPublic(request: NextRequest): Promise<Response> {
+    const artistsService = new ArtistsService()
     const searchParams = request.nextUrl.searchParams
     const sortBy = (searchParams.get('sortBy') || 'name') as ArtistsSortBy
     const page = parseInt(searchParams.get('page') || '1', 10)
@@ -18,7 +31,7 @@ export class ArtistsController {
     const order = (searchParams.get('order') || 'DESC') as FindOptionsOrderValue
     const query = searchParams.get('query')
 
-    const { artists, total } = await this.artistsService.getPaged(
+    const { artists, total } = await artistsService.getPaged(
       { page, limit },
       sortBy,
       order,
@@ -27,7 +40,7 @@ export class ArtistsController {
 
     const sanitizedArtists = artists.map(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      ({ createdAt, updatedAt, deletedAt, ...rest }) => rest
+      ({ createdAt, updatedAt, ...rest }) => rest
     )
     return NextResponse.json({
       artists: sanitizedArtists,

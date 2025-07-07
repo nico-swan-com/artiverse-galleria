@@ -17,8 +17,14 @@ export class Artists1743547674198 implements MigrationInterface {
             type: 'varchar'
           },
           {
-            name: 'photoUrl',
-            type: 'varchar'
+            name: 'image',
+            type: 'text',
+            isNullable: false
+          },
+          {
+            name: 'logo',
+            type: 'text',
+            isNullable: true
           },
           {
             name: 'featured',

@@ -1,2 +1,2 @@
-import { User } from './user.entity'
-export type Users = { users: User[]; total: number }
+import { UsersEntity } from './user.entity'
+export type Users = { users: UsersEntity[]; total: number }

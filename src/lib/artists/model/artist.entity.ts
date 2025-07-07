@@ -9,15 +9,15 @@ import {
 } from 'typeorm'
 
 @Entity('artists')
-export class Artist {
+export class ArtistsEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string
 
   @Column()
   name!: string
 
-  @Column()
-  photoUrl!: string
+  @Column({ type: 'text' })
+  image!: string
 
   @Column({ default: false })
   featured!: boolean

@@ -18,7 +18,11 @@
     "dashboard",
     "authentication",
     "users",
-    "artist-management"
+    "artist-management",
+    "products-management",
+    "user-management",
+    "data-access",
+    "media-management"
   ],
-  "cSpell.words": ["Artiverse"]
+  "cSpell.words": ["Artiverse", "sonner", "Uncategorized"]
 }

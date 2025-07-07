@@ -4,14 +4,20 @@
   dotenv.enable = true;
 
   env = {
-    NODE_ENV = "local";
+    NODE_ENV = "development";
     SOPS_AGE_KEY_FILE = "/home/nicoswan/.config/sops/age/keys.txt";
 
-    POSTGRES_HOST = "localhost";
-    POSTGRES_PORT = "5433";
-    POSTGRES_USER = "app";
-    POSTGRES_DATABASE = "app";
-    POSTGRES_SCHEMA = "app";
+    # POSTGRES_HOST = "localhost";
+    # POSTGRES_PORT = "5433";
+    # POSTGRES_USER = "app";
+    # POSTGRES_DATABASE = "app";
+    # POSTGRES_SCHEMA = "app";
+    POSTGRES_HOST = "vm403bfeq.cygnus-labs.com";
+    POSTGRES_PORT = "5432";
+    POSTGRES_USER = "artiverse";
+    POSTGRES_DATABASE = "development";
+    POSTGRES_SCHEMA = "artiverse";
+
 
     SMTP_SERVER_HOST = "mail.cygnus-labs.com";
     SMTP_SERVER_PORT = "465";
@@ -32,32 +38,32 @@
   # };
 
   # https://devenv.sh/services/
-  services.postgres = {
-    enable = true;
-    createDatabase = true;
-    initialDatabases = [{
-      name = "app";
-      user = "app";
-      pass = "app";
-    }];
-    listen_addresses = "*";
-    port = 5433;
-  };
+  # services.postgres = {
+  #   enable = true;
+  #   createDatabase = true;
+  #   initialDatabases = [{
+  #     name = "app";
+  #     user = "app";
+  #     pass = "app";
+  #   }];
+  #   listen_addresses = "*";
+  #   port = 5433;
+  # };
 
-  services.wiremock = {
-    enable = true;
-    port = 8080;
-    mappings = [{
-      request = {
-        method = "GET";
-        url = "/api/hello";
-      };
-      response = {
-        status = 200;
-        body = "Hello, world!";
-      };
-    }];
-  };
+  # services.wiremock = {
+  #   enable = true;
+  #   port = 8080;
+  #   mappings = [{
+  #     request = {
+  #       method = "GET";
+  #       url = "/api/hello";
+  #     };
+  #     response = {
+  #       status = 200;
+  #       body = "Hello, world!";
+  #     };
+  #   }];
+  # };
 
   # https://devenv.sh/scripts/
   scripts = {

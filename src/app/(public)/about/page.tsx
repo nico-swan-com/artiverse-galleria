@@ -142,9 +142,9 @@ const About = () => {
                   'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80',
                 bio: 'Aisha oversees our online platform, enhancing the digital experience of viewing and purchasing art.'
               }
-            ].map((member, index) => (
+            ].map((member) => (
               <div
-                key={index}
+                key={member.name}
                 className='overflow-hidden rounded-lg bg-white shadow-sm'
               >
                 <div className='aspect-square'>

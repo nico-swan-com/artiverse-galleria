@@ -30,6 +30,7 @@ export const UpdatePasswordSchema = z
   })
 
 export const UserSchema = z.object({
+  id: z.string().uuid({ message: 'Invalid user ID.' }).optional(),
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Invalid email address.' }),
   password: z.string().optional(),
@@ -41,5 +42,16 @@ export const UserSchema = z.object({
     .nativeEnum(UserStatus, { message: 'Missing user status.' })
     .optional()
     .default(UserStatus.Pending),
-  avatar: z.string().optional().default('/placeholder.svg')
+  avatar: z.string().url().optional(),
+  createdAt: z.date().transform((date) => date || undefined),
+  updatedAt: z
+    .date()
+    .optional()
+    .transform((date) => date || undefined),
+  deletedAt: z
+    .date()
+    .optional()
+    .transform((date) => date || undefined)
 })
+
+export type User = z.infer<typeof UserSchema>

@@ -1,9 +1,16 @@
 'use client'
 import { AnimatePresence } from 'framer-motion'
 import { useIsMobile } from '@/hooks/use-mobile'
-import Sidebar from '@/components/layout/navigation/sidebar.component'
-import MobileNavbar from '@/components/layout/navigation/mobile-navbar.component'
-import { BarChart3, Palette, UserRound, UsersRound } from 'lucide-react'
+import Sidebar from '@/components/layout/navigation/Sidebar'
+import MobileNavbar from '@/components/layout/navigation/MobileNavbar'
+import {
+  BarChart3,
+  Package,
+  Palette,
+  Images,
+  UserRound,
+  UsersRound
+} from 'lucide-react'
 import { useState } from 'react'
 import { SessionProvider } from 'next-auth/react'
 
@@ -17,16 +24,19 @@ export default function DashboardLayout({
 
   const menuItems = [
     {
+      id: 'dashboard',
       title: 'Dashboard',
       icon: <BarChart3 size={18} />,
       path: '/admin'
     },
     {
+      id: 'users',
       title: 'Users',
       icon: <UsersRound size={18} />,
       path: '/admin/users'
     },
     {
+      id: 'artists',
       title: 'Artists',
       icon: (
         <>
@@ -37,6 +47,18 @@ export default function DashboardLayout({
         </>
       ),
       path: '/admin/artists'
+    },
+    {
+      id: 'products',
+      title: 'Products',
+      icon: <Package size={18} />,
+      path: '/admin/products'
+    },
+    {
+      id: 'media',
+      title: 'Media',
+      icon: <Images size={18} />,
+      path: '/admin/media'
     }
     // {
     //   title: 'Blog',

@@ -1,7 +1,7 @@
 import { PaginationParams } from './../../types/common/pagination-params.type'
 import { FindOptionsOrderValue } from 'typeorm'
 import { UsersRepository } from './users.repository'
-import { User, UsersSortBy } from './model'
+import { UsersEntity, UsersSortBy } from './model'
 
 export default class Users {
   repository: UsersRepository
@@ -19,17 +19,17 @@ export default class Users {
     return result
   }
 
-  async create(user: User) {
+  async create(user: UsersEntity) {
     const result = await this.repository.create(user)
     return result
   }
 
-  async update(user: User) {
+  async update(user: UsersEntity) {
     const result = await this.repository.update(user)
     return result
   }
 
-  async delete(user: User) {
+  async delete(user: UsersEntity) {
     const result = await this.repository.delete(user.id)
     return result
   }

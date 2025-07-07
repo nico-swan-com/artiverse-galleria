@@ -81,7 +81,7 @@ const Pagination = ({
         )}
         {variant === 'dots' &&
           Array.from({ length: 7 }, (_, i) => (
-            <PaginationItem key={i}>
+            <PaginationItem key={`dot-${i}`}>
               <button
                 className={cn(
                   'h-2 w-2 rounded-full transition-colors',
@@ -96,7 +96,7 @@ const Pagination = ({
           ))}
         {variant === 'numbers' &&
           pageNumbers.map((page, index) => (
-            <PaginationItem key={index}>
+            <PaginationItem key={`page-${page}-${index}`}>
               {page === '...' ? (
                 <PaginationEllipsis />
               ) : (
