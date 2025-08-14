@@ -3,6 +3,9 @@ import React from 'react'
 import { render, fireEvent, waitFor, screen, act } from '@testing-library/react'
 import MediaUploadForm from './MediaUploadForm'
 
+// Add this at the very top of your test file, before any tests
+global.URL.createObjectURL = jest.fn(() => 'mock-url')
+
 jest.mock('browser-image-compression', () =>
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   jest.fn(async (file, opts) => file)
@@ -63,5 +66,28 @@ describe('MediaUploadForm', () => {
       <MediaUploadForm onUpload={onUpload} loading={true} existingMedia={[]} />
     )
     expect(screen.getByLabelText(/file/i)).toBeDisabled()
+  })
+
+  it('disables save button in dialog when loading', async () => {
+    render(
+      <MediaUploadForm onUpload={onUpload} loading={false} existingMedia={[]} />
+    )
+    const file = new File(['test'], 'test.png', { type: 'image/png' })
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText(/file/i), {
+        target: { files: [file] }
+      })
+    })
+    await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument())
+    // Simulate loading state by re-rendering with loading=true
+    // Re-render the dialog with loading=true to ensure the button is disabled
+    render(
+      <MediaUploadForm onUpload={onUpload} loading={true} existingMedia={[]} />
+    )
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: /save & apply/i })
+      ).toBeDisabled()
+    })
   })
 })

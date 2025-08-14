@@ -3,6 +3,14 @@ import { Media, MediaCreate, MediaUpdate } from './model/media.schema'
 import { MediaEntity } from './model/media.entity'
 import crypto from 'crypto'
 
+export const MAX_FILE_SIZE = 5 * 1024 * 1024
+export const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp'
+]
+
 export class MediaService {
   private mediaRepository: MediaRepository
 
@@ -40,8 +48,7 @@ export class MediaService {
       throw new Error('Invalid media file data')
     }
 
-    // File size validation (5MB max)
-    if (file.fileSize > 5 * 1024 * 1024) {
+    if (file.fileSize > MAX_FILE_SIZE) {
       const err = new Error(
         'File is too large. Maximum allowed size is 5MB.'
       ) as Error & { status?: number }
@@ -62,11 +69,7 @@ export class MediaService {
     // Duplicate detection
     const existing = await this.mediaRepository.findByContentHash(hash)
     if (existing) {
-      const err = new Error(
-        'Duplicate file detected. A file with this content already exists.'
-      ) as Error & { status?: number }
-      err.status = 409
-      throw err
+      return existing
     }
 
     const media = new MediaEntity()

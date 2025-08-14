@@ -15,6 +15,8 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { PasswordInput } from '../create-user/PasswordInput'
+import AvatarImageInput from '../../media/AvatarImageInput'
+import { getAvatarUrl } from '@/lib/utilities'
 
 interface EditUserFormProps {
   user: User
@@ -31,11 +33,14 @@ const initialFormState: EditUserState = {
   newPassword: '',
   role: '',
   status: '',
+  avatar: undefined,
+  avatarFile: undefined,
   errors: {}
 }
 
 const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
   const [showPasswordFields, setShowPasswordFields] = useState(false)
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [state, formAction, isPending] = useActionState<
     EditUserState,
     FormData
@@ -46,20 +51,67 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
     email: user.email,
     password: user.password!,
     role: user.role,
+    avatar: user.avatar,
     status: user.status
   })
+  const [avatarPreview, setAvatarPreview] = useState<string | undefined>(
+    undefined
+  )
 
   useEffect(() => {
     if (state.success && !!state.message && !isPending) {
       toast.success(state.message)
-      state.message = ''
       onClose()
     }
-  }, [state, isPending, onClose])
+  }, [state.success, state.message, isPending, onClose])
+
+  useEffect(() => {
+    if (state.success && state.avatar) {
+      setAvatarPreview((prev) => {
+        if (prev !== state.avatar) {
+          return state.avatar
+        }
+        return prev
+      })
+    }
+    // Only run when state.success or state.avatar changes
+  }, [state.success, state.avatar])
+
+  const handleFormAction = (formData: FormData) => {
+    if (avatarFile) {
+      formData.set('avatarFile', avatarFile)
+    } else {
+      formData.delete('avatarFile')
+    }
+    formAction(formData)
+  }
 
   return (
-    <form action={formAction} className='mt-4 space-y-4'>
+    <form action={handleFormAction} className='mt-4 space-y-4'>
       <Input id='userId' name='userId' type='hidden' defaultValue={user.id} />
+      <div className='space-y-2'>
+        <label htmlFor='avatarFile'>Avatar</label>
+        <AvatarImageInput
+          url={
+            avatarPreview || state.avatar || getAvatarUrl(user.email, user.name)
+          }
+          onChangeAction={(file) => {
+            if (file instanceof File) {
+              setAvatarFile(file)
+              setAvatarPreview(URL.createObjectURL(file))
+            } else {
+              setAvatarFile(null)
+              setAvatarPreview(undefined)
+            }
+          }}
+        />
+        {state.errors?.avatarFile && (
+          <p className='text-sm font-medium text-destructive'>
+            {state.errors.avatarFile[0]}
+          </p>
+        )}
+      </div>
+
       <div className='space-y-2'>
         <Label htmlFor='name'>Name</Label>
         <Input
@@ -73,7 +125,6 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
           <p className='text-red-500'>{state.errors.name.join(', ')}</p>
         )}
       </div>
-
       <div className='space-y-2'>
         <Label htmlFor='email'>Email</Label>
         <Input
@@ -88,7 +139,6 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
           <p className='text-red-500'>{state.errors.email.join(', ')}</p>
         )}
       </div>
-
       <div className='space-y-2'>
         <Label htmlFor='role'>Role</Label>
         <Select name='role' defaultValue={user.role}>
@@ -107,7 +157,6 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
           <p className='text-red-500'>{state.errors.role.join(', ')}</p>
         )}
       </div>
-
       <div className='space-y-2'>
         <Label htmlFor='status'>Status</Label>
         <Select name='status' defaultValue={user.status}>
@@ -127,11 +176,6 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
         )}
       </div>
 
-      <div className='space-y-2'>
-        <Label htmlFor='avatar'>Avatar</Label>
-        <Input id='avatar' name='avatar' type='file' accept='image/*' />
-      </div>
-
       {!showPasswordFields && (
         <Button
           className='w-full'
@@ -141,14 +185,12 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
           Change Password
         </Button>
       )}
-
       <Input
         id='password'
         name='password'
         type='hidden'
         defaultValue={user.password}
       />
-
       {showPasswordFields && (
         <>
           <div className='space-y-2'>

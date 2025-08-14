@@ -16,7 +16,7 @@ const initialFormState: CreateArtistState = {
   message: '',
   name: '',
   email: '',
-  photoUrl: undefined,
+  image: undefined,
   featured: false,
   styles: [],
   biography: '',
@@ -78,16 +78,16 @@ const CreateArtistForm = ({ onClose }: CreateArtistFormProps) => {
       </div>
 
       <div className='space-y-2'>
-        <Label htmlFor='photoUrl'>Photo URL</Label>
+        <Label htmlFor='image'>Profile image</Label>
         <Input
-          id='photoUrl'
-          name='photoUrl'
+          id='image'
+          name='image'
           type='text'
           placeholder='https://example.com/photo.jpg'
-          defaultValue={state.photoUrl}
+          defaultValue={state.image}
         />
-        {state?.errors?.photoUrl && (
-          <p className='text-red-500'>{state?.errors.photoUrl.join(', ')}</p>
+        {state?.errors?.image && (
+          <p className='text-red-500'>{state?.errors?.image.join(', ')}</p>
         )}
       </div>
 

@@ -8,6 +8,11 @@ const defaultConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'www.gravatar.com',
+        pathname: '/**' // This allows all paths
+      },
+      {
+        protocol: 'https',
         hostname: 'images.unsplash.com',
         pathname: '/**' // This allows all paths
       },

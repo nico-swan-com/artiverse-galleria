@@ -9,7 +9,7 @@ import ArtistsService from '@/lib/artists/artists.service'
 export type CreateArtistFieldErrors = {
   name?: string[]
   email?: string[]
-  photoUrl?: string[]
+  image?: string[]
   featured?: string[]
   styles?: string[]
   biography?: string[]
@@ -26,7 +26,7 @@ export type CreateArtistState = {
   message: string
   name: string
   email: string
-  photoUrl: string | undefined
+  image: string | undefined
   featured: boolean
   styles: string[]
   biography: string
@@ -44,8 +44,7 @@ async function createArtistAction(
 ): Promise<CreateArtistState> {
   const name = formData.get('name')?.toString() || ''
   const email = formData.get('email')?.toString() || ''
-  const photoUrl =
-    formData.get('photoUrl')?.toString() || getAvatarUrl(email, name)
+  const image = formData.get('image')?.toString() || getAvatarUrl(email, name)
   const featured = Boolean(formData.get('featured')?.valueOf()) || false
   const styles = (formData.get('styles')?.toString() || '').split(',')
   const biography = formData.get('biography')?.toString() || ''
@@ -60,7 +59,7 @@ async function createArtistAction(
     message: '',
     name,
     email,
-    photoUrl,
+    image,
     featured,
     styles,
     biography,
@@ -76,7 +75,7 @@ async function createArtistAction(
     const values = ArtistCreateSchema.parse({
       name,
       email,
-      photoUrl,
+      image,
       featured,
       styles,
       biography,

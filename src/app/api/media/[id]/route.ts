@@ -23,7 +23,7 @@ function isPlainBufferObject(
  *   - height: number (optional)
  *   - watermark: '1' | '0' (optional)
  *   - wmText: string (optional)
- *   - wmLogo: string (optional, logo file name in /public)
+ *   - wmLogo: string (optional, logo file name in /public)no
  *   - wmPos: string (e.g. 'bottom-right')
  *   - wmOpacity: number (0-1)
  *   - wmScale: number (0-1, relative to image width)
