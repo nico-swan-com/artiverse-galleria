@@ -5,11 +5,13 @@ import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
 import { ArtistCreateSchema } from '@/lib/artists'
 import ArtistsService from '@/lib/artists/artists.service'
+import { MediaCreate, MediaService } from '@/lib/media'
 
 export type CreateArtistFieldErrors = {
   name?: string[]
   email?: string[]
   image?: string[]
+  avatarFile?: string[]
   featured?: string[]
   styles?: string[]
   biography?: string[]
@@ -27,6 +29,7 @@ export type CreateArtistState = {
   name: string
   email: string
   image: string | undefined
+  avatarFile?: File
   featured: boolean
   styles: string[]
   biography: string
@@ -44,7 +47,7 @@ async function createArtistAction(
 ): Promise<CreateArtistState> {
   const name = formData.get('name')?.toString() || ''
   const email = formData.get('email')?.toString() || ''
-  const image = formData.get('image')?.toString() || getAvatarUrl(email, name)
+  const avatarFile = formData.get('avatarFile') || undefined
   const featured = Boolean(formData.get('featured')?.valueOf()) || false
   const styles = (formData.get('styles')?.toString() || '').split(',')
   const biography = formData.get('biography')?.toString() || ''
@@ -54,12 +57,43 @@ async function createArtistAction(
   const exhibitions = (formData.get('exhibitions')?.toString() || '').split(',')
   const statement = formData.get('statement')?.toString() || ''
 
+  let image = getAvatarUrl(email, name)
+
+  // Handle avatar file upload if provided
+  if (avatarFile instanceof File) {
+    try {
+      const mediaService = new MediaService()
+      const buffer = Buffer.from(await avatarFile.arrayBuffer())
+      const newImage: MediaCreate = {
+        fileName: avatarFile.name,
+        fileSize: avatarFile.size,
+        mimeType: avatarFile.type,
+        data: buffer,
+        altText: name,
+        tags: ['avatar', 'artist', 'profile']
+      }
+      const newAvatarUrl = await mediaService.uploadImage(newImage)
+      image = `/api/media/${newAvatarUrl.id}`
+    } catch (error) {
+      console.error('Failed to upload avatar:', error)
+      return {
+        ...prevState,
+        success: false,
+        message: 'Failed to upload avatar image.',
+        errors: {
+          avatarFile: ['Failed to upload avatar image']
+        }
+      }
+    }
+  }
+
   const state: CreateArtistState = {
     success: false,
     message: '',
     name,
     email,
     image,
+    avatarFile: avatarFile instanceof File ? avatarFile : undefined,
     featured,
     styles,
     biography,
@@ -73,21 +107,15 @@ async function createArtistAction(
 
   try {
     const values = ArtistCreateSchema.parse({
-      name,
-      email,
-      image,
-      featured,
-      styles,
-      biography,
-      specialization,
-      location,
-      website,
-      exhibitions,
-      statement
+      ...state
     })
 
+    // Filter out avatarFile as it's not a database field
+    const createData = { ...values }
+    delete createData.avatarFile
+
     const services = new ArtistsService()
-    await services.create(values)
+    await services.create(createData)
     revalidateTag('artists')
 
     return {

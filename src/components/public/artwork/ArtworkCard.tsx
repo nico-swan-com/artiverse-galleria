@@ -24,8 +24,6 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({ artwork, className }) => {
     addToCart(artwork)
   }
 
-  const artistName = artwork.artist?.name || 'Unknown Artist'
-
   return (
     <div className={cn('artwork-card group', className)}>
       <Link href={`/artworks/${artwork.id}`} className='flex h-full flex-col'>
@@ -74,7 +72,6 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({ artwork, className }) => {
           <h3 className='font-display text-lg font-medium text-gray-900 transition-colors group-hover:text-black'>
             {artwork.title}
           </h3>
-          <p className='mt-1 text-sm text-gray-600'>{artistName}</p>
           <div className='mt-2 flex items-center justify-between'>
             <p className='font-medium'>{formatPrice(artwork.price)}</p>
             <div className='text-xs text-gray-500'>{artwork?.medium}</div>

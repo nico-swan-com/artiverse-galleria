@@ -41,11 +41,9 @@ export default function ArtworksClient({
 
   const filteredArtworks = useMemo(() => {
     return artworks.filter((artwork) => {
-      const matchesSearch =
-        artwork.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (artwork.artist?.name || '')
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
+      const matchesSearch = artwork.title
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
       const matchesCategory = selectedCategory
         ? artwork.category === selectedCategory
         : true

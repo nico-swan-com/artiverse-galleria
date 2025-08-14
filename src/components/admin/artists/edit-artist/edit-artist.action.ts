@@ -1,16 +1,17 @@
 'use server'
 
 import { z } from 'zod'
-import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
 import { ArtistUpdate, ArtistUpdateSchema } from '@/lib/artists'
 import ArtistsService from '@/lib/artists/artists.service'
+import { MediaCreate, MediaService } from '@/lib/media'
 
 export type EditArtistFieldErrors = {
   id?: string[]
   name?: string[]
   email?: string[]
-  photoUrl?: string[]
+  image?: string[]
+  avatarFile?: string[]
   featured?: string[]
   styles?: string[]
   biography?: string[]
@@ -28,27 +29,57 @@ export type EditArtistState = {
   message: string
   name: string
   email: string
-  photoUrl: string | undefined
+  image: string
+  avatarFile?: File
   featured: boolean
   styles: string[]
   biography: string
   specialization: string
   location: string
-  website: string | undefined
+  website?: string
   exhibitions: string[]
   statement: string
   errors: EditArtistFieldErrors
 }
 
-async function editArtistAction(
+export default async function editArtistAction(
   prevState: EditArtistState,
   formData: FormData
 ): Promise<EditArtistState> {
-  const id = prevState.id
+  const id = formData.get('id')?.toString() || ''
   const name = formData.get('name')?.toString() || ''
   const email = formData.get('email')?.toString() || ''
-  const photoUrl =
-    formData.get('photoUrl')?.toString() || getAvatarUrl(email, name)
+  const avatarFile = formData.get('avatarFile') as File | null
+  let image = formData.get('image')?.toString() || ''
+
+  // Handle avatar file upload if provided
+  if (avatarFile instanceof File) {
+    try {
+      const mediaService = new MediaService()
+      const buffer = Buffer.from(await avatarFile.arrayBuffer())
+      const newImage: MediaCreate = {
+        fileName: avatarFile.name,
+        fileSize: avatarFile.size,
+        mimeType: avatarFile.type,
+        data: buffer,
+        altText: name,
+        tags: ['avatar', 'artist', 'profile']
+      }
+      const newAvatarUrl = await mediaService.uploadImage(newImage)
+      image = `/api/media/${newAvatarUrl.id}`
+    } catch (error) {
+      console.error('Failed to upload avatar:', error)
+      return {
+        ...prevState,
+        success: false,
+        message: 'Failed to upload avatar image.',
+        errors: {
+          avatarFile: ['Failed to upload avatar image']
+        }
+      }
+    }
+  }
+
   const featured = Boolean(formData.get('featured')?.valueOf()) || false
   const styles = (formData.get('styles')?.toString() || '').split(',')
   const biography = formData.get('biography')?.toString() || ''
@@ -64,7 +95,8 @@ async function editArtistAction(
     message: '',
     name,
     email,
-    photoUrl,
+    image,
+    avatarFile: avatarFile instanceof File ? avatarFile : undefined,
     featured,
     styles,
     biography,
@@ -78,22 +110,15 @@ async function editArtistAction(
 
   try {
     const values: ArtistUpdate = ArtistUpdateSchema.parse({
-      id,
-      name,
-      email,
-      photoUrl,
-      featured,
-      styles,
-      biography,
-      specialization,
-      location,
-      website,
-      exhibitions,
-      statement
+      ...state
     })
 
+    // Filter out avatarFile as it's not a database field
+    const updateData = { ...values }
+    delete updateData.avatarFile
+
     const services = new ArtistsService()
-    await services.update(values)
+    await services.update(updateData)
     revalidateTag('artists')
 
     return {
@@ -124,5 +149,3 @@ async function editArtistAction(
     }
   }
 }
-
-export default editArtistAction

@@ -1,15 +1,19 @@
 'use client'
 
-import React, { useActionState, useEffect } from 'react'
+import React, { useActionState, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import createArtistAction, { CreateArtistState } from './create-artist.action'
+import AvatarImageInput from '../../media/AvatarImageInput'
+import { getAvatarUrl } from '@/lib/utilities'
 
 interface CreateArtistFormProps {
   onClose: () => void
 }
+
+const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB in bytes
 
 const initialFormState: CreateArtistState = {
   success: false,
@@ -29,6 +33,12 @@ const initialFormState: CreateArtistState = {
 }
 
 const CreateArtistForm = ({ onClose }: CreateArtistFormProps) => {
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const [avatarError, setAvatarError] = useState<string | null>(null)
+  const [avatarPreview, setAvatarPreview] = useState<string | undefined>(
+    undefined
+  )
+
   const [state, formAction, isPending] = useActionState(
     createArtistAction,
     initialFormState
@@ -46,8 +56,62 @@ const CreateArtistForm = ({ onClose }: CreateArtistFormProps) => {
     }
   }, [state, isPending, onClose])
 
+  // Clear avatar error when avatarFile changes
+  useEffect(() => {
+    if (avatarFile) {
+      setAvatarError(null)
+    }
+  }, [avatarFile])
+
+  const handleFormAction = (formData: FormData) => {
+    // Clear any previous errors
+    setAvatarError(null)
+
+    // Validate file size before submission
+    if (avatarFile && avatarFile.size > MAX_FILE_SIZE) {
+      const sizeInMB = (MAX_FILE_SIZE / (1024 * 1024)).toFixed(1)
+      const fileSizeInMB = (avatarFile.size / (1024 * 1024)).toFixed(1)
+      setAvatarError(
+        `File size (${fileSizeInMB}MB) exceeds the maximum allowed size of ${sizeInMB}MB`
+      )
+      return
+    }
+
+    if (avatarFile) {
+      formData.set('avatarFile', avatarFile)
+    } else {
+      formData.delete('avatarFile')
+    }
+    formAction(formData)
+  }
+
+  const handleAvatarChange = (file: File | string | null) => {
+    if (file instanceof File) {
+      setAvatarFile(file)
+      setAvatarPreview(URL.createObjectURL(file))
+      setAvatarError(null)
+    } else {
+      setAvatarFile(null)
+      setAvatarPreview(undefined)
+      setAvatarError(null)
+    }
+  }
+
   return (
-    <form action={formAction} className='mt-4 space-y-4'>
+    <form action={handleFormAction} className='mt-4 space-y-4'>
+      <div className='space-y-2'>
+        <Label htmlFor='avatarFile'>Profile Image</Label>
+        <AvatarImageInput
+          url={
+            avatarPreview ||
+            state.image ||
+            getAvatarUrl(state.email || '', state.name || '')
+          }
+          onChangeAction={handleAvatarChange}
+          maxFileSize={MAX_FILE_SIZE}
+          error={avatarError || state.errors?.image?.[0]}
+        />
+      </div>
       <div className='space-y-2'>
         <Label htmlFor='name'>Name</Label>
         <Input
@@ -58,7 +122,9 @@ const CreateArtistForm = ({ onClose }: CreateArtistFormProps) => {
           required
         />
         {state?.errors?.name && (
-          <p className='text-red-500'>{state?.errors.name.join(', ')}</p>
+          <p className='text-sm font-medium text-destructive'>
+            {state?.errors.name.join(', ')}
+          </p>
         )}
       </div>
 
@@ -73,21 +139,9 @@ const CreateArtistForm = ({ onClose }: CreateArtistFormProps) => {
           required
         />
         {state.errors?.email && (
-          <p className='text-red-500'>{state?.errors?.email.join(', ')}</p>
-        )}
-      </div>
-
-      <div className='space-y-2'>
-        <Label htmlFor='image'>Profile image</Label>
-        <Input
-          id='image'
-          name='image'
-          type='text'
-          placeholder='https://example.com/photo.jpg'
-          defaultValue={state.image}
-        />
-        {state?.errors?.image && (
-          <p className='text-red-500'>{state?.errors?.image.join(', ')}</p>
+          <p className='text-sm font-medium text-destructive'>
+            {state?.errors?.email.join(', ')}
+          </p>
         )}
       </div>
 
@@ -101,7 +155,9 @@ const CreateArtistForm = ({ onClose }: CreateArtistFormProps) => {
           defaultValue={state.biography}
         />
         {state?.errors?.biography && (
-          <p className='text-red-500'>{state?.errors.biography.join(', ')}</p>
+          <p className='text-sm font-medium text-destructive'>
+            {state?.errors.biography.join(', ')}
+          </p>
         )}
       </div>
 
@@ -115,7 +171,7 @@ const CreateArtistForm = ({ onClose }: CreateArtistFormProps) => {
           defaultValue={state.specialization}
         />
         {state?.errors?.specialization && (
-          <p className='text-red-500'>
+          <p className='text-sm font-medium text-destructive'>
             {state?.errors.specialization.join(', ')}
           </p>
         )}
@@ -131,7 +187,9 @@ const CreateArtistForm = ({ onClose }: CreateArtistFormProps) => {
           defaultValue={state.location}
         />
         {state?.errors?.location && (
-          <p className='text-red-500'>{state?.errors.location.join(', ')}</p>
+          <p className='text-sm font-medium text-destructive'>
+            {state?.errors.location.join(', ')}
+          </p>
         )}
       </div>
 
@@ -145,7 +203,9 @@ const CreateArtistForm = ({ onClose }: CreateArtistFormProps) => {
           defaultValue={state.website}
         />
         {state?.errors?.website && (
-          <p className='text-red-500'>{state?.errors.website.join(', ')}</p>
+          <p className='text-sm font-medium text-destructive'>
+            {state?.errors.website.join(', ')}
+          </p>
         )}
       </div>
 
@@ -159,18 +219,26 @@ const CreateArtistForm = ({ onClose }: CreateArtistFormProps) => {
           defaultValue={state.statement}
         />
         {state?.errors?.statement && (
-          <p className='text-red-500'>{state?.errors.statement.join(', ')}</p>
+          <p className='text-sm font-medium text-destructive'>
+            {state?.errors.statement.join(', ')}
+          </p>
         )}
       </div>
 
       <div className='flex w-full justify-end pt-4'>
         {state?.success === false && (
-          <p className='text-red-500'>{state.message}</p>
+          <p className='text-sm font-medium text-destructive'>
+            {state.message}
+          </p>
         )}
       </div>
 
       <div className='flex justify-end pt-4'>
-        <Button type='submit' disabled={isPending} className='w-full'>
+        <Button
+          type='submit'
+          disabled={isPending || !!avatarError}
+          className='w-full'
+        >
           {isPending ? 'Adding artist...' : 'Add artist'}
         </Button>
       </div>
