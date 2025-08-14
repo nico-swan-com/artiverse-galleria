@@ -18,17 +18,49 @@ type AvatarImageInputProps = {
    * Optionally set the initial image (URL).
    */
   url?: string
+  /**
+   * Maximum file size in bytes (default: 1MB)
+   */
+  maxFileSize?: number
+  /**
+   * Error message to display
+   */
+  error?: string
 }
 
 export default function AvatarImageInput({
   onChangeAction,
-  url
+  url,
+  maxFileSize = 1024 * 1024, // 1MB default
+  error
 }: AvatarImageInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(url || null)
+  const [fileError, setFileError] = useState<string | null>(null)
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
+    setFileError(null) // Clear previous errors
+
     if (file) {
+      // Check file size
+      if (file.size > maxFileSize) {
+        const sizeInMB = (maxFileSize / (1024 * 1024)).toFixed(1)
+        const fileSizeInMB = (file.size / (1024 * 1024)).toFixed(1)
+        setFileError(
+          `File size (${fileSizeInMB}MB) exceeds the maximum allowed size of ${sizeInMB}MB`
+        )
+        onChangeAction(null, null)
+        return
+      }
+
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        setFileError('Please select a valid image file')
+        onChangeAction(null, null)
+        return
+      }
+
       setPreviewUrl(URL.createObjectURL(file))
       onChangeAction(file, {
         name: file.name,
@@ -41,6 +73,10 @@ export default function AvatarImageInput({
     }
   }
 
+  const clearError = () => {
+    setFileError(null)
+  }
+
   return (
     <div className='flex flex-col items-center gap-2'>
       <div className='relative inline-flex'>
@@ -48,7 +84,10 @@ export default function AvatarImageInput({
           variant='outline'
           type='button'
           className='relative size-16 overflow-hidden p-0 shadow-none'
-          onClick={() => inputRef.current?.click()}
+          onClick={() => {
+            clearError()
+            inputRef.current?.click()
+          }}
           aria-label={previewUrl ? 'Change image' : 'Upload image'}
         >
           {previewUrl ? (
@@ -77,6 +116,18 @@ export default function AvatarImageInput({
           onChange={handleFileChange}
         />
       </div>
+
+      {/* Display file size limit info */}
+      <p className='text-xs text-muted-foreground'>
+        Max file size: {(maxFileSize / (1024 * 1024)).toFixed(1)}MB
+      </p>
+
+      {/* Display errors */}
+      {(fileError || error) && (
+        <p className='max-w-48 text-center text-sm font-medium text-destructive'>
+          {fileError || error}
+        </p>
+      )}
     </div>
   )
 }

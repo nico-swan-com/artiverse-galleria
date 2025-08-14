@@ -38,9 +38,12 @@ const initialFormState: EditUserState = {
   errors: {}
 }
 
+const MAX_FILE_SIZE = 1024 * 1024 // 1MB in bytes
+
 const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
   const [showPasswordFields, setShowPasswordFields] = useState(false)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const [avatarError, setAvatarError] = useState<string | null>(null)
   const [state, formAction, isPending] = useActionState<
     EditUserState,
     FormData
@@ -77,13 +80,45 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
     // Only run when state.success or state.avatar changes
   }, [state.success, state.avatar])
 
+  // Clear avatar error when avatarFile changes
+  useEffect(() => {
+    if (avatarFile) {
+      setAvatarError(null)
+    }
+  }, [avatarFile])
+
   const handleFormAction = (formData: FormData) => {
+    // Clear any previous errors
+    setAvatarError(null)
+
+    // Validate file size before submission
+    if (avatarFile && avatarFile.size > MAX_FILE_SIZE) {
+      const sizeInMB = (MAX_FILE_SIZE / (1024 * 1024)).toFixed(1)
+      const fileSizeInMB = (avatarFile.size / (1024 * 1024)).toFixed(1)
+      setAvatarError(
+        `File size (${fileSizeInMB}MB) exceeds the maximum allowed size of ${sizeInMB}MB`
+      )
+      return
+    }
+
     if (avatarFile) {
       formData.set('avatarFile', avatarFile)
     } else {
       formData.delete('avatarFile')
     }
     formAction(formData)
+  }
+
+  const handleAvatarChange = (file: File | string | null) => {
+    if (file instanceof File) {
+      setAvatarFile(file)
+      setAvatarPreview(URL.createObjectURL(file))
+      setAvatarError(null)
+    } else {
+      setAvatarFile(null)
+      setAvatarPreview(undefined)
+      setAvatarError(null)
+    }
   }
 
   return (
@@ -95,21 +130,10 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
           url={
             avatarPreview || state.avatar || getAvatarUrl(user.email, user.name)
           }
-          onChangeAction={(file) => {
-            if (file instanceof File) {
-              setAvatarFile(file)
-              setAvatarPreview(URL.createObjectURL(file))
-            } else {
-              setAvatarFile(null)
-              setAvatarPreview(undefined)
-            }
-          }}
+          onChangeAction={handleAvatarChange}
+          maxFileSize={MAX_FILE_SIZE}
+          error={avatarError || state.errors?.avatarFile?.[0]}
         />
-        {state.errors?.avatarFile && (
-          <p className='text-sm font-medium text-destructive'>
-            {state.errors.avatarFile[0]}
-          </p>
-        )}
       </div>
 
       <div className='space-y-2'>
@@ -122,7 +146,9 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
           defaultValue={user.name}
         />
         {!state.success && state.errors?.name && (
-          <p className='text-red-500'>{state.errors.name.join(', ')}</p>
+          <p className='text-sm font-medium text-destructive'>
+            {state.errors.name.join(', ')}
+          </p>
         )}
       </div>
       <div className='space-y-2'>
@@ -136,7 +162,9 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
           required
         />
         {!state.success && state.errors?.email && (
-          <p className='text-red-500'>{state.errors.email.join(', ')}</p>
+          <p className='text-sm font-medium text-destructive'>
+            {state.errors.email.join(', ')}
+          </p>
         )}
       </div>
       <div className='space-y-2'>
@@ -154,7 +182,9 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
           </SelectContent>
         </Select>
         {!state.success && state.errors?.role && (
-          <p className='text-red-500'>{state.errors.role.join(', ')}</p>
+          <p className='text-sm font-medium text-destructive'>
+            {state.errors.role.join(', ')}
+          </p>
         )}
       </div>
       <div className='space-y-2'>
@@ -172,7 +202,9 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
           </SelectContent>
         </Select>
         {!state.success && state.errors?.status && (
-          <p className='text-red-500'>{state.errors.status.join(', ')}</p>
+          <p className='text-sm font-medium text-destructive'>
+            {state.errors.status.join(', ')}
+          </p>
         )}
       </div>
 
@@ -197,7 +229,7 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
             <Label htmlFor='newPassword'>Password</Label>
             <PasswordInput id='newPassword' name='newPassword' required />
             {!state.success && state.errors?.password && (
-              <p className='text-red-500'>
+              <p className='text-sm font-medium text-destructive'>
                 Password must be between 8 and 20 characters long and include
                 uppercase letters, lowercase letters, numbers, and at least one
                 special character.
@@ -208,7 +240,11 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
       )}
 
       <div className='flex justify-end pt-4'>
-        <Button type='submit' disabled={isPending} className='w-full'>
+        <Button
+          type='submit'
+          disabled={isPending || !!avatarError}
+          className='w-full'
+        >
           {isPending ? 'Updating user...' : 'Update user'}
         </Button>
       </div>

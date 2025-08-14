@@ -1,6 +1,8 @@
-import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from '@/lib/media'
+import { ACCEPTED_IMAGE_TYPES } from '@/lib/media'
 import { UserRoles, UserStatus } from '.'
 import { z } from 'zod'
+
+const AVATAR_MAX_FILE_SIZE = 1 * 1024 * 1024 // 1MB
 
 export const PasswordSchema = z
   .string()
@@ -48,8 +50,8 @@ export const UserSchema = z.object({
     .instanceof(File)
     .optional()
     .refine(
-      (file) => !file || file.size === 0 || file.size <= MAX_FILE_SIZE,
-      `Max file size is 5MB.`
+      (file) => !file || file.size === 0 || file.size <= AVATAR_MAX_FILE_SIZE,
+      `Max file size is 1MB.`
     )
     .refine(
       (file) =>

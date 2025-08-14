@@ -29,11 +29,8 @@ function isPlainBufferObject(
  *   - wmScale: number (0-1, relative to image width)
  *   - skipWatermark: '1' (optional, disables watermark for system UI assets)
  */
-export async function GET(
-  req: NextRequest,
-
-  { params }: { params: { id: string } }
-) {
+export async function GET(req: NextRequest, context: unknown) {
+  const { params } = (context || {}) as { params: { id: string } }
   const mediaService = new MediaService()
   try {
     const { id } = params
@@ -181,20 +178,16 @@ export async function GET(
 /**
  * DELETE /api/media/[id] - Deletes media from the database by media ID.
  */
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(req: NextRequest, context: unknown) {
+  const { params } = (context || {}) as { params: { id: string } }
   const service = new MediaService()
   const deleted = await service.deleteImage(params.id)
   if (!deleted) return new NextResponse('Not found', { status: 404 })
   return NextResponse.json({ success: true })
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(req: NextRequest, context: unknown) {
+  const { params } = (context || {}) as { params: { id: string } }
   const service = new MediaService()
   const body = await req.json()
   const { fileName, alt, tags } = body
