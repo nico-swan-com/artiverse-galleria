@@ -26,7 +26,6 @@ const defaultConfig: NextConfig = {
   experimental: {
     serverMinification: true,
     authInterrupts: true,
-    nodeMiddleware: true,
     serverActions: {
       bodySizeLimit: '10mb'
     }
@@ -58,7 +57,6 @@ const customServerConfig: NextConfig = {
   experimental: {
     serverMinification: false,
     authInterrupts: true,
-    nodeMiddleware: true,
     serverActions: {
       bodySizeLimit: '1mb'
     }
@@ -97,7 +95,6 @@ const staticConfig: NextConfig = {
   experimental: {
     serverMinification: false,
     authInterrupts: true,
-    nodeMiddleware: true,
     serverActions: {
       bodySizeLimit: '1mb'
     }
