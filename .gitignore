@@ -17,6 +17,7 @@
 /_next/
 /.next/
 /out/
+dist
 
 # production
 /build
@@ -34,6 +35,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -44,5 +46,16 @@ next-env.d.ts
 _next
 server.js
 
+# Devenv
+.devenv*
+devenv.local.nix
 
+# direnv
+.direnv
+
+# pre-commit
 .pre-commit-config.yaml
+
+# documentation
+.notes
+

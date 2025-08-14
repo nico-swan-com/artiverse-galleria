@@ -8,10 +8,28 @@ const defaultConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'www.gravatar.com',
+        pathname: '/**' // This allows all paths
+      },
+      {
+        protocol: 'https',
         hostname: 'images.unsplash.com',
+        pathname: '/**' // This allows all paths
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.freepik.com',
         pathname: '/**' // This allows all paths
       }
     ]
+  },
+  experimental: {
+    serverMinification: true,
+    authInterrupts: true,
+    nodeMiddleware: true,
+    serverActions: {
+      bodySizeLimit: '10mb'
+    }
   }
 }
 
@@ -29,8 +47,21 @@ const customServerConfig: NextConfig = {
         protocol: 'https',
         hostname: 'images.unsplash.com',
         pathname: '/**' // This allows all paths
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.freepik.com',
+        pathname: '/**' // This allows all paths
       }
     ]
+  },
+  experimental: {
+    serverMinification: false,
+    authInterrupts: true,
+    nodeMiddleware: true,
+    serverActions: {
+      bodySizeLimit: '1mb'
+    }
   }
 }
 
@@ -55,8 +86,21 @@ const staticConfig: NextConfig = {
         protocol: 'https',
         hostname: 'images.unsplash.com',
         pathname: '/**' // This allows all paths
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.freepik.com',
+        pathname: '/**' // This allows all paths
       }
     ]
+  },
+  experimental: {
+    serverMinification: false,
+    authInterrupts: true,
+    nodeMiddleware: true,
+    serverActions: {
+      bodySizeLimit: '1mb'
+    }
   }
 }
 

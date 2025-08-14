@@ -14,7 +14,15 @@
     "not-found",
     "contact-page",
     "cart",
-    "checkout"
+    "checkout",
+    "dashboard",
+    "authentication",
+    "users",
+    "artist-management",
+    "products-management",
+    "user-management",
+    "data-access",
+    "media-management"
   ],
-  "cSpell.words": ["Artiverse"]
+  "cSpell.words": ["Artiverse", "sonner", "Uncategorized"]
 }

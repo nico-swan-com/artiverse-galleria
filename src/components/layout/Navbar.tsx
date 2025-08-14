@@ -1,17 +1,17 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useCart } from '@/contexts/CartContext'
+import { useCart } from '@/contexts/cart.context'
 import { useIsMobile } from '@/hooks/use-mobile'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ShoppingCart, Search, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import Logo from '../logo/Logo'
+import Logo from '../admin/users/create-user/logo/Logo'
 
 const Navbar = () => {
   const { getItemCount } = useCart()
-  const itemCount = getItemCount()
+  const [itemCount, setItemCount] = useState(0)
   const pathname = usePathname()
   const isMobile = useIsMobile()
   const [isScrolled, setIsScrolled] = useState(false)
@@ -35,6 +35,10 @@ const Navbar = () => {
   useEffect(() => {
     setIsMenuOpen(false)
   }, [pathname])
+
+  useEffect(() => {
+    setItemCount(getItemCount())
+  }, [getItemCount])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()

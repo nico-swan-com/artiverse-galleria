@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
-import { AnimatePresence } from 'framer-motion'
-import QueryProvider from '@/contexts/QueryProvider'
+import { SessionProvider } from 'next-auth/react'
+import QueryProvider from '@/contexts/query-provider.context'
+import { Toaster } from 'sonner'
+import AnimatePresenceWrapper from '@/components/common/utility/AnimatePresenceWrapper'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -15,12 +17,12 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Artiverse Gallerria',
+  title: 'Artiverse Galleria',
   description:
     'Explore our curated collection of original artworks from talented artists around the world. Each piece comes with its own story and identity.'
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children
 }: {
   children: React.ReactNode
@@ -28,11 +30,16 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} dark antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <QueryProvider>
-          <AnimatePresence mode='wait'>{children}</AnimatePresence>
-        </QueryProvider>
+        <SessionProvider>
+          <QueryProvider>
+            <AnimatePresenceWrapper mode='wait'>
+              {children}
+            </AnimatePresenceWrapper>
+            <Toaster />
+          </QueryProvider>
+        </SessionProvider>
       </body>
     </html>
   )

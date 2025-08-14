@@ -3,25 +3,31 @@
 {
   dotenv.enable = true;
 
-  # https://devenv.sh/basics/
   env = {
-    NODE_ENV="development";
-    NEXTAUTH_URL="http://localhost:3000";
-    NEXTAUTH_SECRET="cvk0SMhmSkJd4MJSuNBIeP/P9Iwr+Myi7T0bMhJ9Iv0=";
-    POSTGRES_HOST="localhost";
-    POSTGRES_PORT="5433";
-    POSTGRES_USER="app";
-    POSTGRES_PASSWORD="app";
-    POSTGRES_DATABASE="app";
-    POSTGRES_SCHEMA="public";
+    NODE_ENV = "development";
+    SOPS_AGE_KEY_FILE = "/home/nicoswan/.config/sops/age/keys.txt";
 
+    # POSTGRES_HOST = "localhost";
+    # POSTGRES_PORT = "5433";
+    # POSTGRES_USER = "app";
+    # POSTGRES_DATABASE = "app";
+    # POSTGRES_SCHEMA = "app";
+    POSTGRES_HOST = "vm403bfeq.cygnus-labs.com";
+    POSTGRES_PORT = "5432";
+    POSTGRES_USER = "artiverse";
+    POSTGRES_DATABASE = "development";
+    POSTGRES_SCHEMA = "artiverse";
+
+
+    SMTP_SERVER_HOST = "mail.cygnus-labs.com";
+    SMTP_SERVER_PORT = "465";
+    SMTP_SERVER_SECURE = "true";
+    SITE_MAIL_RECEIVER = "nico.swan@cygnus-labs.com";
+    SMTP_SIMULATOR = "true";
   };
 
   # https://devenv.sh/packages/
-  packages = with pkgs; [
-    git
-    nodejs-18_x
-  ];
+  packages = with pkgs; [ git nodejs envsubst ];
 
   # https://devenv.sh/languages/
   languages.typescript.enable = true;
@@ -32,46 +38,47 @@
   # };
 
   # https://devenv.sh/services/
-  services.postgres = {
-    enable = true;
-    createDatabase = true;
-    initialDatabases = [
-      {
-        name = "app";
-        user = "app";
-        pass = "app";
-      }
-    ];
-    listen_addresses = "*";
-    port = 5433;
+  # services.postgres = {
+  #   enable = true;
+  #   createDatabase = true;
+  #   initialDatabases = [{
+  #     name = "app";
+  #     user = "app";
+  #     pass = "app";
+  #   }];
+  #   listen_addresses = "*";
+  #   port = 5433;
+  # };
+
+  # services.wiremock = {
+  #   enable = true;
+  #   port = 8080;
+  #   mappings = [{
+  #     request = {
+  #       method = "GET";
+  #       url = "/api/hello";
+  #     };
+  #     response = {
+  #       status = 200;
+  #       body = "Hello, world!";
+  #     };
+  #   }];
+  # };
+
+  # https://devenv.sh/scripts/
+  scripts = {
+    edit-secrets.exec = ''
+      sops ./secrets.yaml
+    '';
+    generate-env.exec = ''
+      sops --decrypt secrets.yaml |envsubst > .env
+    '';
   };
 
-  services.wiremock = {
-    enable = true;
-    port = 8080;
-    mappings = [
-      {
-        request = {
-          method = "GET";
-          url = "/api/artists";
-        };
-        response = {
-          status = 200;
-          body =  [];
-      };
-      }
-    ];
-  };
-
-  # # https://devenv.sh/scripts/
-  # scripts.hello.exec = ""
-  #   echo hello from $GREET
-  # "";
-
-  # enterShell = ""
+  # enterShell = ''
   #   hello
   #   git --version
-  # "";
+  # '';
 
   # https://devenv.sh/tasks/
   # tasks = {
@@ -81,10 +88,10 @@
   # };
 
   # https://devenv.sh/tests/
-  # enterTest = ""
+  # enterTest = ''
   #   echo "Running tests"
   #   git --version | grep --color=auto "${pkgs.git.version}"
-  # "";
+  # '';
 
   # https://devenv.sh/git-hooks/
   git-hooks.hooks.shellcheck.enable = true;
