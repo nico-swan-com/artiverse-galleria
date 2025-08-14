@@ -1,7 +1,7 @@
 {
   inputs =
     let
-      version = "1.4.1";
+      version = "1.7.0";
 system = "x86_64-linux";
 devenv_root = "/home/nicoswan/development/nicoswan.com/artiverse-galleria";
 devenv_dotfile = ./.devenv;
@@ -24,7 +24,7 @@ devenv_direnvrc_latest_version = 1;
 
       outputs = { nixpkgs, ... }@inputs:
         let
-          version = "1.4.1";
+          version = "1.7.0";
 system = "x86_64-linux";
 devenv_root = "/home/nicoswan/development/nicoswan.com/artiverse-galleria";
 devenv_dotfile = ./.devenv;
@@ -51,9 +51,11 @@ devenv_direnvrc_latest_version = 1;
           pkgs = import nixpkgs {
             inherit system;
             config = {
-              allowUnfree = devenv.allowUnfree or false;
-              allowBroken = devenv.allowBroken or false;
-              permittedInsecurePackages = devenv.permittedInsecurePackages or [ ];
+              allowUnfree = devenv.nixpkgs.per-platform."${system}".allowUnfree or devenv.nixpkgs.allowUnfree or devenv.allowUnfree or false;
+              allowBroken = devenv.nixpkgs.per-platform."${system}".allowBroken or devenv.nixpkgs.allowBroken or devenv.allowBroken or false;
+              cudaSupport = devenv.nixpkgs.per-platform."${system}".cudaSupport or devenv.nixpkgs.cudaSupport or false;
+              cudaCapabilities = devenv.nixpkgs.per-platform."${system}".cudaCapabilities or devenv.nixpkgs.cudaCapabilities or [ ];
+              permittedInsecurePackages = devenv.nixpkgs.per-platform."${system}".permittedInsecurePackages or devenv.nixpkgs.permittedInsecurePackages or devenv.permittedInsecurePackages or [ ];
             };
             inherit overlays;
           };
@@ -80,8 +82,11 @@ devenv_direnvrc_latest_version = 1;
               then devenvdefaultpath
               else throw (devenvdefaultpath + " file does not exist for input ${name}.");
           project = pkgs.lib.evalModules {
-            specialArgs = inputs // { inherit inputs pkgs; };
+            specialArgs = inputs // { inherit inputs; };
             modules = [
+              ({ config, ... }: {
+                _module.args.pkgs = pkgs.appendOverlays (config.overlays or [ ]);
+              })
               (inputs.devenv.modules + /top-level.nix)
               {
                 devenv.cliVersion = version;
@@ -105,9 +110,10 @@ devenv_direnvrc_latest_version = 1;
                 };
               })
             ] ++ (map importModule (devenv.imports or [ ])) ++ [
-              ./devenv.nix
+              (if builtins.pathExists ./devenv.nix then ./devenv.nix else { })
               (devenv.devenv or { })
               (if builtins.pathExists ./devenv.local.nix then ./devenv.local.nix else { })
+              (if builtins.pathExists (devenv_dotfile + "/cli-options.nix") then import (devenv_dotfile + "/cli-options.nix") else { })
             ];
           };
           config = project.config;
@@ -128,13 +134,17 @@ devenv_direnvrc_latest_version = 1;
               );
           };
 
+          # Recursively search for outputs in the config.
+          # This is used when not building a specific output by attrpath.
           build = options: config:
             lib.concatMapAttrs
               (name: option:
-                if builtins.hasAttr "type" option then
-                  if option.type.name == "output" || option.type.name == "outputOf" then {
-                    ${name} = config.${name};
-                  } else { }
+                if lib.isOption option then
+                  let typeName = option.type.name or "";
+                  in
+                  if builtins.elem typeName [ "output" "outputOf" ] then
+                    { ${name} = config.${name}; }
+                  else { }
                 else
                   let v = build option config.${name};
                   in if v != { } then {
@@ -142,16 +152,18 @@ devenv_direnvrc_latest_version = 1;
                   } else { }
               )
               options;
+
+          systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
         in
         {
-          packages."${system}" = {
+          devShell = lib.genAttrs systems (system: config.shell);
+          packages = lib.genAttrs systems (system: {
             optionsJSON = options.optionsJSON;
             # deprecated
             inherit (config) info procfileScript procfileEnv procfile;
             ci = config.ciDerivation;
-          };
+          });
           devenv = config;
           build = build project.options project.config;
-          devShell."${system}" = config.shell;
         };
       }
