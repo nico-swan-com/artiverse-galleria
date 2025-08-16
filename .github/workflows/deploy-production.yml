@@ -157,6 +157,6 @@ jobs:
       - name: Deploy kubernetes
         uses: actions-hub/kubectl@master
         env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG_PRODUCTION }}
         with:
           args: apply -f ./deploy.yaml --validate=false
