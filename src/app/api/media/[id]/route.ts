@@ -168,7 +168,11 @@ export async function GET(req: NextRequest, context: unknown) {
     console.info(
       `Media ${id}: original=${media.fileSize}B, processed=${processedBuffer.byteLength}B, watermark=${watermarkApplied}`
     )
-    return new NextResponse(processedBuffer, { status: 200, headers })
+    // Fix: Convert Buffer to Uint8Array for NextResponse
+    return new NextResponse(new Uint8Array(processedBuffer), {
+      status: 200,
+      headers
+    })
   } catch (error) {
     console.error(error)
     return new NextResponse('Internal Server Error', { status: 500 })
