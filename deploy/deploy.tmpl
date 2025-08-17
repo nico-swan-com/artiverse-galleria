@@ -50,7 +50,7 @@ spec:
   selector:
     matchLabels:
       app: $CI_PROJECT_NAME
-  minReadySeconds: 10
+# minReadySeconds: 10
   strategy:
     type: RollingUpdate
     rollingUpdate:
