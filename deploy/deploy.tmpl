@@ -3,8 +3,8 @@ kind: Service
 metadata:
   namespace: $NAMESPACE
   name: $CI_PROJECT_NAME
-  labels:
-    monitoring: "true"
+#  labels:
+#    monitoring: "true"
 spec:
   type: ClusterIP
   ports:
@@ -67,16 +67,16 @@ spec:
         image: $IMAGE_NAME
         ports:
         - containerPort: 3000
-        livenessProbe:
-          httpGet:
-            path: /health/liveness
-            port: 3000
-          initialDelaySeconds: 30
-        readinessProbe:
-          httpGet:
-            path: /health/readiness
-            port: 3000
-          initialDelaySeconds: 30
+#        livenessProbe:
+#          httpGet:
+#            path: /health/liveness
+#            port: 3000
+#          initialDelaySeconds: 30
+#        readinessProbe:
+#          httpGet:
+#            path: /health/readiness
+#            port: 3000
+#          initialDelaySeconds: 30
         resources:
           limits:
             cpu: "200m"
