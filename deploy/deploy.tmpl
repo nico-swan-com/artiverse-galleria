@@ -85,14 +85,8 @@ spec:
             cpu: "100m"
             memory: "128Mi"
         env:
-        - name: NEXTAUTH_URL
-          value: "https://$CI_PROJECT_NAME.$NAMESPACE.cygnus-labs.com"
-        - name: AUTH_URL
-          value: "https://$CI_PROJECT_NAME.$NAMESPACE.cygnus-labs.com"
-        - name: NEXTAUTH_TRUST_HOST
-          value: true
         - name: AUTH_TRUST_HOST
-          value: true
+          value: "true"
         envFrom:
         - configMapRef:
             name: artiverse-gallerria-config
