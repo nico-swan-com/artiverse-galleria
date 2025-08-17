@@ -1,5 +1,5 @@
 # Build
-FROM node:current-alpine3.21 AS builder
+FROM node:23-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
@@ -8,7 +8,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
 # Release image
-FROM node:current-alpine3.21
+FROM node:23-alpine
 COPY --from=builder /app /app
 WORKDIR /app
 
