@@ -1,5 +1,6 @@
 # Build
 FROM node:current-alpine3.21 AS builder
+RUN apt-get update && apt-get install -y libc6
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci

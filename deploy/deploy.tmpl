@@ -86,6 +86,8 @@ spec:
         env:
         - name: NEXTAUTH_URL
           value: "https://$CI_PROJECT_NAME.$NAMESPACE.cygnus-labs.com"
+        - name: NEXTAUTH_TRUST_HOST
+          value: "true"
         envFrom:
         - configMapRef:
             name: artiverse-gallerria-config
