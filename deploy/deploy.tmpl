@@ -83,4 +83,9 @@ spec:
           requests:
             cpu: "100m"
             memory: "128Mi"
+        envFrom:
+        - configMapRef:
+            name: artiverse-gallerria-config
+        - secretRef:
+            name: artiverse-gallerria-secrets
 
