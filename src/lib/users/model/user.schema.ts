@@ -1,5 +1,8 @@
+import { ACCEPTED_IMAGE_TYPES } from '@/lib/media'
 import { UserRoles, UserStatus } from '.'
 import { z } from 'zod'
+
+const AVATAR_MAX_FILE_SIZE = 1 * 1024 * 1024 // 1MB
 
 export const PasswordSchema = z
   .string()
@@ -42,7 +45,19 @@ export const UserSchema = z.object({
     .nativeEnum(UserStatus, { message: 'Missing user status.' })
     .optional()
     .default(UserStatus.Pending),
-  avatar: z.string().url().optional(),
+  avatar: z.string().optional(),
+  avatarFile: z
+    .instanceof(File)
+    .optional()
+    .refine(
+      (file) => !file || file.size === 0 || file.size <= AVATAR_MAX_FILE_SIZE,
+      `Max file size is 1MB.`
+    )
+    .refine(
+      (file) =>
+        !file || file.size === 0 || ACCEPTED_IMAGE_TYPES.includes(file.type),
+      'Only .jpg, .jpeg, .png and .webp formats are supported.'
+    ),
   createdAt: z.date().transform((date) => date || undefined),
   updatedAt: z
     .date()
@@ -55,3 +70,21 @@ export const UserSchema = z.object({
 })
 
 export type User = z.infer<typeof UserSchema>
+export const UserListSchema = z.array(UserSchema)
+export type UserList = z.infer<typeof UserListSchema>
+export const UserCreateSchema = UserSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+})
+export type UserCreate = z.infer<typeof UserCreateSchema>
+export const UserUpdateSchema = UserSchema.partial().omit({
+  createdAt: true
+})
+export type UserUpdate = z.infer<typeof UserUpdateSchema>
+export const UserUpdatePartialSchema = UserSchema.partial()
+export type UserUpdatePartial = z.infer<typeof UserUpdatePartialSchema>
+export const UserUpdateListSchema = z.array(UserUpdateSchema)
+export type UserUpdateList = z.infer<typeof UserUpdateListSchema>
+export const UserUpdateListPartialSchema = z.array(UserUpdatePartialSchema)
+export type UserUpdateListPartial = z.infer<typeof UserUpdateListPartialSchema>

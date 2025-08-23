@@ -14,21 +14,42 @@ export class MediaEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string
 
-  @Column({ length: 255 })
+  @Column({ name: 'file_name', length: 255 })
   fileName!: string
 
-  @Column({ length: 50 })
+  @Column({ name: 'mime_type', length: 50 })
   mimeType!: string
 
-  @Column('integer')
+  @Column({ name: 'file_size', type: 'integer' })
   fileSize!: number
 
   @Column('bytea')
   data!: Buffer
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @Column({ name: 'alt_text', length: 255 })
+  altText?: string
+
+  @Column({
+    name: 'content_hash',
+    type: 'varchar',
+    length: 64,
+    unique: false,
+    nullable: true
+  })
+  contentHash?: string
+
+  @Column({
+    name: 'tags',
+    type: 'text',
+    array: true,
+    nullable: true,
+    default: () => 'ARRAY[]::text[]'
+  })
+  tags?: string[]
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt!: Date
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt!: Date
 }

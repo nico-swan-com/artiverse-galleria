@@ -99,14 +99,11 @@ const Cart = () => {
                             <h3 className='text-lg font-medium text-gray-900'>
                               <Link
                                 href={`/artworks/${item.artwork.id}`}
-                                className='hover:underline'
+                                className='hover:text-primary'
                               >
                                 {item.artwork.title}
                               </Link>
                             </h3>
-                            <p className='text-sm text-gray-500'>
-                              By {item.artwork?.artist?.name}
-                            </p>
                           </div>
                           <div className='mt-2 sm:mt-0'>
                             <p className='font-medium'>

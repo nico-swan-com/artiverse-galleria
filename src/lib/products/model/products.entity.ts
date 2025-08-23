@@ -9,7 +9,7 @@ import {
   ManyToOne,
   JoinColumn
 } from 'typeorm'
-import { ArtistsEntity } from '@/lib/artists/model/artist.entity'
+import { ArtistsEntity } from '../../artists/model/artist.entity'
 
 @Entity('products')
 export class ProductsEntity {

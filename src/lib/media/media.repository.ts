@@ -26,6 +26,10 @@ export class MediaRepository {
 
   async createAndSave(media: MediaEntity): Promise<Media> {
     try {
+      // Ensure updatedAt is always a Date
+      if (!media.updatedAt || typeof media.updatedAt !== 'object') {
+        media.updatedAt = new Date()
+      }
       const repository = await getRepository(MediaEntity)
       const saved = await repository.save(media)
       return saved as Media
@@ -42,6 +46,19 @@ export class MediaRepository {
       return result.affected !== 0
     } catch (error) {
       console.error(`Error deleting image by ID:${id}`, { error })
+      throw error
+    }
+  }
+
+  async findByContentHash(contentHash: string): Promise<Media | null> {
+    try {
+      const repository = await getRepository(MediaEntity)
+      const media = await repository.findOne({ where: { contentHash } })
+      return media as Media
+    } catch (error) {
+      console.error(`Error finding media by content hash: ${contentHash}`, {
+        error
+      })
       throw error
     }
   }

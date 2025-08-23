@@ -1,6 +1,15 @@
 import { MediaRepository } from './media.repository'
-import { Media, MediaCreate } from './model/media.schema'
+import { Media, MediaCreate, MediaUpdate } from './model/media.schema'
 import { MediaEntity } from './model/media.entity'
+import crypto from 'crypto'
+
+export const MAX_FILE_SIZE = 5 * 1024 * 1024
+export const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp'
+]
 
 export class MediaService {
   private mediaRepository: MediaRepository
@@ -39,17 +48,36 @@ export class MediaService {
       throw new Error('Invalid media file data')
     }
 
+    if (file.fileSize > MAX_FILE_SIZE) {
+      const err = new Error(
+        'File is too large. Maximum allowed size is 5MB.'
+      ) as Error & { status?: number }
+      err.status = 400
+      throw err
+    }
+
     let bufferData: Buffer
     if (file.data instanceof File) {
       bufferData = Buffer.from(await file.data.arrayBuffer())
     } else {
       bufferData = file.data
     }
+
+    // Calculate SHA-256 hash
+    const hash = crypto.createHash('sha256').update(bufferData).digest('hex')
+
+    // Duplicate detection
+    const existing = await this.mediaRepository.findByContentHash(hash)
+    if (existing) {
+      return existing
+    }
+
     const media = new MediaEntity()
     media.fileName = file.fileName
     media.mimeType = file.mimeType
     media.fileSize = file.fileSize
     media.data = bufferData
+    media.contentHash = hash
     return this.mediaRepository.createAndSave(media)
   }
 
@@ -60,6 +88,27 @@ export class MediaService {
    */
   async deleteImage(id: string): Promise<boolean> {
     return this.mediaRepository.deleteById(id)
+  }
+
+  /**
+   * Update image metadata.
+   * @param id Media UUID
+   * @param meta Metadata object containing fileName, alt, and tags
+   * @returns Updated Media entity
+   */
+  async updateImageMeta(
+    id: string,
+    meta: { fileName: string; alt?: string; tags?: string[] }
+  ) {
+    const media = await this.mediaRepository.getById(id)
+    if (!media) throw new Error('Media not found')
+    const update: MediaUpdate = {
+      ...media,
+      fileName: meta.fileName,
+      altText: meta.alt ?? (media as { altText?: string }).altText ?? '',
+      tags: meta.tags ?? media.tags ?? []
+    }
+    return this.mediaRepository.createAndSave(update as MediaEntity)
   }
 
   // Additional CRUD methods (upload, delete, etc.) can be added here

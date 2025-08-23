@@ -21,7 +21,6 @@ import {
 import ArtworkCard from '@/components/public/artwork/ArtworkCard'
 import { toast } from 'sonner'
 import { Product } from '@/lib/products/model/product.schema'
-import { Artist } from '@/lib/artists/model/artist.schema'
 
 interface ArtworkDetailClientProps {
   artwork: Product
@@ -63,25 +62,8 @@ export default function ArtworkDetailClient({
   // }
 
   const handleAddToCart = () => {
-    const defaultArtist: Artist = {
-      id: '',
-      name: 'Unknown Artist',
-      image: '',
-      featured: false,
-      styles: [],
-      biography: '',
-      specialization: '',
-      location: '',
-      email: '',
-      website: '',
-      exhibitions: [],
-      statement: '',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }
     addToCart({
       ...artwork,
-      artist: (artwork.artist ?? defaultArtist) as Artist,
       images: Array.isArray(artwork.images)
         ? artwork.images.filter(
             (img: unknown): img is string => typeof img === 'string'
@@ -195,14 +177,6 @@ export default function ArtworkDetailClient({
               <h1 className='text-3xl font-bold text-gray-900'>
                 {artwork.title}
               </h1>
-              {artwork.artist && (
-                <Link
-                  href={`/artists/${artwork.artist.id}`}
-                  className='text-primary hover:underline'
-                >
-                  {artwork.artist.name}
-                </Link>
-              )}
             </div>
 
             <div className='flex items-center space-x-2'>

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { MediaService, MediaCreate } from '@/lib/media'
 
+export const runtime = 'nodejs'
+
 // GET /api/media - List all media
 export async function GET() {
   const service = new MediaService()
@@ -20,10 +22,24 @@ export async function POST(req: NextRequest) {
     fileName: file.name,
     mimeType: file.type,
     fileSize: file.size,
-    data: file
+    data: Buffer.from(await file.arrayBuffer())
   }
-  const media = await service.uploadImage(mediaFile)
-  return NextResponse.json(media)
+  try {
+    const media = await service.uploadImage(mediaFile)
+    return NextResponse.json(media)
+  } catch (e: unknown) {
+    const error = e as Error & { status?: number }
+    if (error.status === 409) {
+      return NextResponse.json({ message: error.message }, { status: 409 })
+    }
+    if (error.status === 400) {
+      return NextResponse.json({ message: error.message }, { status: 400 })
+    }
+    return NextResponse.json(
+      { message: error.message || 'Failed to upload media.' },
+      { status: 500 }
+    )
+  }
 }
 
 // DELETE /api/media/:id is handled in [id]/route.ts

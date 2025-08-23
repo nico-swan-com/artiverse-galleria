@@ -83,8 +83,9 @@ export async function productFormAction(
   let featureImage: string | undefined
   const service = new MediaService()
   if (featureImageFile && featureImageFile instanceof File) {
+    const buffer = Buffer.from(await featureImageFile.arrayBuffer())
     const newMedia: MediaCreate = {
-      data: featureImageFile,
+      data: buffer,
       mimeType: featureImageFile?.type || '',
       fileSize: featureImageFile?.size || 0,
       fileName: featureImageFile?.name || ''
@@ -101,8 +102,9 @@ export async function productFormAction(
     if (!(file instanceof File)) {
       images.push(file)
     } else {
+      const buffer = Buffer.from(await file.arrayBuffer())
       const image = await service.uploadImage({
-        data: file,
+        data: buffer,
         mimeType: file.type,
         fileSize: file.size,
         fileName: file.name

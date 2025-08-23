@@ -4,10 +4,13 @@ export const MediaSchema = z.object({
   id: z.string().uuid(),
   fileName: z.string().min(1, 'Name is required').max(255, 'Name is too long'),
   mimeType: z.string().max(50, 'Description is too long'),
-  data: z.instanceof(Buffer).or(z.instanceof(File)).optional(),
+  data: z.instanceof(Buffer), // Only Buffer allowed
   fileSize: z.number().min(0, 'Price must be a positive number'),
   createdAt: z.date(),
-  updatedAt: z.date().optional()
+  updatedAt: z.date().optional(),
+  contentHash: z.string().max(64).optional(),
+  tags: z.array(z.string()).optional(),
+  altText: z.string().optional()
 })
 
 export type Media = z.infer<typeof MediaSchema>

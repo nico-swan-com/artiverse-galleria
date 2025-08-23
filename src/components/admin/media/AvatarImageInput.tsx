@@ -1,63 +1,93 @@
 'use client'
 
-import { CircleUserRoundIcon, XIcon } from 'lucide-react'
-import { useEffect } from 'react'
-import { useFileUpload } from '@/hooks/use-file-upload'
+import { CircleUserRoundIcon } from 'lucide-react'
+import React, { useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 
 type AvatarImageInputProps = {
   /**
-   * Called with the selected image (File | string | null) when changed.
+   * Called with the selected image (File | string | null) and its metadata when changed.
    * Passes null when image is removed.
    */
-  onChangeAction: (image: File | string | null) => void
+  onChangeAction: (
+    image: File | string | null,
+    meta?: { name: string; type: string; size: number } | null
+  ) => void
   /**
    * Optionally set the initial image (URL).
    */
-  value?: string
+  url?: string
+  /**
+   * Maximum file size in bytes (default: 1MB)
+   */
+  maxFileSize?: number
+  /**
+   * Error message to display
+   */
+  error?: string
 }
 
 export default function AvatarImageInput({
   onChangeAction,
-  value
+  url,
+  maxFileSize = 1024 * 1024, // 1MB default
+  error
 }: AvatarImageInputProps) {
-  const [{ files }, { removeFile, openFileDialog, getInputProps }] =
-    useFileUpload({
-      accept: 'image/*',
-      initialFiles: value
-        ? [
-            {
-              name: 'avatar',
-              size: 0,
-              type: '',
-              url: value,
-              id: 'avatar'
-            }
-          ]
-        : []
-    })
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(url || null)
+  const [fileError, setFileError] = useState<string | null>(null)
 
-  const previewUrl = files[0]?.preview || null
-  const fileName = files[0]?.file.name || null
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    setFileError(null) // Clear previous errors
 
-  useEffect(() => {
-    if (files[0]) {
-      onChangeAction(files[0].file as File)
-    } else if (!files[0] && !value) {
-      onChangeAction(null)
+    if (file) {
+      // Check file size
+      if (file.size > maxFileSize) {
+        const sizeInMB = (maxFileSize / (1024 * 1024)).toFixed(1)
+        const fileSizeInMB = (file.size / (1024 * 1024)).toFixed(1)
+        setFileError(
+          `File size (${fileSizeInMB}MB) exceeds the maximum allowed size of ${sizeInMB}MB`
+        )
+        onChangeAction(null, null)
+        return
+      }
+
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        setFileError('Please select a valid image file')
+        onChangeAction(null, null)
+        return
+      }
+
+      setPreviewUrl(URL.createObjectURL(file))
+      onChangeAction(file, {
+        name: file.name,
+        type: file.type,
+        size: file.size
+      })
+    } else {
+      setPreviewUrl(url || null)
+      onChangeAction(null, null)
     }
-    // Only run when files or value changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [files, value])
+  }
+
+  const clearError = () => {
+    setFileError(null)
+  }
 
   return (
     <div className='flex flex-col items-center gap-2'>
       <div className='relative inline-flex'>
         <Button
           variant='outline'
+          type='button'
           className='relative size-16 overflow-hidden p-0 shadow-none'
-          onClick={openFileDialog}
+          onClick={() => {
+            clearError()
+            inputRef.current?.click()
+          }}
           aria-label={previewUrl ? 'Change image' : 'Upload image'}
         >
           {previewUrl ? (
@@ -75,31 +105,29 @@ export default function AvatarImageInput({
             </div>
           )}
         </Button>
-        {previewUrl && (
-          <Button
-            onClick={() => removeFile(files[0]?.id)}
-            size='icon'
-            className='absolute -right-2 -top-2 size-6 rounded-full border-2 border-background shadow-none focus-visible:border-background'
-            aria-label='Remove image'
-          >
-            <XIcon className='size-3.5' />
-          </Button>
-        )}
         <input
-          {...getInputProps()}
+          ref={inputRef}
+          type='file'
           className='sr-only'
           aria-label='Upload image file'
           tabIndex={-1}
+          name='avatarFile'
+          accept='image/*'
+          onChange={handleFileChange}
         />
       </div>
-      {fileName && <p className='text-xs text-muted-foreground'>{fileName}</p>}
-      <p
-        aria-live='polite'
-        role='region'
-        className='mt-2 text-xs text-muted-foreground'
-      >
-        Avatar upload button
+
+      {/* Display file size limit info */}
+      <p className='text-xs text-muted-foreground'>
+        Max file size: {(maxFileSize / (1024 * 1024)).toFixed(1)}MB
       </p>
+
+      {/* Display errors */}
+      {(fileError || error) && (
+        <p className='max-w-48 text-center text-sm font-medium text-destructive'>
+          {fileError || error}
+        </p>
+      )}
     </div>
   )
 }

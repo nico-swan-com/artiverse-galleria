@@ -22,6 +22,9 @@
     "migration:create": "NODE_ENV=migration npx ts-node -r tsconfig-paths/register --project ./tsconfig.typeorm.json ./node_modules/.bin/typeorm migration:create ./src/lib/database/migrations -t",
     "test": "jest"
   },
+  "engines": {
+    "node": ">=18.17.0"
+  },
   "packageManager": "npm@10.5.2",
   "overrides": {
     "react": "$react",
@@ -50,7 +53,7 @@
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.4.7",
     "lucide-react": "^0.476.0",
-    "next": "^15.4.0-canary.114",
+    "next": "^15.4.2-canary.50",
     "next-auth": "^5.0.0-beta.25",
     "next-themes": "^0.4.4",
     "nodemailer": "^6.10.0",
@@ -62,19 +65,22 @@
     "recharts": "^2.15.1",
     "reflect-metadata": "^0.2.2",
     "shadcn": "^2.4.0-canary.10",
+    "sharp": "^0.34.2",
     "simplex-noise": "^4.0.3",
     "sonner": "^2.0.1",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
     "typeorm": "^0.3.21",
-    "zod": "^3.24.2"
+    "zod": "^3.24.2",
+    "browser-image-compression": "^2.0.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@faker-js/faker": "^9.6.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.2.0",
+    "@testing-library/react": "^16.3.0",
+    "@types/jest": "^29.5.12",
     "@types/node": "^20",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "^19",
@@ -96,6 +102,7 @@
     "prettier": "^3.5.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^3.4.1",
+    "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3"

@@ -14,8 +14,9 @@ export async function POST(req: NextRequest) {
     const results = []
     for (const file of files) {
       if (!(file instanceof File)) continue
+      const buffer = Buffer.from(await file.arrayBuffer())
       const media = await service.uploadImage({
-        data: file,
+        data: buffer,
         mimeType: file.type,
         fileSize: file.size,
         fileName: file.name

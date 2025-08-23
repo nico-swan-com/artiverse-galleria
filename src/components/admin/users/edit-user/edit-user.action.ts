@@ -3,12 +3,15 @@
 import { z } from 'zod'
 import {
   PasswordSchema,
+  UserRoles,
   UsersEntity,
-  UserSchema,
-  UsersRepository
+  UsersRepository,
+  UserStatus,
+  UserUpdateSchema
 } from '@/lib/users'
 import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
+import { MediaCreate, MediaService } from '@/lib/media'
 
 export type EditUserFieldErrors = {
   id?: string[]
@@ -18,6 +21,8 @@ export type EditUserFieldErrors = {
   newPassword?: string[]
   role?: string[]
   status?: string[]
+  avatarFile?: string[]
+  avatar?: string[]
   database?: string[]
 }
 
@@ -31,6 +36,8 @@ export type EditUserState = {
   newPassword: string
   role: string
   status: string
+  avatar?: string
+  avatarFile?: File
   errors: EditUserFieldErrors
 }
 
@@ -44,7 +51,18 @@ async function editUserAction(
   const password = !!newPassword
     ? PasswordSchema.parse(newPassword)
     : prevState.password
-  const avatar = formData.get('avatar')?.toString() || getAvatarUrl(email, name)
+  const avatarFile = formData.get('avatarFile') || undefined
+  // Debug logging for avatarFile
+  console.log('avatarFile:', avatarFile)
+  if (avatarFile instanceof File) {
+    console.log('avatarFile.name:', avatarFile.name)
+    console.log('avatarFile.size:', avatarFile.size)
+    console.log('avatarFile.type:', avatarFile.type)
+  } else {
+    console.log('avatarFile is not a File instance:', avatarFile)
+  }
+  const avatar =
+    formData.get('avatarUrl')?.toString() || getAvatarUrl(email, name)
 
   const state: EditUserState = {
     id: prevState.id,
@@ -56,22 +74,38 @@ async function editUserAction(
     newPassword,
     role: prevState.role || '',
     status: prevState.status || '',
+    avatar,
+    avatarFile: avatarFile instanceof File ? avatarFile : undefined,
     errors: {}
   }
 
   try {
-    const values = UserSchema.parse({
-      ...state,
-      avatar
+    const values = UserUpdateSchema.parse({
+      ...state
     })
+
+    if (avatarFile instanceof File) {
+      const mediaFiles = new MediaService()
+      const data = await avatarFile.arrayBuffer()
+      const newImage: MediaCreate = {
+        fileName: avatarFile.name,
+        fileSize: avatarFile.size,
+        mimeType: avatarFile.type,
+        data: Buffer.from(data),
+        altText: name,
+        tags: ['avatar', 'user', 'profile']
+      }
+      const newAvatarUrl = await mediaFiles.uploadImage(newImage)
+      values.avatar = `/api/media/${newAvatarUrl.id}`
+    }
 
     const user = new UsersEntity()
     user.id = prevState.id
     user.name = name
     user.email = email
     user.avatar = values.avatar
-    user.role = values.role
-    user.status = values.status
+    user.role = values.role || UserRoles.Client
+    user.status = values.status || UserStatus.Pending
     if (password) await user.setPassword(password)
 
     const repository = new UsersRepository()
