@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { MediaService, MediaCreate } from '@/lib/media'
 
+export const runtime = 'nodejs'
+
 // GET /api/media - List all media
 export async function GET() {
   const service = new MediaService()

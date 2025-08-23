@@ -1,4 +1,4 @@
-import type { NextConfig } from 'next'
+import type { NextConfig, SizeLimit } from 'next'
 
 const { BUILD_TYPE } = process.env
 
@@ -9,7 +9,7 @@ const defaultConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'www.gravatar.com',
-        pathname: '/**' // This allows all paths
+        pathname: '/avatar/**'
       },
       {
         protocol: 'https',
@@ -28,7 +28,8 @@ const defaultConfig: NextConfig = {
     authInterrupts: true,
     nodeMiddleware: true,
     serverActions: {
-      bodySizeLimit: '10mb'
+      bodySizeLimit:
+        (process.env.SERVER_ACTIONS_BODY_SIZE_LIMIT as SizeLimit) || '10mb'
     }
   }
 }
@@ -43,6 +44,11 @@ const customServerConfig: NextConfig = {
   output: 'standalone',
   images: {
     remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'www.gravatar.com',
+        pathname: '/avatar/**'
+      },
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
@@ -60,7 +66,8 @@ const customServerConfig: NextConfig = {
     authInterrupts: true,
     nodeMiddleware: true,
     serverActions: {
-      bodySizeLimit: '10mb'
+      bodySizeLimit:
+        (process.env.SERVER_ACTIONS_BODY_SIZE_LIMIT as SizeLimit) || '10mb'
     }
   }
 }
@@ -84,6 +91,11 @@ const staticConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'www.gravatar.com',
+        pathname: '/avatar/**'
+      },
+      {
+        protocol: 'https',
         hostname: 'images.unsplash.com',
         pathname: '/**' // This allows all paths
       },
@@ -99,7 +111,8 @@ const staticConfig: NextConfig = {
     authInterrupts: true,
     nodeMiddleware: true,
     serverActions: {
-      bodySizeLimit: '10mb'
+      bodySizeLimit:
+        (process.env.SERVER_ACTIONS_BODY_SIZE_LIMIT as SizeLimit) || '10mb'
     }
   }
 }

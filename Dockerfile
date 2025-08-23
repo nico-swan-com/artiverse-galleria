@@ -1,5 +1,5 @@
 # Build
-FROM node:23-alpine AS builder
+FROM node:18.17-bullseye-slim AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
@@ -8,7 +8,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
 # Release image
-FROM node:23-alpine
+FROM node:18.17-bullseye-slim
 COPY --from=builder /app /app
 WORKDIR /app
 

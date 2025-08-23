@@ -101,7 +101,7 @@ const config: Config = {
   // moduleNameMapper: {},
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1'
-  },
+  }
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],
 
@@ -113,7 +113,7 @@ const config: Config = {
 
   // A preset that is used as a base for Jest's configuration
   // preset: undefined,
-  preset: 'ts-jest'
+  // preset: 'ts-jest' // Not needed; next/jest handles TS/TSX transforms
 
   // Run tests from one or more projects
   // projects: undefined,
