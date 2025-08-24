@@ -58,4 +58,10 @@ devenv.local.nix
 
 # documentation
 .notes
-
+docs
+web-bundles
+.bmad-core
+.bmad-infrastructure-devops
+.cursor
+.github/chatmodes
+.gemini
