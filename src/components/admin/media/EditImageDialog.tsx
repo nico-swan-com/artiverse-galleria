@@ -31,6 +31,7 @@ interface EditImageDialogProps {
     height?: number
     quality: number
   }) => void
+  loading: boolean
 }
 
 const EditImageDialog: React.FC<EditImageDialogProps> = ({
@@ -38,7 +39,8 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
   onOpenChange,
   file,
   media,
-  onSave
+  onSave,
+  loading
 }) => {
   const [fileName, setFileName] = useState('')
   const [altText, setAlt] = useState('')
@@ -330,7 +332,7 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
           <DialogFooter>
             <Button
               type='submit'
-              disabled={saving}
+              disabled={saving || loading}
               className='flex items-center gap-2'
             >
               <Save className='size-4' /> Save & Apply

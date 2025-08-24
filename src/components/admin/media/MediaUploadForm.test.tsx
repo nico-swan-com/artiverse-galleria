@@ -11,6 +11,50 @@ jest.mock('browser-image-compression', () =>
   jest.fn(async (file, opts) => file)
 )
 
+jest.mock('./EditImageDialog', () => {
+  const React = require('react')
+  const { useState, useEffect } = React
+
+  return {
+    __esModule: true,
+    default: ({
+      open,
+      onOpenChange,
+      file,
+      onSave,
+      loading
+    }: {
+      open: boolean
+      onOpenChange: (open: boolean) => void
+      file: File | null
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onSave: (meta: any) => void
+      loading: boolean
+    }) => {
+      const [isLoading, setIsLoading] = useState(loading)
+
+      useEffect(() => {
+        setIsLoading(loading)
+      }, [loading])
+
+      if (!open) return null
+      return (
+        <div role='dialog'>
+          <button
+            onClick={() =>
+              onSave({ fileName: 'test.png', altText: '', tags: [] })
+            }
+            disabled={isLoading}
+          >
+            Save & Apply
+          </button>
+          <button onClick={() => onOpenChange(false)}>Cancel</button>
+        </div>
+      )
+    }
+  }
+})
+
 describe('MediaUploadForm', () => {
   const existingMedia = [{ fileName: 'existing.png', contentHash: 'abc123' }]
   const onUpload = jest.fn().mockResolvedValue(undefined)
@@ -69,7 +113,7 @@ describe('MediaUploadForm', () => {
   })
 
   it('disables save button in dialog when loading', async () => {
-    render(
+    const { rerender } = render(
       <MediaUploadForm onUpload={onUpload} loading={false} existingMedia={[]} />
     )
     const file = new File(['test'], 'test.png', { type: 'image/png' })
@@ -81,7 +125,7 @@ describe('MediaUploadForm', () => {
     await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument())
     // Simulate loading state by re-rendering with loading=true
     // Re-render the dialog with loading=true to ensure the button is disabled
-    render(
+    rerender(
       <MediaUploadForm onUpload={onUpload} loading={true} existingMedia={[]} />
     )
     await waitFor(() => {
