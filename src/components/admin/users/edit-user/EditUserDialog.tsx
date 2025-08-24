@@ -13,7 +13,7 @@ import { Pencil } from 'lucide-react'
 import { useState, Suspense } from 'react'
 import EditUserForm from './EditUserForm'
 import { Skeleton } from '@/components/ui/skeleton'
-import { User } from '@/lib/users'
+import { User } from '@/types/users/user.schema'
 
 type EditUserProps = {
   user: User | null

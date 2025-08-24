@@ -14,16 +14,11 @@ type FeatureImageInputProps = {
    * Optionally set the initial image (URL or file ID).
    */
   initialImage?: string
-  /**
-   * Name for the hidden field (default: 'featureImage').
-   */
-  name?: string
 }
 
 export default function FeatureImageInput({
   onChangeAction,
-  initialImage,
-  name = 'featureImage'
+  initialImage
 }: FeatureImageInputProps) {
   const maxSizeMB = 5
   const maxSize = maxSizeMB * 1024 * 1024 // 5MB default
@@ -130,13 +125,6 @@ export default function FeatureImageInput({
           </div>
         )}
       </div>
-
-      {/* Hidden field for form submission (string or empty) */}
-      <input
-        type='hidden'
-        name={name}
-        value={files[0]?.file?.name || initialImage || ''}
-      />
 
       {errors.length > 0 && (
         <div

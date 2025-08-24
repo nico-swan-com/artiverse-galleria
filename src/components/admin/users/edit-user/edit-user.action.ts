@@ -1,14 +1,11 @@
 'use server'
 
 import { z } from 'zod'
-import {
-  PasswordSchema,
-  UserRoles,
-  UsersEntity,
-  UsersRepository,
-  UserStatus,
-  UserUpdateSchema
-} from '@/lib/users'
+import { UsersEntity } from '@/lib/users/model'
+import { UsersRepository } from '@/lib/users/users.repository'
+import { UserRoles } from '@/types/users/user-roles.enum'
+import { UserStatus } from '@/types/users/user-status.enum'
+import { PasswordSchema, UserUpdateSchema } from '@/types/users/user.schema'
 import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
 import { MediaCreate, MediaService } from '@/lib/media'

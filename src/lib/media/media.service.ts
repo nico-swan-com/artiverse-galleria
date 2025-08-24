@@ -4,12 +4,6 @@ import { MediaEntity } from './model/media.entity'
 import crypto from 'crypto'
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024
-export const ACCEPTED_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp'
-]
 
 export class MediaService {
   private mediaRepository: MediaRepository
@@ -69,11 +63,7 @@ export class MediaService {
     // Duplicate detection
     const existing = await this.mediaRepository.findByContentHash(hash)
     if (existing) {
-      const err = new Error('Duplicate file detected') as Error & {
-        status?: number
-      }
-      err.status = 409 // Conflict
-      throw err
+      return existing
     }
 
     const media = new MediaEntity()

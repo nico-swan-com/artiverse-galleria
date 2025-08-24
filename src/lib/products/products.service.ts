@@ -2,9 +2,13 @@ import { PaginationParams } from '../../types/common/pagination-params.type'
 import { unstable_cache } from 'next/cache'
 import { FindOptionsOrderValue } from 'typeorm'
 import { ProductsRepository } from './products.repository'
-import { ProductsSortBy } from './model/products-sort-by.type'
-import { Products } from './model/products.type'
-import { Product, ProductCreate, ProductUpdate } from './model/product.schema'
+import { ProductsSortBy } from '../../types/products/products-sort-by.type'
+import { Products } from '../../types/products/products.type'
+import {
+  Product,
+  ProductCreate,
+  ProductUpdate
+} from '../../types/products/product.schema'
 
 export default class ProductsService {
   repository: ProductsRepository
@@ -160,6 +164,24 @@ export default class ProductsService {
       return
     } catch (error) {
       console.error('Error deleting product:', error)
+      throw error
+    }
+  }
+
+  async findRelated(
+    artworkId: string,
+    category: string,
+    artistId: string
+  ): Promise<Product[]> {
+    try {
+      const result = await this.repository.findRelated(
+        artworkId,
+        category,
+        artistId
+      )
+      return result
+    } catch (error) {
+      console.error('Error finding related products:', error)
       throw error
     }
   }

@@ -1,7 +1,9 @@
 'use server'
 
+import { z } from 'zod'
 import { LoginSchema } from './login.schema'
 import { signIn } from '@/lib/authentication'
+import { CredentialsSignin } from 'next-auth'
 
 export type LoginFieldErrors = {
   email?: string[]
@@ -38,31 +40,49 @@ async function submitLogin(
       password: formData.get('password')
     })
 
-    const result = await signIn('credentials', {
+    await signIn('credentials', {
       ...credentials,
       redirect: false
     })
 
-    if (result?.error) {
-      console.error('Sign-in error:', result.error)
+    return {
+      ...state,
+      success: true,
+      message: 'Login successful',
+      password: ''
+    }
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
       return {
         ...state,
         success: false,
-        message: 'Sign-in error.',
-        errors: result.error
+        message: 'Validation failed',
+        errors: error.flatten().fieldErrors,
+        password: ''
       }
-    } else {
-      return { ...state, success: true, message: 'Login successful' }
     }
-  } catch (error: unknown) {
-    console.error('Validation error:', error)
+
+    if (error instanceof CredentialsSignin) {
+      return {
+        ...state,
+        success: false,
+        message: 'Invalid credentials',
+        errors: {
+          credentials: ['Invalid email or password']
+        },
+        password: ''
+      }
+    }
+
+    console.error('Authentication error:', error)
     return {
       ...state,
       success: false,
-      message: 'Authentication failed',
+      message: 'An unexpected error occurred',
       errors: {
-        credentials: ['Invalid email or password']
-      }
+        credentials: ['An unexpected error occurred']
+      },
+      password: ''
     }
   }
 }

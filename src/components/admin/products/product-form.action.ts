@@ -3,7 +3,10 @@
 import { z } from 'zod'
 import ProductsService from '@/lib/products/products.service'
 import { revalidateTag } from 'next/cache'
-import { ProductCreateSchema, ProductUpdateSchema } from '@/lib/products'
+import {
+  ProductCreateSchema,
+  ProductUpdateSchema
+} from '@/types/products/product.schema'
 import { MediaCreate, MediaService } from '@/lib/media'
 
 export type ProductFormFieldErrors = {
@@ -91,7 +94,9 @@ export async function productFormAction(
       fileName: featureImageFile?.name || ''
     }
     const media = await service.uploadImage(newMedia)
-    featureImage = media.id ? `/api/media/${media.id}` : undefined
+    if (media) {
+      featureImage = `/api/media/${media.id}`
+    }
   } else if (typeof featureImageFile === 'string') {
     featureImage = featureImageFile
   }
@@ -109,9 +114,15 @@ export async function productFormAction(
         fileSize: file.size,
         fileName: file.name
       })
-      images.push(`/api/media/${image.id}`)
+      if (image) {
+        images.push(`/api/media/${image.id}`)
+      }
     }
   }
+
+  const sales = formData.get('sales')
+    ? Number(formData.get('sales'))
+    : undefined
 
   const values = {
     title,
@@ -129,7 +140,7 @@ export async function productFormAction(
     featured,
     images,
     description,
-    sales: 0
+    sales
   }
 
   try {
@@ -163,7 +174,7 @@ export async function productFormAction(
       success: false,
       message: 'Failed to save product.',
       errors: {
-        database: [error instanceof Error ? error.message : 'Unknown error']
+        database: ['An unexpected error occurred while saving the product.']
       }
     }
   }

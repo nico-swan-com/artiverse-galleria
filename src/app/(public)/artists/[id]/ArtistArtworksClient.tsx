@@ -1,6 +1,6 @@
 'use client'
 import ArtworkCard from '@/components/public/artwork/ArtworkCard'
-import { Product } from '@/lib/products/model/product.schema'
+import { Product } from '@/types/products/product.schema'
 
 interface ArtistArtworksClientProps {
   artistArtworks: Product[]

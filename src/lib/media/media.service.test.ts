@@ -33,10 +33,11 @@ describe('MediaService.uploadImage', () => {
     expect(mockRepo.createAndSave).toHaveBeenCalled()
   })
 
-  it('rejects duplicate files', async () => {
-    mockRepo.findByContentHash.mockResolvedValue({
+  it('returns existing file for duplicate files', async () => {
+    const existingMedia = {
       id: '1'
-    } as unknown as Media)
+    } as unknown as Media
+    mockRepo.findByContentHash.mockResolvedValue(existingMedia)
     const fileData = Buffer.from('duplicate')
     const file: MediaCreate = {
       fileName: 'dup.png',
@@ -44,9 +45,8 @@ describe('MediaService.uploadImage', () => {
       fileSize: fileData.length,
       data: fileData
     }
-    await expect(service.uploadImage(file)).rejects.toThrow(
-      'Duplicate file detected'
-    )
+    const result = await service.uploadImage(file)
+    expect(result).toEqual(existingMedia)
   })
 
   it('rejects files over 5MB', async () => {

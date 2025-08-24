@@ -1,6 +1,6 @@
-import NextAuth from 'next-auth'
+import NextAuth, { CredentialsSignin } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { initializeDatabase } from '../database/data-source'
+
 import { getAvatarUrl } from '../utilities'
 import { UsersRepository } from '../users'
 
@@ -9,10 +9,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     CredentialsProvider({
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null
+          throw new CredentialsSignin('Missing credentials')
         }
         try {
-          await initializeDatabase()
           const users = new UsersRepository()
 
           const email: string = credentials.email as string
@@ -21,7 +20,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const user = await users.getUserByEmail(email)
 
           if (!user) {
-            return null
+            throw new CredentialsSignin('Invalid credentials')
           }
 
           const passwordMatch = await user.validatePassword(password)
@@ -32,14 +31,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               email: user.email,
               id: user.id.toString(),
               image,
-              name: user.name
+              name: user.name,
+              role: user.role
             }
           } else {
-            return null
+            throw new CredentialsSignin('Invalid credentials')
           }
         } catch (error) {
+          if (error instanceof CredentialsSignin) {
+            throw error
+          }
           console.error('Authentication error:', error)
-          return null
+          throw new Error('An unexpected error occurred during authentication')
         }
       }
     })
@@ -51,6 +54,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        token.id = user.id
+        token.role = user.role
         token.email = user.email
         token.picture = user.image
       }
@@ -59,6 +64,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       if (token && typeof token.id === 'string') {
         session.user.id = token.id
+        session.user.role = token.role
         session.user.image = token.picture
       }
       return session

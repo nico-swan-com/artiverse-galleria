@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import ProductItem from '@/components/admin/products/ProductItem'
-import { Product } from '@/lib/products'
+import { Product } from '@/types/products/product.schema'
 
 type ProductsGridListProps = {
   products: Product[]

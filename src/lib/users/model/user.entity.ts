@@ -7,11 +7,11 @@ import {
   UpdateDateColumn
 } from 'typeorm'
 import bcrypt from 'bcryptjs'
-import { UserRoles } from './user-roles.enum'
-import { UserStatus } from './user-status.enum'
+import { UserRoles } from '@/types/users/user-roles.enum'
+import { UserStatus } from '@/types/users/user-status.enum'
 import { Exclude, instanceToPlain, Transform } from 'class-transformer'
 @Entity('users')
-export class UsersEntity {
+export class User {
   @PrimaryGeneratedColumn('uuid')
   id!: string
 
@@ -37,12 +37,12 @@ export class UsersEntity {
   @CreateDateColumn({ name: 'created_at' })
   @Transform(({ value }) => (value === null ? undefined : value))
   @Transform(({ value }) => value.toISOString(), { toPlainOnly: true })
-  createdAt?: Date
+  createdAt!: Date
 
   @UpdateDateColumn({ name: 'updated_at' })
   @Transform(({ value }) => (value === null ? undefined : value))
   @Transform(({ value }) => value.toISOString(), { toPlainOnly: true })
-  updatedAt?: Date
+  updatedAt!: Date
 
   @DeleteDateColumn({ name: 'deleted_at' })
   @Transform(({ value }) => (value === null ? undefined : value))

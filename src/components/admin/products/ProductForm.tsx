@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Product } from '@/lib/products'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
@@ -15,6 +14,7 @@ import ProductArtistSelect from '@/components/admin/products/ProductArtistSelect
 import MultipleImageInput from '@/components/admin/media/MultipleImageInput'
 import FeatureImageInput from '@/components/admin/media/FeatureImageInput'
 import MediaPickerModal from '@/components/admin/media/MediaPickerModal'
+import { Product } from '@/types/products/product.schema'
 
 interface ProductFormProps {
   initialProduct?: Partial<Product>
@@ -78,6 +78,14 @@ export default function ProductForm({
     e.preventDefault()
     setIsPending(true)
     const formData = new FormData(e.currentTarget)
+
+    if (product.featureImage instanceof File) {
+      formData.append('featureImage', product.featureImage)
+    } else if (typeof product.featureImage === 'string') {
+      // If it's an existing string URL/ID, append it
+      formData.append('featureImage', product.featureImage)
+    }
+
     // Separate new files and existing URLs
     const filesOrUrls = product.images || []
     const newFiles: File[] = filesOrUrls.filter(
@@ -110,7 +118,7 @@ export default function ProductForm({
       }
     }
     // Merge and normalize all image URLs
-    const images = [...existingUrls, ...uploadedUrls]
+    const images = Array.from(new Set([...existingUrls, ...uploadedUrls]))
       .filter(Boolean)
       .map((url) => {
         if (typeof url === 'string' && url.startsWith('/api/media/')) return url
@@ -207,7 +215,6 @@ export default function ProductForm({
                     setProduct((prev) => ({ ...prev, featureImage: img }))
                   }
                 }}
-                name='featureImage'
               />
               {state?.errors?.featureImage && (
                 <p className='mt-2 text-xs text-red-500'>
@@ -232,7 +239,7 @@ export default function ProductForm({
                 </Button>
               </div>
               <MultipleImageInput
-                images={product.images as (File | string)[]}
+                images={(product.images || []) as (File | string)[]}
                 onChangeAction={(imgs) =>
                   setProduct((prev) => ({ ...prev, images: imgs }))
                 }

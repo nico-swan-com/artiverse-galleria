@@ -1,6 +1,8 @@
 import { PaginationParams } from './../../types/common/pagination-params.type'
 import { DeleteResult, FindOptionsOrderValue, UpdateResult } from 'typeorm'
-import { Users, UsersEntity, UsersSortBy } from './model'
+import { User } from './model/user.entity'
+import { Users } from '../../types/users/users.type'
+import { UsersSortBy } from '../../types/users/users-sort-by.type'
 import { getRepository } from '../database'
 
 class UsersRepository {
@@ -12,7 +14,7 @@ class UsersRepository {
     const { page, limit } = pagination
     const skip = (page - 1) * limit
     try {
-      const repository = await getRepository(UsersEntity)
+      const repository = await getRepository(User)
       const [users, total] = await repository.findAndCount({
         skip,
         take: limit,
@@ -21,36 +23,36 @@ class UsersRepository {
       return { users, total }
     } catch (error) {
       console.error('Error getting users:', error)
-      return { users: [], total: 0 }
+      throw error
     }
   }
 
-  async getUserById(id: string): Promise<UsersEntity | null> {
+  async getUserById(id: string): Promise<User | null> {
     try {
-      const repository = await getRepository(UsersEntity)
+      const repository = await getRepository(User)
       const found = await repository.findOne({ where: { id } })
       return found
     } catch (error) {
       console.error('Error getting user by id:', error)
-      return null
+      throw error
     }
   }
-  async getUserByEmail(email: string): Promise<UsersEntity | null> {
+  async getUserByEmail(email: string): Promise<User | null> {
     try {
-      const repository = await getRepository(UsersEntity)
+      const repository = await getRepository(User)
       const found = await repository.findOne({
         where: { email }
       })
       return found
     } catch (error) {
       console.error('Error getting user by email:', error)
-      return null
+      throw error
     }
   }
 
-  async create(user: UsersEntity): Promise<UsersEntity> {
+  async create(user: User): Promise<User> {
     try {
-      const repository = await getRepository(UsersEntity)
+      const repository = await getRepository(User)
       const created = await repository.save(user)
       return created
     } catch (error) {
@@ -59,9 +61,9 @@ class UsersRepository {
     }
   }
 
-  async update(user: UsersEntity): Promise<UpdateResult> {
+  async update(user: User): Promise<UpdateResult> {
     try {
-      const repository = await getRepository(UsersEntity)
+      const repository = await getRepository(User)
       const updated = await repository.update(user.id, user)
       return updated
     } catch (error) {
@@ -72,7 +74,7 @@ class UsersRepository {
 
   async delete(id: string): Promise<DeleteResult> {
     try {
-      const repository = await getRepository(UsersEntity)
+      const repository = await getRepository(User)
       const deleted = await repository.delete(id)
       return deleted
     } catch (error) {

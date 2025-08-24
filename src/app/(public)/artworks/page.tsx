@@ -1,7 +1,7 @@
 import ProductsService from '@/lib/products/products.service'
 import ArtworksClient from './ArtworksClient'
 import { instanceToPlain } from 'class-transformer'
-import { Product } from '@/lib/products/model/product.schema'
+import { Product } from '@/types/products/product.schema'
 
 // Force dynamic rendering to prevent prerendering issues
 export const dynamic = 'force-dynamic'

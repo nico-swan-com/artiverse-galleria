@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { FindOptionsOrderValue } from 'typeorm'
 
 import ProductsService from './products.service'
-import { ProductsSortBy } from './model/products-sort-by.type'
+import { ProductsSortBy } from '../../types/products/products-sort-by.type'
 
 export class ProductsController {
   private productsService: ProductsService
@@ -27,8 +27,15 @@ export class ProductsController {
     )
 
     const sanitizedProducts = products.map(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      ({ createdAt, updatedAt, ...rest }) => rest
+      (product: {
+        createdAt?: Date
+        updatedAt?: Date
+        [key: string]: unknown
+      }) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { createdAt, updatedAt, ...rest } = product
+        return rest
+      }
     )
     return NextResponse.json({
       products: sanitizedProducts,

@@ -26,11 +26,19 @@ const defaultConfig: NextConfig = {
   experimental: {
     serverMinification: true,
     authInterrupts: true,
-    nodeMiddleware: true,
     serverActions: {
       bodySizeLimit:
         (process.env.SERVER_ACTIONS_BODY_SIZE_LIMIT as SizeLimit) || '10mb'
     }
+  },
+  webpack: (config, { isServer }) => {
+    // Preserve Next/webpack defaults and gracefully handle function/undefined externals.
+    const asArray = (val: any) => (Array.isArray(val) ? val : val ? [val] : [])
+    if (isServer) {
+      const extra = ['pg-hstore', 'react-native-sqlite-storage', 'sqlite3']
+      config.externals = [...asArray(config.externals), ...extra]
+    }
+    return config
   }
 }
 
@@ -64,7 +72,6 @@ const customServerConfig: NextConfig = {
   experimental: {
     serverMinification: false,
     authInterrupts: true,
-    nodeMiddleware: true,
     serverActions: {
       bodySizeLimit:
         (process.env.SERVER_ACTIONS_BODY_SIZE_LIMIT as SizeLimit) || '10mb'
@@ -109,7 +116,6 @@ const staticConfig: NextConfig = {
   experimental: {
     serverMinification: false,
     authInterrupts: true,
-    nodeMiddleware: true,
     serverActions: {
       bodySizeLimit:
         (process.env.SERVER_ACTIONS_BODY_SIZE_LIMIT as SizeLimit) || '10mb'

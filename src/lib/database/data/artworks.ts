@@ -1,4 +1,4 @@
-import { Product } from './../../products/model/product.schema'
+import { Product } from '../../../types/products/product.schema'
 
 import { artists, getArtistById } from './artists'
 

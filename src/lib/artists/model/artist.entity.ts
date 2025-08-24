@@ -9,7 +9,7 @@ import {
 } from 'typeorm'
 
 @Entity('artists')
-export class ArtistsEntity {
+export class Artist {
   @PrimaryGeneratedColumn('uuid')
   id!: string
 
@@ -48,14 +48,20 @@ export class ArtistsEntity {
   statement!: string
 
   @CreateDateColumn({ name: 'created_at' })
-  @Transform(({ value }) => (value === null ? undefined : value))
-  @Transform(({ value }) => value.toISOString(), { toPlainOnly: true })
-  createdAt?: Date
+  @Transform(
+    ({ value }) =>
+      value === null || value === undefined ? undefined : value.toISOString(),
+    { toPlainOnly: true }
+  )
+  createdAt!: Date
 
   @UpdateDateColumn({ name: 'updated_at' })
-  @Transform(({ value }) => (value === null ? undefined : value))
-  @Transform(({ value }) => value.toISOString(), { toPlainOnly: true })
-  updatedAt?: Date
+  @Transform(
+    ({ value }) =>
+      value === null || value === undefined ? undefined : value.toISOString(),
+    { toPlainOnly: true }
+  )
+  updatedAt!: Date
 
   @DeleteDateColumn({ name: 'deleted_at' })
   @Transform(({ value }) => (value === null ? undefined : value))

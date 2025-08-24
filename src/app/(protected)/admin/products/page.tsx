@@ -1,5 +1,9 @@
 import ProductsPage from '@/components/admin/products/ProductsPage'
-import { isValidProductsSortKey, Product, ProductsSortBy } from '@/lib/products'
+import { Product } from '@/types/products/product.schema'
+import {
+  isValidProductsSortKey,
+  ProductsSortBy
+} from '@/types/products/products-sort-by.type'
 import ProductsService from '@/lib/products/products.service'
 import { instanceToPlain } from 'class-transformer'
 import { FindOptionsOrderValue } from 'typeorm'

@@ -21,7 +21,7 @@ import {
   SheetTitle,
   SheetTrigger
 } from '@/components/ui/sheet'
-import { Product } from '@/lib/products/model/product.schema'
+import { Product } from '@/types/products/product.schema'
 
 type ArtworksClientProps = {
   artworks: Product[]

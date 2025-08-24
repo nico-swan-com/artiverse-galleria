@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react'
 import { Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-import { UsersEntity } from '@/lib/users'
+import type { User } from '@/types/users/user.schema'
 
 interface UserSearchProps {
-  users: UsersEntity[]
+  users: User[]
   onSearch: (query: string) => void
 }
 

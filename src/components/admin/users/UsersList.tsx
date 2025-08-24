@@ -19,7 +19,8 @@ import { FindOptionsOrderValue } from 'typeorm'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowDown, ArrowUp } from 'lucide-react'
 import TablePagination from '@/components/common/ui/TablePagination'
-import { User, UsersSortBy } from '@/lib/users'
+import { User } from '@/types/users/user.schema'
+import { UsersSortBy } from '@/types/users/users-sort-by.type'
 import { getAvatarUrl } from '@/lib/utilities/get-avatar-url'
 
 interface UsersListProps {

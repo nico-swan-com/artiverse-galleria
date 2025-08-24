@@ -5,7 +5,7 @@ import { Search, PlusCircle } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import PageTransition from '@/components/common/utility/PageTransition'
 import ProductsGridList from './ProductsGridList'
-import { Product } from '@/lib/products'
+import { Product } from '@/types/products/product.schema'
 import { useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 

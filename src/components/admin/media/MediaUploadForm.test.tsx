@@ -6,51 +6,43 @@ import MediaUploadForm from './MediaUploadForm'
 // Add this at the very top of your test file, before any tests
 global.URL.createObjectURL = jest.fn(() => 'mock-url')
 
-jest.mock('browser-image-compression', () =>
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  jest.fn(async (file, opts) => file)
-)
+jest.mock('browser-image-compression', () => jest.fn(async (file) => file))
 
-interface MockMeta {
+interface MediaMetaData {
   fileName: string
   altText: string
   tags: string[]
 }
 
-const EditImageDialogMock = ({
-  open,
-  onOpenChange,
-  onSave,
-  loading
-}: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onSave: (meta: MockMeta) => void
-  loading: boolean
-}) => {
-  const [isLoading, setIsLoading] = useState(loading)
-
-  useEffect(() => {
-    setIsLoading(loading)
-  }, [loading])
-
-  if (!open) return null
-  return (
-    <div role='dialog'>
-      <button
-        onClick={() => onSave({ fileName: 'test.png', altText: '', tags: [] })}
-        disabled={isLoading}
-      >
-        Save & Apply
-      </button>
-      <button onClick={() => onOpenChange(false)}>Cancel</button>
-    </div>
-  )
-}
-
 jest.mock('./EditImageDialog', () => ({
   __esModule: true,
-  default: EditImageDialogMock
+  default: ({
+    open,
+    onOpenChange,
+    onSave,
+    loading
+  }: {
+    open: boolean
+    onOpenChange: (open: boolean) => void
+    file: File | null
+    onSave: (meta: MediaMetaData) => void
+    loading: boolean
+  }) => {
+    if (!open) return null
+    return (
+      <div role='dialog'>
+        <button
+          onClick={() =>
+            onSave({ fileName: 'test.png', altText: '', tags: [] })
+          }
+          disabled={loading}
+        >
+          Save & Apply
+        </button>
+        <button onClick={() => onOpenChange(false)}>Cancel</button>
+      </div>
+    )
+  }
 }))
 
 describe('MediaUploadForm', () => {

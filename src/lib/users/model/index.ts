@@ -1,6 +1,1 @@
-export * from './user-roles.enum'
-export * from './user-status.enum'
-export * from './user.entity'
-export * from './user.schema'
-export * from './users.type'
-export * from './users-sort-by.type'
+export { User as UsersEntity } from './user.entity'

@@ -1,5 +1,6 @@
 import { z } from 'zod'
-import { ACCEPTED_IMAGE_TYPES } from '@/lib/media'
+import { ACCEPTED_IMAGE_TYPES } from '@/shared/constants/media'
+import { FileSchema } from '@/shared/schemas/file.schema'
 
 const AVATAR_MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
 
@@ -7,16 +8,16 @@ export const ArtistSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1, 'Name is required').max(100, 'Name is too long'),
   image: z.string().min(1, 'Image is required'),
-  avatarFile: z
-    .instanceof(File)
-    .optional()
+  avatarFile: FileSchema.optional()
     .refine(
       (file) => !file || file.size === 0 || file.size <= AVATAR_MAX_FILE_SIZE,
       `Max file size is 2MB.`
     )
     .refine(
       (file) =>
-        !file || file.size === 0 || ACCEPTED_IMAGE_TYPES.includes(file.type),
+        !file ||
+        file.size === 0 ||
+        (ACCEPTED_IMAGE_TYPES as readonly string[]).includes(file.type),
       'Only .jpg, .jpeg, .png and .webp formats are supported.'
     ),
   featured: z.boolean().default(false),

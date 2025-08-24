@@ -9,10 +9,11 @@ import {
   ManyToOne,
   JoinColumn
 } from 'typeorm'
-import { ArtistsEntity } from '../../artists/model/artist.entity'
+import { ColumnNumericTransformer } from '../../database/column-numeric-transformer'
+import { Artist } from '../../artists/model/artist.entity'
 
 @Entity('products')
-export class ProductsEntity {
+export class ProductEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string
 
@@ -25,7 +26,12 @@ export class ProductsEntity {
   @Column({ type: 'text' })
   description!: string
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    transformer: new ColumnNumericTransformer()
+  })
   price!: number
 
   @Column({ type: 'int' })
@@ -37,7 +43,12 @@ export class ProductsEntity {
   @Column({ type: 'text', array: true, nullable: true })
   images?: string[]
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    transformer: new ColumnNumericTransformer()
+  })
   sales!: number
 
   @Column({ type: 'boolean', default: false })
@@ -57,9 +68,9 @@ export class ProductsEntity {
   @Column({ name: 'artist_id', type: 'uuid', nullable: true })
   artistId?: string
 
-  @ManyToOne(() => ArtistsEntity, { eager: false, nullable: true })
+  @ManyToOne(() => Artist, { eager: false, nullable: true })
   @JoinColumn({ name: 'artist_id' })
-  artist?: ArtistsEntity
+  artist?: Artist
 
   @Column({ name: 'year_created', type: 'int', nullable: true })
   yearCreated?: number
