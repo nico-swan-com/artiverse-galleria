@@ -5,7 +5,7 @@ export const ProductSchema = z.object({
   sku: z.number().int().positive().optional(),
   title: z.string().min(1, 'Name is required').max(255, 'Name is too long'),
   description: z.string().max(5000, 'Description is too long'),
-  featureImage: z.string().url().or(z.instanceof(File)).optional(),
+  featureImage: z.string().or(z.instanceof(File)).optional(),
   price: z.number().min(0, 'Price must be a positive number'),
   stock: z.number().min(0, 'Stock must be a positive number'),
   sales: z.number().min(0, 'Sales must be a positive number'),

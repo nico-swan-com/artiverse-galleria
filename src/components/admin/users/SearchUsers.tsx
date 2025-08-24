@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-import { UsersEntity } from '@/lib/users'
+import { UsersEntity } from '@/lib/users/model'
 
 interface UserSearchProps {
   users: UsersEntity[]

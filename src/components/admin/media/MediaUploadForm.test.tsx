@@ -1,58 +1,54 @@
 import '@testing-library/jest-dom'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { render, fireEvent, waitFor, screen, act } from '@testing-library/react'
 import MediaUploadForm from './MediaUploadForm'
 
 // Add this at the very top of your test file, before any tests
 global.URL.createObjectURL = jest.fn(() => 'mock-url')
 
-jest.mock('browser-image-compression', () =>
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  jest.fn(async (file, opts) => file)
-)
+jest.mock('browser-image-compression', () => jest.fn(async (file) => file))
+
+interface MediaMetaData {
+  fileName: string
+  altText: string
+  tags: string[]
+}
 
 jest.mock('./EditImageDialog', () => {
-  const React = require('react')
-  const { useState, useEffect } = React
+  const EditImageDialog = ({
+    open,
+    onOpenChange,
+    onSave,
+    loading
+  }: {
+    open: boolean
+    onOpenChange: (open: boolean) => void
+    file: File | null
+    onSave: (meta: MediaMetaData) => void
+    loading: boolean
+  }) => {
+    const [isLoading, setIsLoading] = useState(loading)
 
-  return {
-    __esModule: true,
-    default: ({
-      open,
-      onOpenChange,
-      file,
-      onSave,
-      loading
-    }: {
-      open: boolean
-      onOpenChange: (open: boolean) => void
-      file: File | null
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onSave: (meta: any) => void
-      loading: boolean
-    }) => {
-      const [isLoading, setIsLoading] = useState(loading)
+    useEffect(() => {
+      setIsLoading(loading)
+    }, [loading])
 
-      useEffect(() => {
-        setIsLoading(loading)
-      }, [loading])
-
-      if (!open) return null
-      return (
-        <div role='dialog'>
-          <button
-            onClick={() =>
-              onSave({ fileName: 'test.png', altText: '', tags: [] })
-            }
-            disabled={isLoading}
-          >
-            Save & Apply
-          </button>
-          <button onClick={() => onOpenChange(false)}>Cancel</button>
-        </div>
-      )
-    }
+    if (!open) return null
+    return (
+      <div role='dialog'>
+        <button
+          onClick={() =>
+            onSave({ fileName: 'test.png', altText: '', tags: [] })
+          }
+          disabled={isLoading}
+        >
+          Save & Apply
+        </button>
+        <button onClick={() => onOpenChange(false)}>Cancel</button>
+      </div>
+    )
   }
+  return EditImageDialog
 })
 
 describe('MediaUploadForm', () => {

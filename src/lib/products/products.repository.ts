@@ -2,9 +2,13 @@ import { PaginationParams } from './../../types/common/pagination-params.type'
 import { FindOptionsOrderValue, ILike } from 'typeorm'
 import { plainToInstance } from 'class-transformer'
 import { ProductsEntity } from './model/products.entity'
-import { ProductsSortBy } from './model/products-sort-by.type'
-import { Products } from './model/products.type'
-import { Product, ProductCreate, ProductUpdate } from './model/product.schema'
+import { ProductsSortBy } from '../../types/products/products-sort-by.type'
+import { Products } from '../../types/products/products.type'
+import {
+  Product,
+  ProductCreate,
+  ProductUpdate
+} from '../../types/products/product.schema'
 import { getRepository } from '../database'
 
 class ProductsRepository {

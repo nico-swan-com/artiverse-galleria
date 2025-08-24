@@ -10,7 +10,7 @@ import {
   deleteProductAction,
   DeleteProductState
 } from './delete-product.action'
-import { ProductDelete } from '@/lib/products'
+import { ProductDelete } from '@/types/products/product.schema'
 
 interface DeleteProductFormProps {
   product: ProductDelete

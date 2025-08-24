@@ -2,7 +2,7 @@ import ProductsService from '@/lib/products/products.service'
 import ArtworkDetailClient from './ArtworkDetailClient'
 import { notFound } from 'next/navigation'
 import { instanceToPlain } from 'class-transformer'
-import { Product } from '@/lib/products'
+import { Product } from '@/types/products/product.schema'
 
 // Force dynamic rendering to prevent prerendering issues
 export const dynamic = 'force-dynamic'
@@ -28,7 +28,7 @@ export default async function ArtworkDetailPage({
     )
     const relatedArtworks = allProducts
       .filter(
-        (a) =>
+        (a: Product) =>
           a.id !== artwork.id &&
           (a.category === artwork.category ||
             a.style === artwork.style ||

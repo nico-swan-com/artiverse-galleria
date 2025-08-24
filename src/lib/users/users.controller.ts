@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { FindOptionsOrderValue } from 'typeorm'
 
 import { AuthGuard } from '../authentication/auth-guard-route.decorator'
-import { UsersSortBy } from './model'
+import { UsersSortBy } from '../../types/users/users-sort-by.type'
 
 export class UsersController {
   @AuthGuard()

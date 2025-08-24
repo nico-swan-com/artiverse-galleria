@@ -1,5 +1,6 @@
 import { ACCEPTED_IMAGE_TYPES } from '@/lib/media'
-import { UserRoles, UserStatus } from '.'
+import { UserRoles } from './user-roles.enum'
+import { UserStatus } from './user-status.enum'
 import { z } from 'zod'
 
 const AVATAR_MAX_FILE_SIZE = 1 * 1024 * 1024 // 1MB

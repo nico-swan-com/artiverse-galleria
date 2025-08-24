@@ -1,6 +1,6 @@
 'use client'
 
-import { Product } from '@/lib/products'
+import { Product } from '@/types/products/product.schema'
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { toast } from 'sonner'
 

@@ -3,7 +3,10 @@
 import { z } from 'zod'
 import ProductsService from '@/lib/products/products.service'
 import { revalidateTag } from 'next/cache'
-import { ProductCreateSchema, ProductUpdateSchema } from '@/lib/products'
+import {
+  ProductCreateSchema,
+  ProductUpdateSchema
+} from '@/types/products/product.schema'
 import { MediaCreate, MediaService } from '@/lib/media'
 
 export type ProductFormFieldErrors = {

@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Pencil } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
-import { Product } from '@/lib/products'
+import { Product } from '@/types/products/product.schema'
 import Link from 'next/link'
 import DeleteProductDialog from './ProductDeleteDialog'
 

@@ -9,7 +9,7 @@ import {
   CarouselNext
 } from '@/components/ui/carousel'
 
-import { Product } from '@/lib/products/model/product.schema'
+import { Product } from '@/types/products/product.schema'
 import ProductsService from '@/lib/products/products.service'
 
 export default async function Hero() {

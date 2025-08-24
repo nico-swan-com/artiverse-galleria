@@ -166,6 +166,7 @@ export default function MediaAdminPage() {
             open={!!editMedia}
             onOpenChange={handleEditDialogClose}
             media={editMedia}
+            loading={loading}
             onSave={async (meta: {
               fileName?: string
               title?: string

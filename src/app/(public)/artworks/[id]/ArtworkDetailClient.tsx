@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/dialog'
 import ArtworkCard from '@/components/public/artwork/ArtworkCard'
 import { toast } from 'sonner'
-import { Product } from '@/lib/products/model/product.schema'
+import { Product } from '@/types/products/product.schema'
 
 interface ArtworkDetailClientProps {
   artwork: Product

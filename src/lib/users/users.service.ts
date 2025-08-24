@@ -1,7 +1,8 @@
 import { PaginationParams } from './../../types/common/pagination-params.type'
 import { FindOptionsOrderValue } from 'typeorm'
 import { UsersRepository } from './users.repository'
-import { UsersEntity, UsersSortBy } from './model'
+import { UsersEntity } from './model/user.entity'
+import { UsersSortBy } from '../../types/users/users-sort-by.type'
 
 export default class Users {
   repository: UsersRepository

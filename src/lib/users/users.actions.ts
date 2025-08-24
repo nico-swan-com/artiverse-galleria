@@ -4,7 +4,7 @@ import { unstable_cache } from 'next/cache'
 import { FindOptionsOrderValue } from 'typeorm'
 import { UsersEntity } from './model/user.entity'
 import Users from './users.service'
-import { UsersSortBy } from './model'
+import { UsersSortBy } from '../../types/users/users-sort-by.type'
 
 export const getUsersUnstableCache = unstable_cache(
   async (

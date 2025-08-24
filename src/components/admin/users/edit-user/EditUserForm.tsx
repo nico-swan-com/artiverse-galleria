@@ -6,7 +6,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import editUserAction, { EditUserState } from './edit-user.action'
-import { User, UserRoles, UserStatus } from '@/lib/users'
+import { User } from '@/types/users/user.schema'
+import { UserRoles } from '@/types/users/user-roles.enum'
+import { UserStatus } from '@/types/users/user-status.enum'
 import {
   Select,
   SelectContent,

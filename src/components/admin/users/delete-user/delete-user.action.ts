@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod'
-import { UsersRepository } from '@/lib/users'
+import { UsersRepository } from '@/lib/users/users.repository'
 import { revalidateTag } from 'next/cache'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

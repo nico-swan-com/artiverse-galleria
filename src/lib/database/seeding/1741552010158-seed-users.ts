@@ -1,5 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
-import { UsersEntity, UserRoles, UserStatus } from '../../users/model' // Import enums
+import { UsersEntity } from '../../users/model' // Import entity
+import { UserRoles } from '../../../types/users/user-roles.enum' // Import roles enum
+import { UserStatus } from '../../../types/users/user-status.enum' // Import status enum
 import { faker } from '@faker-js/faker' // Import Faker
 
 export const users: UsersEntity[] = [

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Product } from '@/lib/products'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
@@ -15,6 +14,7 @@ import ProductArtistSelect from '@/components/admin/products/ProductArtistSelect
 import MultipleImageInput from '@/components/admin/media/MultipleImageInput'
 import FeatureImageInput from '@/components/admin/media/FeatureImageInput'
 import MediaPickerModal from '@/components/admin/media/MediaPickerModal'
+import { Product } from '@/types/products/product.schema'
 
 interface ProductFormProps {
   initialProduct?: Partial<Product>

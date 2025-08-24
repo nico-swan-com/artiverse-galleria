@@ -1,6 +1,8 @@
 import { PaginationParams } from './../../types/common/pagination-params.type'
 import { DeleteResult, FindOptionsOrderValue, UpdateResult } from 'typeorm'
-import { Users, UsersEntity, UsersSortBy } from './model'
+import { UsersEntity } from './model/user.entity'
+import { Users } from '../../types/users/users.type'
+import { UsersSortBy } from '../../types/users/users-sort-by.type'
 import { getRepository } from '../database'
 
 class UsersRepository {
