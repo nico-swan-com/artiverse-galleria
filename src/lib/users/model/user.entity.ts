@@ -37,12 +37,12 @@ export class User {
   @CreateDateColumn({ name: 'created_at' })
   @Transform(({ value }) => (value === null ? undefined : value))
   @Transform(({ value }) => value.toISOString(), { toPlainOnly: true })
-  createdAt?: Date
+  createdAt!: Date
 
   @UpdateDateColumn({ name: 'updated_at' })
   @Transform(({ value }) => (value === null ? undefined : value))
   @Transform(({ value }) => value.toISOString(), { toPlainOnly: true })
-  updatedAt?: Date
+  updatedAt!: Date
 
   @DeleteDateColumn({ name: 'deleted_at' })
   @Transform(({ value }) => (value === null ? undefined : value))

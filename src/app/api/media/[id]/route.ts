@@ -3,7 +3,9 @@ import { MediaService } from '@/lib/media/media.service'
 import sharp, { type Gravity } from 'sharp'
 import path from 'path'
 import fs from 'fs/promises'
+import crypto from 'crypto'
 import { handleApiError, ApiError } from '@/lib/utilities/api-error-handler'
+import { escapeHtml } from '@/lib/utilities/html-escape'
 
 function isPlainBufferObject(
   obj: unknown
@@ -62,7 +64,7 @@ export async function GET(req: NextRequest, context: unknown) {
     const watermark = url.searchParams.get('watermark') === '1'
     const skipWatermark = url.searchParams.get('skipWatermark') === '1'
     const wmText = url.searchParams.get('wmText') || ''
-    const wmLogo = url.searchParams.get('wmLogo') || ''
+    const wmLogo = path.basename(url.searchParams.get('wmLogo') || '')
     const wmPos = (url.searchParams.get('wmPos') as Gravity) || 'southeast'
     const wmOpacity = url.searchParams.get('wmOpacity')
       ? parseFloat(url.searchParams.get('wmOpacity')!)
@@ -132,7 +134,7 @@ export async function GET(req: NextRequest, context: unknown) {
           : 24
         const svg = Buffer.from(`
           <svg width='${imgMeta.width}' height='${imgMeta.height}'>
-            <text x='95%' y='95%' text-anchor='end' alignment-baseline='bottom' font-size='${fontSize}' fill='white' fill-opacity='${wmOpacity}' font-family='Arial, sans-serif' stroke='black' stroke-width='2'>${wmText}</text>
+            <text x='95%' y='95%' text-anchor='end' alignment-baseline='bottom' font-size='${fontSize}' fill='white' fill-opacity='${wmOpacity}' font-family='Arial, sans-serif' stroke='black' stroke-width='2'>${escapeHtml(wmText)}</text>
           </svg>
         `)
         transformer = transformer.composite([
@@ -160,7 +162,7 @@ export async function GET(req: NextRequest, context: unknown) {
     }
 
     // ETag for CDN cache (hash of original + params)
-    const etag = `W/"${id}-${quality}-${width || ''}-${height || ''}-${watermark ? 1 : 0}-${wmLogo || wmText || ''}"`
+    const etag = `W/"${crypto.createHash('sha256').update(processedBuffer).digest('hex')}"`
     const headers = new Headers()
     headers.set('Content-Type', outputFormat)
     headers.set('Content-Length', processedBuffer.byteLength.toString())

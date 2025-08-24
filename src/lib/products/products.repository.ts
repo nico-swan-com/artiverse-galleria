@@ -46,7 +46,7 @@ class ProductsRepository {
     const searchFilter = searchQuery
       ? {
           where: [
-            { name: ILike(`%${searchQuery}%`) },
+            { title: ILike(`%${searchQuery}%`) },
             { description: ILike(`%${searchQuery}%`) },
             { category: ILike(`%${searchQuery}%`) }
           ]

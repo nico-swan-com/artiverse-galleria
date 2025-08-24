@@ -1,7 +1,8 @@
-import { ACCEPTED_IMAGE_TYPES } from '@/lib/media'
+import { ACCEPTED_IMAGE_TYPES } from '@/shared/constants/media'
 import { UserRoles } from './user-roles.enum'
 import { UserStatus } from './user-status.enum'
 import { z } from 'zod'
+import { FileSchema } from '@/shared/schemas/file.schema'
 
 const AVATAR_MAX_FILE_SIZE = 1 * 1024 * 1024 // 1MB
 
@@ -47,16 +48,16 @@ export const UserSchema = z.object({
     .optional()
     .default(UserStatus.Pending),
   avatar: z.string().optional(),
-  avatarFile: z
-    .instanceof(File)
-    .optional()
+  avatarFile: FileSchema.optional()
     .refine(
       (file) => !file || file.size === 0 || file.size <= AVATAR_MAX_FILE_SIZE,
       `Max file size is 1MB.`
     )
     .refine(
       (file) =>
-        !file || file.size === 0 || ACCEPTED_IMAGE_TYPES.includes(file.type),
+        !file ||
+        file.size === 0 ||
+        (ACCEPTED_IMAGE_TYPES as readonly string[]).includes(file.type),
       'Only .jpg, .jpeg, .png and .webp formats are supported.'
     ),
   createdAt: z.date().transform((date) => date || undefined),

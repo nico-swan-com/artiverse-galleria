@@ -23,7 +23,7 @@ class UsersRepository {
       return { users, total }
     } catch (error) {
       console.error('Error getting users:', error)
-      return { users: [], total: 0 }
+      throw error
     }
   }
 
@@ -34,7 +34,7 @@ class UsersRepository {
       return found
     } catch (error) {
       console.error('Error getting user by id:', error)
-      return null
+      throw error
     }
   }
   async getUserByEmail(email: string): Promise<User | null> {
@@ -46,7 +46,7 @@ class UsersRepository {
       return found
     } catch (error) {
       console.error('Error getting user by email:', error)
-      return null
+      throw error
     }
   }
 

@@ -9,6 +9,7 @@ import {
   ManyToOne,
   JoinColumn
 } from 'typeorm'
+import { ColumnNumericTransformer } from '../../database/column-numeric-transformer'
 import { Artist } from '../../artists/model/artist.entity'
 
 @Entity('products')
@@ -25,7 +26,12 @@ export class Product {
   @Column({ type: 'text' })
   description!: string
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    transformer: new ColumnNumericTransformer()
+  })
   price!: number
 
   @Column({ type: 'int' })
@@ -37,7 +43,12 @@ export class Product {
   @Column({ type: 'text', array: true, nullable: true })
   images?: string[]
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    transformer: new ColumnNumericTransformer()
+  })
   sales!: number
 
   @Column({ type: 'boolean', default: false })

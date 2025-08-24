@@ -120,6 +120,10 @@ export async function productFormAction(
     }
   }
 
+  const sales = formData.get('sales')
+    ? Number(formData.get('sales'))
+    : undefined
+
   const values = {
     title,
     featureImage,
@@ -136,7 +140,7 @@ export async function productFormAction(
     featured,
     images,
     description,
-    sales: 0
+    sales
   }
 
   try {
@@ -170,7 +174,7 @@ export async function productFormAction(
       success: false,
       message: 'Failed to save product.',
       errors: {
-        database: [error instanceof Error ? error.message : 'Unknown error']
+        database: ['An unexpected error occurred while saving the product.']
       }
     }
   }
