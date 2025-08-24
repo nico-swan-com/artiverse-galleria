@@ -94,7 +94,9 @@ export async function productFormAction(
       fileName: featureImageFile?.name || ''
     }
     const media = await service.uploadImage(newMedia)
-    featureImage = media.id ? `/api/media/${media.id}` : undefined
+    if (media) {
+      featureImage = `/api/media/${media.id}`
+    }
   } else if (typeof featureImageFile === 'string') {
     featureImage = featureImageFile
   }
@@ -112,7 +114,9 @@ export async function productFormAction(
         fileSize: file.size,
         fileName: file.name
       })
-      images.push(`/api/media/${image.id}`)
+      if (image) {
+        images.push(`/api/media/${image.id}`)
+      }
     }
   }
 

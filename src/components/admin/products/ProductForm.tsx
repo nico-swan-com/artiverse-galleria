@@ -78,6 +78,11 @@ export default function ProductForm({
     e.preventDefault()
     setIsPending(true)
     const formData = new FormData(e.currentTarget)
+
+    if (product.featureImage instanceof File) {
+      formData.append('featureImage', product.featureImage)
+    }
+
     // Separate new files and existing URLs
     const filesOrUrls = product.images || []
     const newFiles: File[] = filesOrUrls.filter(
@@ -232,7 +237,7 @@ export default function ProductForm({
                 </Button>
               </div>
               <MultipleImageInput
-                images={product.images as (File | string)[]}
+                images={(product.images || []) as (File | string)[]}
                 onChangeAction={(imgs) =>
                   setProduct((prev) => ({ ...prev, images: imgs }))
                 }

@@ -131,13 +131,6 @@ export default function FeatureImageInput({
         )}
       </div>
 
-      {/* Hidden field for form submission (string or empty) */}
-      <input
-        type='hidden'
-        name={name}
-        value={files[0]?.file?.name || initialImage || ''}
-      />
-
       {errors.length > 0 && (
         <div
           className='flex items-center gap-1 text-xs text-destructive'
