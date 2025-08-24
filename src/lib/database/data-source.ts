@@ -50,6 +50,8 @@ const createAndInitializeDataSource = async (
     migrations: [__dirname + '/migrations/*.ts']
   })
 
+  console.debug('DataSource created', dataSource)
+
   let attempts = 0
   const startTime = Date.now()
 
