@@ -3,13 +3,16 @@
 import React, { useState, useEffect } from 'react'
 import { useCart } from '@/contexts/cart.context'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ShoppingCart, Search, Menu, X } from 'lucide-react'
+import { ShoppingCart, Search, Menu, X, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Logo from '../admin/users/create-user/logo/Logo'
+import { Button } from '../ui/button'
 
 const Navbar = () => {
+  const { data: session } = useSession()
   const { getItemCount } = useCart()
   const [itemCount, setItemCount] = useState(0)
   const pathname = usePathname()
@@ -111,6 +114,15 @@ const Navbar = () => {
               </span>
             )}
           </Link>
+
+          {!session && (
+            <Button asChild variant='outline' size='sm'>
+              <Link href='/login'>
+                <User className='mr-2 size-4' />
+                Login
+              </Link>
+            </Button>
+          )}
 
           {isMobile && (
             <button

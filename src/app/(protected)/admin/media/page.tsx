@@ -166,6 +166,7 @@ export default function MediaAdminPage() {
             open={!!editMedia}
             onOpenChange={handleEditDialogClose}
             media={editMedia}
+            loading={loading}
             onSave={async (meta: {
               fileName?: string
               title?: string
@@ -174,17 +175,25 @@ export default function MediaAdminPage() {
               tags: string[]
             }) => {
               if (!editMedia) return
-              await fetch(`/api/media/${editMedia.id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  fileName: meta.fileName || meta.title,
-                  alt: meta.alt || meta.altText,
-                  tags: meta.tags
+              setLoading(true)
+              try {
+                await fetch(`/api/media/${editMedia.id}`, {
+                  method: 'PATCH',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    fileName: meta.fileName || meta.title,
+                    alt: meta.alt || meta.altText,
+                    tags: meta.tags
+                  })
                 })
-              })
-              handleEditDialogClose()
-              await loadMedia()
+                handleEditDialogClose()
+                await loadMedia()
+              } catch (e) {
+                const error = e as Error
+                setError(error.message)
+              } finally {
+                setLoading(false)
+              }
             }}
           />
         )}

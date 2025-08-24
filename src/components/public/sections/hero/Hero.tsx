@@ -22,7 +22,7 @@ export default async function Hero() {
         <div className='grid grid-cols-1 items-center gap-12 md:grid-cols-2'>
           <div>
             <h1 className='mb-6 text-4xl font-bold tracking-tight text-gray-900 md:text-5xl'>
-              Discover Unique Art for Your Space
+              Welcome to Artiverse
             </h1>
             <p className='mb-8 text-lg text-gray-600'>
               Explore our curated collection of original artworks from talented
@@ -46,12 +46,12 @@ export default async function Hero() {
                     artwork.featureImage && (
                       <CarouselItem key={artwork.id}>
                         <Link href={`/artworks/${artwork.id}`}>
-                          <div className='group relative aspect-[4/3] w-full overflow-hidden rounded-lg'>
+                          <div className='relative aspect-[4/3] w-full overflow-hidden rounded-lg'>
                             <Image
                               src={artwork.featureImage as string}
                               alt={artwork.title}
                               fill
-                              className='object-cover transition-transform duration-300 ease-in-out group-hover:scale-105'
+                              className='object-cover object-center'
                               sizes='(max-width: 768px) 100vw, 50vw'
                             />
                           </div>
