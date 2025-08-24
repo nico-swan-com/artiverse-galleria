@@ -11,49 +11,47 @@ jest.mock('browser-image-compression', () =>
   jest.fn(async (file, opts) => file)
 )
 
-jest.mock('./EditImageDialog', () => {
-  const React = require('react')
-  const { useState, useEffect } = React
+interface MockMeta {
+  fileName: string
+  altText: string
+  tags: string[]
+}
 
-  return {
-    __esModule: true,
-    default: ({
-      open,
-      onOpenChange,
-      file,
-      onSave,
-      loading
-    }: {
-      open: boolean
-      onOpenChange: (open: boolean) => void
-      file: File | null
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onSave: (meta: any) => void
-      loading: boolean
-    }) => {
-      const [isLoading, setIsLoading] = useState(loading)
+const EditImageDialogMock = ({
+  open,
+  onOpenChange,
+  onSave,
+  loading
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onSave: (meta: MockMeta) => void
+  loading: boolean
+}) => {
+  const [isLoading, setIsLoading] = useState(loading)
 
-      useEffect(() => {
-        setIsLoading(loading)
-      }, [loading])
+  useEffect(() => {
+    setIsLoading(loading)
+  }, [loading])
 
-      if (!open) return null
-      return (
-        <div role='dialog'>
-          <button
-            onClick={() =>
-              onSave({ fileName: 'test.png', altText: '', tags: [] })
-            }
-            disabled={isLoading}
-          >
-            Save & Apply
-          </button>
-          <button onClick={() => onOpenChange(false)}>Cancel</button>
-        </div>
-      )
-    }
-  }
-})
+  if (!open) return null
+  return (
+    <div role='dialog'>
+      <button
+        onClick={() => onSave({ fileName: 'test.png', altText: '', tags: [] })}
+        disabled={isLoading}
+      >
+        Save & Apply
+      </button>
+      <button onClick={() => onOpenChange(false)}>Cancel</button>
+    </div>
+  )
+}
+
+jest.mock('./EditImageDialog', () => ({
+  __esModule: true,
+  default: EditImageDialogMock
+}))
 
 describe('MediaUploadForm', () => {
   const existingMedia = [{ fileName: 'existing.png', contentHash: 'abc123' }]
