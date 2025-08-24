@@ -167,4 +167,22 @@ export default class ProductsService {
       throw error
     }
   }
+
+  async findRelated(
+    artworkId: string,
+    category: string,
+    artistId: string
+  ): Promise<Product[]> {
+    try {
+      const result = await this.repository.findRelated(
+        artworkId,
+        category,
+        artistId
+      )
+      return result
+    } catch (error) {
+      console.error('Error finding related products:', error)
+      return []
+    }
+  }
 }

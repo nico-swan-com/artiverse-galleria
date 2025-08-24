@@ -1,8 +1,8 @@
 import 'reflect-metadata'
 import { DataSource, EntityTarget, ObjectLiteral, Repository } from 'typeorm'
-import { ProductsEntity } from '../products'
-import { ArtistsEntity } from '../artists'
-import { UsersEntity } from '../users'
+import { Product } from '../products/model/products.entity'
+import { Artist } from '../artists/model/artist.entity'
+import { User } from '../users/model/user.entity'
 import { MediaEntity } from '../media'
 
 // This promise will hold the single connection instance
@@ -40,7 +40,7 @@ const createAndInitializeDataSource = async (
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DATABASE,
     schema: process.env.POSTGRES_SCHEMA || 'public',
-    entities: [UsersEntity, ArtistsEntity, ProductsEntity, MediaEntity],
+    entities: [User, Artist, Product, MediaEntity],
     synchronize: false,
     logging: process.env.NODE_ENV === 'development',
     migrations: [__dirname + '/migrations/*.ts']

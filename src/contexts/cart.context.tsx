@@ -24,7 +24,6 @@ type CartContextType = {
   getItemCount: () => number
   getCartTotal: () => number
   isInCart: (artworkId: string) => boolean
-  itemCount: number
 }
 
 // Create context with default values
@@ -36,8 +35,7 @@ const CartContext = createContext<CartContextType>({
   clearCart: () => {},
   getItemCount: () => 0,
   getCartTotal: () => 0,
-  isInCart: () => false,
-  itemCount: 0
+  isInCart: () => false
 })
 
 // Custom hook to use cart context
@@ -59,10 +57,7 @@ export const CartProvider = ({ children }: ChildrenProps) => {
     return [] // Return empty array on server-side rendering
   })
 
-  const [itemCount, setItemCount] = useState(0)
-
   // Get total number of items
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const getItemCount = () => {
     return cart.reduce((total, item) => total + item.quantity, 0)
   }
@@ -76,8 +71,7 @@ export const CartProvider = ({ children }: ChildrenProps) => {
         console.error('Error saving cart to localStorage:', error)
       }
     }
-    setItemCount(getItemCount())
-  }, [cart, getItemCount]) // Removed getItemCount from dependency array.
+  }, [cart])
 
   // Add item to cart
   const addToCart = (artwork: Product, quantity = 1) => {
@@ -149,8 +143,7 @@ export const CartProvider = ({ children }: ChildrenProps) => {
     clearCart,
     getItemCount,
     getCartTotal,
-    isInCart,
-    itemCount
+    isInCart
   }
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>

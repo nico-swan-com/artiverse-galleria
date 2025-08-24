@@ -1,5 +1,13 @@
 import { UsersController } from '@/lib/users'
+import { handleApiError } from '@/lib/utilities/api-error-handler'
+import { NextRequest } from 'next/server'
 
 const usersController = new UsersController()
 
-export const GET = usersController.getUsers.bind(usersController)
+export async function GET(request: NextRequest) {
+  try {
+    return await usersController.getUsers(request)
+  } catch (error) {
+    return handleApiError(error)
+  }
+}

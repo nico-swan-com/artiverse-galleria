@@ -9,10 +9,10 @@ import {
   ManyToOne,
   JoinColumn
 } from 'typeorm'
-import { ArtistsEntity } from '../../artists/model/artist.entity'
+import { Artist } from '../../artists/model/artist.entity'
 
 @Entity('products')
-export class ProductsEntity {
+export class Product {
   @PrimaryGeneratedColumn('uuid')
   id!: string
 
@@ -57,9 +57,9 @@ export class ProductsEntity {
   @Column({ name: 'artist_id', type: 'uuid', nullable: true })
   artistId?: string
 
-  @ManyToOne(() => ArtistsEntity, { eager: false, nullable: true })
+  @ManyToOne(() => Artist, { eager: false, nullable: true })
   @JoinColumn({ name: 'artist_id' })
-  artist?: ArtistsEntity
+  artist?: Artist
 
   @Column({ name: 'year_created', type: 'int', nullable: true })
   yearCreated?: number

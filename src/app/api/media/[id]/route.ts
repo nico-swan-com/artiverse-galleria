@@ -3,6 +3,7 @@ import { MediaService } from '@/lib/media/media.service'
 import sharp, { type Gravity } from 'sharp'
 import path from 'path'
 import fs from 'fs/promises'
+import { handleApiError, ApiError } from '@/lib/utilities/api-error-handler'
 
 function isPlainBufferObject(
   obj: unknown
@@ -30,13 +31,13 @@ function isPlainBufferObject(
  *   - skipWatermark: '1' (optional, disables watermark for system UI assets)
  */
 export async function GET(req: NextRequest, context: unknown) {
-  const { params } = (context || {}) as { params: { id: string } }
-  const mediaService = new MediaService()
   try {
+    const { params } = (context || {}) as { params: { id: string } }
+    const mediaService = new MediaService()
     const { id } = params
     const media = await mediaService.getImageById(id)
     if (!media) {
-      return new NextResponse('Not Found', { status: 404 })
+      throw new ApiError(404, 'Not Found')
     }
     // Only handle Buffer or plain buffer object
     let imageBuffer: Buffer
@@ -45,7 +46,8 @@ export async function GET(req: NextRequest, context: unknown) {
     } else if (isPlainBufferObject(media.data)) {
       imageBuffer = Buffer.from(media.data.data)
     } else {
-      throw new Error(
+      throw new ApiError(
+        500,
         'Invalid image data: must be Buffer or {type: "Buffer", data: number[]}'
       )
     }
@@ -174,8 +176,7 @@ export async function GET(req: NextRequest, context: unknown) {
       headers
     })
   } catch (error) {
-    console.error(error)
-    return new NextResponse('Internal Server Error', { status: 500 })
+    return handleApiError(error)
   }
 }
 
@@ -183,24 +184,28 @@ export async function GET(req: NextRequest, context: unknown) {
  * DELETE /api/media/[id] - Deletes media from the database by media ID.
  */
 export async function DELETE(req: NextRequest, context: unknown) {
-  const { params } = (context || {}) as { params: { id: string } }
-  const service = new MediaService()
-  const deleted = await service.deleteImage(params.id)
-  if (!deleted) return new NextResponse('Not found', { status: 404 })
-  return NextResponse.json({ success: true })
+  try {
+    const { params } = (context || {}) as { params: { id: string } }
+    const service = new MediaService()
+    const deleted = await service.deleteImage(params.id)
+    if (!deleted) {
+      throw new ApiError(404, 'Not found')
+    }
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    return handleApiError(error)
+  }
 }
 
 export async function PATCH(req: NextRequest, context: unknown) {
-  const { params } = (context || {}) as { params: { id: string } }
-  const service = new MediaService()
-  const body = await req.json()
-  const { fileName, alt, tags } = body
-  if (!fileName)
-    return NextResponse.json(
-      { message: 'File name is required' },
-      { status: 400 }
-    )
   try {
+    const { params } = (context || {}) as { params: { id: string } }
+    const service = new MediaService()
+    const body = await req.json()
+    const { fileName, alt, tags } = body
+    if (!fileName) {
+      throw new ApiError(400, 'File name is required')
+    }
     const updated = await service.updateImageMeta(params.id, {
       fileName,
       alt,
@@ -208,10 +213,6 @@ export async function PATCH(req: NextRequest, context: unknown) {
     })
     return NextResponse.json(updated)
   } catch (e: unknown) {
-    const error = e as Error
-    return NextResponse.json(
-      { message: error.message || 'Failed to update media' },
-      { status: 500 }
-    )
+    return handleApiError(e)
   }
 }

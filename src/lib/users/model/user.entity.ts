@@ -11,7 +11,7 @@ import { UserRoles } from '@/types/users/user-roles.enum'
 import { UserStatus } from '@/types/users/user-status.enum'
 import { Exclude, instanceToPlain, Transform } from 'class-transformer'
 @Entity('users')
-export class UsersEntity {
+export class User {
   @PrimaryGeneratedColumn('uuid')
   id!: string
 

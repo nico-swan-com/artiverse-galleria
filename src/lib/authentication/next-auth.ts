@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth'
+import NextAuth, { CredentialsSignin } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
 import { getAvatarUrl } from '../utilities'
@@ -9,7 +9,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     CredentialsProvider({
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null
+          throw new CredentialsSignin('Missing credentials')
         }
         try {
           const users = new UsersRepository()
@@ -20,7 +20,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const user = await users.getUserByEmail(email)
 
           if (!user) {
-            return null
+            throw new CredentialsSignin('Invalid credentials')
           }
 
           const passwordMatch = await user.validatePassword(password)
@@ -35,11 +35,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               role: user.role
             }
           } else {
-            return null
+            throw new CredentialsSignin('Invalid credentials')
           }
         } catch (error) {
+          if (error instanceof CredentialsSignin) {
+            throw error
+          }
           console.error('Authentication error:', error)
-          return null
+          throw new Error('An unexpected error occurred during authentication')
         }
       }
     })

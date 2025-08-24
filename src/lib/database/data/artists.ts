@@ -1,6 +1,5 @@
-import { ArtistsEntity } from '../../artists/model/artist.entity'
-
-export type Artist = Omit<ArtistsEntity, 'toPlain'>
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Artist } from '../../artists/model/artist.entity'
 
 export const artists: Artist[] = [
   {
@@ -22,7 +21,12 @@ export const artists: Artist[] = [
       'Nature and Artifice, Los Angeles, 2021'
     ],
     statement:
-      'My work investigates the intersection between constructed urban environments and the natural world. I seek to create harmony between seemingly opposing elements through layered compositions that invite viewers to find their own connections and interpretations.'
+      'My work investigates the intersection between constructed urban environments and the natural world. I seek to create harmony between seemingly opposing elements through layered compositions that invite viewers to find their own connections and interpretations.',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    toPlain: function (): Record<string, any> {
+      throw new Error('Function not implemented.')
+    }
   },
   {
     id: 'd073bf5c-4369-40b3-b47f-ff500d079e97',
@@ -43,7 +47,12 @@ export const artists: Artist[] = [
       'Urban Geometries, Berlin, 2021'
     ],
     statement:
-      'I aim to reveal the hidden beauty in architectural structures through my lens. By focusing on minimalist compositions, I strip away distractions and highlight the essential elements of design - line, shape, light, and shadow.'
+      'I aim to reveal the hidden beauty in architectural structures through my lens. By focusing on minimalist compositions, I strip away distractions and highlight the essential elements of design - line, shape, light, and shadow.',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    toPlain: function (): Record<string, any> {
+      throw new Error('Function not implemented.')
+    }
   },
   {
     id: 'c5a30a5f-cd8e-4715-8a3f-762a32e6e6ff',
@@ -63,7 +72,12 @@ export const artists: Artist[] = [
       'Material Matters, Seattle Art Gallery, 2022'
     ],
     statement:
-      'Through my work, I explore the dialogue between traditional craftsmanship and contemporary aesthetics, seeking to bridge the gap between functional design and artistic expression.'
+      'Through my work, I explore the dialogue between traditional craftsmanship and contemporary aesthetics, seeking to bridge the gap between functional design and artistic expression.',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    toPlain: function (): Record<string, any> {
+      throw new Error('Function not implemented.')
+    }
   },
   {
     id: 'bce3d76c-f26b-4dd2-8c46-84f19ee8fcb2',
@@ -83,7 +97,12 @@ export const artists: Artist[] = [
       'Nature & Technology, Kyoto Gallery, 2022'
     ],
     statement:
-      'My work explores the intersection of traditional Japanese artistry and modern digital techniques, creating a bridge between our cultural heritage and technological future.'
+      'My work explores the intersection of traditional Japanese artistry and modern digital techniques, creating a bridge between our cultural heritage and technological future.',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    toPlain: function (): Record<string, any> {
+      throw new Error('Function not implemented.')
+    }
   },
   {
     id: '66321c80-625b-47bb-a194-2aee8b80978d',
@@ -103,7 +122,12 @@ export const artists: Artist[] = [
       'Colors of Emotion, Berlin Gallery, 2022'
     ],
     statement:
-      'Through portraiture, I seek to reveal the hidden depths of human emotion and experience, using color and light to illuminate the complex psychology of my subjects.'
+      'Through portraiture, I seek to reveal the hidden depths of human emotion and experience, using color and light to illuminate the complex psychology of my subjects.',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    toPlain: function (): Record<string, any> {
+      throw new Error('Function not implemented.')
+    }
   },
   {
     id: '615641d0-1aea-4eb8-8730-2c82b7b1f29d',
@@ -123,7 +147,12 @@ export const artists: Artist[] = [
       'Consumer Culture, Manchester Art Gallery, 2022'
     ],
     statement:
-      'My installations aim to provoke dialogue about our relationship with consumption and waste, transforming discarded materials into powerful statements about environmental responsibility.'
+      'My installations aim to provoke dialogue about our relationship with consumption and waste, transforming discarded materials into powerful statements about environmental responsibility.',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    toPlain: function (): Record<string, any> {
+      throw new Error('Function not implemented.')
+    }
   }
 ]
 

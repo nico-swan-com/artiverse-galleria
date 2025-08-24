@@ -4,7 +4,6 @@ import {
   Artist,
   ArtistCreate,
   Artists,
-  ArtistsEntity,
   ArtistsSortBy,
   ArtistUpdate
 } from './model'
@@ -16,7 +15,7 @@ class ArtistsRepository {
     order: FindOptionsOrderValue = 'DESC'
   ): Promise<Artists> {
     try {
-      const repository = await getRepository(ArtistsEntity)
+      const repository = await getRepository(Artist)
       console.debug('Getting repository for getAll query')
 
       console.debug('Executing findAndCount query', {
@@ -50,7 +49,7 @@ class ArtistsRepository {
     const skip = (page - 1) * limit
 
     try {
-      const repository = await getRepository(ArtistsEntity)
+      const repository = await getRepository(Artist)
       console.debug('Getting repository for paged query')
 
       const searchFilter = searchQuery
@@ -92,7 +91,7 @@ class ArtistsRepository {
 
   async getById(id: string): Promise<Artist | null> {
     try {
-      const repository = await getRepository(ArtistsEntity)
+      const repository = await getRepository(Artist)
       console.debug(`Getting artist by id: ${id}`)
 
       const found = await repository.findOne({
@@ -115,10 +114,10 @@ class ArtistsRepository {
 
   async create(artist: ArtistCreate): Promise<Artist> {
     try {
-      const repository = await getRepository(ArtistsEntity)
+      const repository = await getRepository(Artist)
       console.debug('Creating new artist', { artist })
 
-      const created = await repository.save(artist as Partial<ArtistsEntity>)
+      const created = await repository.save(artist as Partial<Artist>)
       console.debug('Artist created successfully', { id: created.id })
 
       return created as Artist
@@ -134,10 +133,10 @@ class ArtistsRepository {
         throw new Error('Artist ID is required for update')
       }
 
-      const repository = await getRepository(ArtistsEntity)
+      const repository = await getRepository(Artist)
       console.debug('Updating artist', { id: artist.id })
 
-      await repository.update(artist.id, artist as Partial<ArtistsEntity>)
+      await repository.update(artist.id, artist as Partial<Artist>)
       console.debug('Artist updated successfully', { id: artist.id })
 
       return
@@ -149,7 +148,7 @@ class ArtistsRepository {
 
   async delete(id: string): Promise<void> {
     try {
-      const repository = await getRepository(ArtistsEntity)
+      const repository = await getRepository(Artist)
       console.debug(`Deleting artist with id: ${id}`)
 
       await repository.delete(id)

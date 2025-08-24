@@ -212,7 +212,6 @@ export default function ProductForm({
                     setProduct((prev) => ({ ...prev, featureImage: img }))
                   }
                 }}
-                name='featureImage'
               />
               {state?.errors?.featureImage && (
                 <p className='mt-2 text-xs text-red-500'>

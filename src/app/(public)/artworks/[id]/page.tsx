@@ -22,19 +22,11 @@ export default async function ArtworkDetailPage({
     const artwork = instanceToPlain(product) as Product
 
     // Fetch all products to find related artworks
-    const { products: allProducts } = await new ProductsService().getAll(
-      'createdAt',
-      'DESC'
+    const relatedArtworks = await new ProductsService().findRelated(
+      artwork.id,
+      artwork.category,
+      artwork.artistId || ''
     )
-    const relatedArtworks = allProducts
-      .filter(
-        (a: Product) =>
-          a.id !== artwork.id &&
-          (a.category === artwork.category ||
-            a.style === artwork.style ||
-            a.artistId === artwork.artistId)
-      )
-      .slice(0, 3)
 
     return (
       <ArtworkDetailClient

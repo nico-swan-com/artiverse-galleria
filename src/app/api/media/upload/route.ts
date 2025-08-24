@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { MediaService } from '@/lib/media/media.service'
+import { handleApiError, ApiError } from '@/lib/utilities/api-error-handler'
 
 export const runtime = 'nodejs'
 
@@ -8,7 +9,7 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData()
     const files = formData.getAll('file') as File[]
     if (!files.length) {
-      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
+      throw new ApiError(400, 'No file uploaded')
     }
     const service = new MediaService()
     const results = []
@@ -25,9 +26,6 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json({ success: true, files: results })
   } catch (error) {
-    return NextResponse.json(
-      { error: (error as Error).message },
-      { status: 500 }
-    )
+    return handleApiError(error)
   }
 }

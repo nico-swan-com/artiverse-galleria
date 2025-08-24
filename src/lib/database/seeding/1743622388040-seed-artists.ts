@@ -1,11 +1,11 @@
-import { ArtistsEntity } from './../../artists/model/artist.entity'
+import { Artist } from './../../artists/model/artist.entity'
 
 import { MigrationInterface, QueryRunner } from 'typeorm'
 import { artists as artistData } from '../data/artists'
 
 export class SeedArtists1743622388040 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const artistRepository = queryRunner.manager.getRepository(ArtistsEntity)
+    const artistRepository = queryRunner.manager.getRepository(Artist)
     const newArtists = artistData.map((artist) => ({
       id: artist.id, // Ensure the UUID is set explicitly
       name: artist.name,
@@ -30,7 +30,7 @@ export class SeedArtists1743622388040 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    const artistRepository = queryRunner.manager.getRepository(ArtistsEntity)
+    const artistRepository = queryRunner.manager.getRepository(Artist)
     const artistIds = artistData.map((artist) => artist.id)
 
     try {
