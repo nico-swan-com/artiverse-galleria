@@ -18,7 +18,7 @@ export class DatabaseConnectionError extends Error {
 const createAndInitializeDataSource = async (
   maxRetries: number = 5,
   retryDelay: number = 3000,
-  maxWaitTime: number = 60000
+  maxWaitTime: number = 120000 // Increased to 2 minutes
 ): Promise<DataSource> => {
   // Skip database initialization during build time
   if (
@@ -35,6 +35,16 @@ const createAndInitializeDataSource = async (
       }
     } as unknown as DataSource
   }
+
+  // Debug: Log the actual environment variables being used
+  console.debug('Database connection config:', {
+    host: process.env.POSTGRES_HOST,
+    port: process.env.POSTGRES_PORT,
+    user: process.env.POSTGRES_USER,
+    database: process.env.POSTGRES_DATABASE,
+    schema: process.env.POSTGRES_SCHEMA,
+    password: process.env.POSTGRES_PASSWORD ? '[REDACTED]' : 'NOT_SET'
+  })
 
   const dataSource = new DataSource({
     type: 'postgres',
@@ -55,11 +65,14 @@ const createAndInitializeDataSource = async (
   let attempts = 0
   const startTime = Date.now()
 
-  while (attempts < maxRetries && Date.now() - startTime < maxWaitTime) {
+  // Ensure we attempt all retries regardless of time
+  while (attempts < maxRetries) {
     attempts++
     try {
       if (!dataSource.isInitialized) {
-        console.debug(`Initializing DataSource (attempt ${attempts})`)
+        console.debug(
+          `Initializing DataSource (attempt ${attempts}/${maxRetries})`
+        )
         await dataSource.initialize()
         // Verify connection
         await dataSource.query('SELECT 1')
@@ -72,19 +85,33 @@ const createAndInitializeDataSource = async (
         `Failed to initialize database (attempt ${attempts}/${maxRetries}):`,
         error
       )
+
       if (dataSource.isInitialized) {
         await dataSource.destroy()
       }
-      if (attempts < maxRetries && Date.now() - startTime < maxWaitTime) {
-        console.debug(`Retrying in ${retryDelay}ms...`)
+
+      // Check if we should continue retrying
+      if (attempts < maxRetries) {
+        const elapsedTime = Date.now() - startTime
+        if (elapsedTime >= maxWaitTime) {
+          console.warn(
+            `Max wait time (${maxWaitTime}ms) exceeded, but will attempt remaining retries`
+          )
+        }
+
+        console.debug(
+          `Retrying in ${retryDelay}ms... (${maxRetries - attempts} attempts remaining)`
+        )
         await new Promise((resolve) => setTimeout(resolve, retryDelay))
       } else {
+        const totalTime = Date.now() - startTime
         throw new DatabaseConnectionError(
-          'Max retries or wait time reached. Unable to connect to the database.'
+          `Max retries (${maxRetries}) reached after ${totalTime}ms. Unable to connect to the database.`
         )
       }
     }
   }
+
   throw new DatabaseConnectionError(
     'Unable to initialize database within the specified constraints.'
   )
