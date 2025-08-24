@@ -81,6 +81,9 @@ export default function ProductForm({
 
     if (product.featureImage instanceof File) {
       formData.append('featureImage', product.featureImage)
+    } else if (typeof product.featureImage === 'string') {
+      // If it's an existing string URL/ID, append it
+      formData.append('featureImage', product.featureImage)
     }
 
     // Separate new files and existing URLs
@@ -115,7 +118,7 @@ export default function ProductForm({
       }
     }
     // Merge and normalize all image URLs
-    const images = [...existingUrls, ...uploadedUrls]
+    const images = Array.from(new Set([...existingUrls, ...uploadedUrls]))
       .filter(Boolean)
       .map((url) => {
         if (typeof url === 'string' && url.startsWith('/api/media/')) return url

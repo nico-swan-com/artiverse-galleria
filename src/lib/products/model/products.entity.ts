@@ -13,7 +13,7 @@ import { ColumnNumericTransformer } from '../../database/column-numeric-transfor
 import { Artist } from '../../artists/model/artist.entity'
 
 @Entity('products')
-export class Product {
+export class ProductEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string
 

@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { render, fireEvent, waitFor, screen, act } from '@testing-library/react'
 import MediaUploadForm from './MediaUploadForm'
 
@@ -14,8 +14,9 @@ interface MediaMetaData {
   tags: string[]
 }
 
-jest.mock('./EditImageDialog', () => {
-  const EditImageDialog = ({
+jest.mock('./EditImageDialog', () => ({
+  __esModule: true,
+  default: ({
     open,
     onOpenChange,
     onSave,
@@ -27,12 +28,6 @@ jest.mock('./EditImageDialog', () => {
     onSave: (meta: MediaMetaData) => void
     loading: boolean
   }) => {
-    const [isLoading, setIsLoading] = useState(loading)
-
-    useEffect(() => {
-      setIsLoading(loading)
-    }, [loading])
-
     if (!open) return null
     return (
       <div role='dialog'>
@@ -40,7 +35,7 @@ jest.mock('./EditImageDialog', () => {
           onClick={() =>
             onSave({ fileName: 'test.png', altText: '', tags: [] })
           }
-          disabled={isLoading}
+          disabled={loading}
         >
           Save & Apply
         </button>
@@ -48,8 +43,7 @@ jest.mock('./EditImageDialog', () => {
       </div>
     )
   }
-  return EditImageDialog
-})
+}))
 
 describe('MediaUploadForm', () => {
   const existingMedia = [{ fileName: 'existing.png', contentHash: 'abc123' }]

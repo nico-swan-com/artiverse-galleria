@@ -1,12 +1,13 @@
 import { PaginationParams } from './../../types/common/pagination-params.type'
 import { FindOptionsOrderValue, ILike } from 'typeorm'
 import { plainToInstance } from 'class-transformer'
-import { Product } from './model/products.entity'
+import { ProductEntity } from './model/products.entity'
 import { ProductsSortBy } from '../../types/products/products-sort-by.type'
 import { Products } from '../../types/products/products.type'
 import {
   ProductCreate,
-  ProductUpdate
+  ProductUpdate,
+  Product
 } from '../../types/products/product.schema'
 import { getRepository } from '../database'
 
@@ -16,7 +17,7 @@ class ProductsRepository {
     sortOrder: FindOptionsOrderValue = 'ASC'
   ): Promise<Products> {
     try {
-      const repository = await getRepository(Product)
+      const repository = await getRepository(ProductEntity)
       const [products, total] = await repository.findAndCount({
         order: { [sortByField]: sortOrder },
         relations: ['artist']
@@ -53,7 +54,7 @@ class ProductsRepository {
         }
       : undefined
     try {
-      const repository = await getRepository(Product)
+      const repository = await getRepository(ProductEntity)
       const [products, total] = await repository.findAndCount({
         skip,
         take: limit,
@@ -62,7 +63,7 @@ class ProductsRepository {
         relations: ['artist']
       })
       return {
-        products: plainToInstance(Product, products) as Product[],
+        products: plainToInstance(ProductEntity, products) as Product[],
         total
       }
     } catch (error) {
@@ -73,12 +74,12 @@ class ProductsRepository {
 
   async getById(id: string): Promise<Product | null> {
     try {
-      const repository = await getRepository(Product)
+      const repository = await getRepository(ProductEntity)
       const found = await repository.findOne({
         where: { id },
         relations: ['artist']
       })
-      return found ? (plainToInstance(Product, found) as Product) : null
+      return found ? (plainToInstance(ProductEntity, found) as Product) : null
     } catch (error) {
       console.error('Error getting product by id:', error)
       return null
@@ -87,13 +88,15 @@ class ProductsRepository {
 
   async getFeaturedProducts(): Promise<Product[]> {
     try {
-      const repository = await getRepository(Product)
+      const repository = await getRepository(ProductEntity)
       const found = await repository.find({
         where: { featured: true },
         relations: ['artist']
       })
       return found.length
-        ? found.map((product) => plainToInstance(Product, product) as Product)
+        ? found.map(
+            (product) => plainToInstance(ProductEntity, product) as Product
+          )
         : []
     } catch (error) {
       console.error('Error getting product by id:', error)
@@ -103,8 +106,8 @@ class ProductsRepository {
 
   async create(product: ProductCreate): Promise<Product> {
     try {
-      const repository = await getRepository(Product)
-      const created = await repository.save(product as Partial<Product>)
+      const repository = await getRepository(ProductEntity)
+      const created = await repository.save(product as Partial<ProductEntity>)
       return created as Product
     } catch (error) {
       console.error('Error creating product:', error)
@@ -115,8 +118,8 @@ class ProductsRepository {
   async update(product: ProductUpdate): Promise<void> {
     try {
       if (!product.id) throw new Error('Product ID is required for update')
-      const repository = await getRepository(Product)
-      await repository.update(product.id, product as Partial<Product>)
+      const repository = await getRepository(ProductEntity)
+      await repository.update(product.id, product as Partial<ProductEntity>)
       return
     } catch (error) {
       console.error('Error updating product:', error)
@@ -126,7 +129,7 @@ class ProductsRepository {
 
   async delete(id: string): Promise<void> {
     try {
-      const repository = await getRepository(Product)
+      const repository = await getRepository(ProductEntity)
       await repository.delete(id)
       return
     } catch (error) {
@@ -141,7 +144,7 @@ class ProductsRepository {
     artistId: string
   ): Promise<Product[]> {
     try {
-      const repository = await getRepository(Product)
+      const repository = await getRepository(ProductEntity)
       const related = await repository
         .createQueryBuilder('product')
         .leftJoinAndSelect('product.artist', 'artist')
@@ -159,7 +162,7 @@ class ProductsRepository {
       return related as Product[]
     } catch (error) {
       console.error('Error finding related products:', error)
-      return []
+      throw error
     }
   }
 }

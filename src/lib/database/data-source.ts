@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import { DataSource, EntityTarget, ObjectLiteral, Repository } from 'typeorm'
-import { Product } from '../products/model/products.entity'
+import { ProductEntity } from '../products/model/products.entity'
 import { Artist } from '../artists/model/artist.entity'
 import { User } from '../users/model/user.entity'
 import { MediaEntity } from '../media'
@@ -28,7 +28,11 @@ const createAndInitializeDataSource = async (
     console.debug('Skipping database initialization during build phase')
     // Return a mock DataSource to prevent errors during build
     return {
-      getRepository: () => ({})
+      getRepository: () => {
+        throw new Error(
+          'getRepository called during build phase; database unavailable'
+        )
+      }
     } as unknown as DataSource
   }
 
@@ -40,7 +44,7 @@ const createAndInitializeDataSource = async (
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DATABASE,
     schema: process.env.POSTGRES_SCHEMA || 'public',
-    entities: [User, Artist, Product, MediaEntity],
+    entities: [User, Artist, ProductEntity, MediaEntity],
     synchronize: false,
     logging: process.env.NODE_ENV === 'development',
     migrations: [__dirname + '/migrations/*.ts']

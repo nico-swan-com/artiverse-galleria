@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useCart } from '@/contexts/cart.context'
@@ -14,9 +14,28 @@ interface ArtworkCardProps {
 
 const ArtworkCard: React.FC<ArtworkCardProps> = ({ artwork, className }) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false)
-  //const { addToCart, cart } = useCart()
-  //const isInCart = cart.some((item) => item.artwork.id === artwork.id)
   const { addToCart } = useCart()
+
+  const [imageSrc, setImageSrc] = useState<string>('')
+
+  useEffect(() => {
+    let url: string | undefined
+    if (artwork.featureImage instanceof File) {
+      url = URL.createObjectURL(artwork.featureImage)
+      setImageSrc(url)
+    } else if (typeof artwork.featureImage === 'string') {
+      setImageSrc(artwork.featureImage)
+    } else {
+      setImageSrc('') // Or a placeholder
+    }
+
+    return () => {
+      if (url) {
+        URL.revokeObjectURL(url)
+      }
+    }
+  }, [artwork.featureImage])
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -30,7 +49,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({ artwork, className }) => {
         {/* Image */}
         <div className='relative mb-4 aspect-[4/5] overflow-hidden rounded-sm'>
           <Image
-            src={(artwork.featureImage as string) || ''}
+            src={imageSrc}
             alt={artwork.title}
             fill
             className={cn(

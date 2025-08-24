@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { forbidden } from 'next/navigation'
-import { NextApiRequest } from 'next'
+import { NextRequest } from 'next/server'
 import { auth } from './next-auth'
 
 export function AuthGuard() {
@@ -10,7 +10,7 @@ export function AuthGuard() {
     descriptor: PropertyDescriptor
   ) {
     const originalMethod = descriptor.value
-    descriptor.value = async function (req: NextApiRequest, ...args: any[]) {
+    descriptor.value = async function (req: NextRequest, ...args: any[]) {
       const session = await auth()
       if (!session) {
         forbidden()

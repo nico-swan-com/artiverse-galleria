@@ -182,7 +182,7 @@ export default class ProductsService {
       return result
     } catch (error) {
       console.error('Error finding related products:', error)
-      return []
+      throw error
     }
   }
 }

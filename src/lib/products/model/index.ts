@@ -1,1 +1,1 @@
-export { Product as ProductsEntity } from './products.entity'
+export { ProductEntity } from './products.entity'
