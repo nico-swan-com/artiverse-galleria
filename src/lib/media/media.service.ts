@@ -69,7 +69,11 @@ export class MediaService {
     // Duplicate detection
     const existing = await this.mediaRepository.findByContentHash(hash)
     if (existing) {
-      return existing
+      const err = new Error('Duplicate file detected') as Error & {
+        status?: number
+      }
+      err.status = 409 // Conflict
+      throw err
     }
 
     const media = new MediaEntity()

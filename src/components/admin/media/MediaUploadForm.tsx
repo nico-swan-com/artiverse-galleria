@@ -196,6 +196,7 @@ const MediaUploadForm: React.FC<MediaUploadFormProps> = ({
         }}
         file={pendingFile}
         onSave={handleSubmit}
+        loading={loading}
       />
     </>
   )
