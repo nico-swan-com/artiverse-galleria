@@ -32,16 +32,12 @@ const defaultConfig: NextConfig = {
     }
   },
   webpack: (config, { isServer }) => {
+    // Preserve Next/webpack defaults and gracefully handle function/undefined externals.
+    const asArray = (val: any) => (Array.isArray(val) ? val : val ? [val] : [])
     if (isServer) {
-      config.externals = [...config.externals, 'pg-hstore']
+      const extra = ['pg-hstore', 'react-native-sqlite-storage', 'sqlite3']
+      config.externals = [...asArray(config.externals), ...extra]
     }
-
-    config.externals = [
-      ...config.externals,
-      'react-native-sqlite-storage',
-      'sqlite3'
-    ]
-
     return config
   }
 }
