@@ -6,11 +6,10 @@ on:
     branches: ['fake-main']
   workflow_dispatch:
 
-# # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-# permissions:
-#   contents: read
-#   pages: write
-#   id-token: write
+permissions:
+  contents: write
+  pull-requests: read
+  packages: write
 
 # # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
@@ -19,6 +18,25 @@ on:
 #   cancel-in-progress: false
 
 jobs:
+  release:
+    name: Semantic Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm ci
+      - name: Semantic Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+
   # # Cpanel
   # build-cpanel:
   #   name: Build standalone
@@ -81,6 +99,7 @@ jobs:
     name: Build Publish docker image to docker hub
     runs-on: ubuntu-latest
     environment: production
+    needs: release
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -92,8 +111,8 @@ jobs:
           images: |
             nicoswan/artiverse-gallerria
           tags: |
+            type=semver,pattern={{version}}
             type=raw,value=latest,enable={{is_default_branch}}
-            type=sha
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -110,53 +129,55 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
+          build-args: |
+            VERSION=${{ steps.meta.outputs.version }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  deploy-kubernetes:
-    name: Deploy to Kubernetes cygnus-labs.com
-    runs-on: ubuntu-latest
-    environment: production
-    needs: publish-dockerhub
+  # deploy-kubernetes:
+  #   name: Deploy to Kubernetes cygnus-labs.com
+  #   runs-on: ubuntu-latest
+  #   environment: production
+  #   needs: publish-dockerhub
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          sudo apt update && sudo apt install -y gettext-base  && sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/*
+  #     - name: Install dependencies
+  #       run: |
+  #         sudo apt update && sudo apt install -y gettext-base  && sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/*
 
-      - name: Set environment variables
-        id: vars
-        env:
-          NAMESPACE: production
-          CI_PROJECT_NAME: artiverse-gallerria
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-        run: |
-          echo "NAMESPACE=$NAMESPACE" >> $GITHUB_ENV
-          echo "CI_PROJECT_NAME=$CI_PROJECT_NAME" >> $GITHUB_ENV
-          SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
-          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
-          IMAGE_NAME="$DOCKERHUB_USERNAME/$CI_PROJECT_NAME:sha-$SHORT_SHA"
-          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
-        shell: bash
+  #     - name: Set environment variables
+  #       id: vars
+  #       env:
+  #         NAMESPACE: production
+  #         CI_PROJECT_NAME: artiverse-gallerria
+  #         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  #       run: |
+  #         echo "NAMESPACE=$NAMESPACE" >> $GITHUB_ENV
+  #         echo "CI_PROJECT_NAME=$CI_PROJECT_NAME" >> $GITHUB_ENV
+  #         SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+  #         echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
+  #         IMAGE_NAME="$DOCKERHUB_USERNAME/$CI_PROJECT_NAME:sha-$SHORT_SHA"
+  #         echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+  #       shell: bash
 
-      - name: Template update
-        env:
-          REPLICAS: 1
-          NAMESPACE: ${{ env.NAMESPACE }}
-          CI_PROJECT_NAME: ${{ env.CI_PROJECT_NAME }}
-          SHORT_SHA: ${{ env.SHORT_SHA }}
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-        run: |
-          envsubst < ./deploy/deploy.tmpl > ./deploy.yaml
-          cat ./deploy.yaml
+  #     - name: Template update
+  #       env:
+  #         REPLICAS: 1
+  #         NAMESPACE: ${{ env.NAMESPACE }}
+  #         CI_PROJECT_NAME: ${{ env.CI_PROJECT_NAME }}
+  #         SHORT_SHA: ${{ env.SHORT_SHA }}
+  #         IMAGE_NAME: ${{ env.IMAGE_NAME }}
+  #       run: |
+  #         envsubst < ./deploy/deploy.tmpl > ./deploy.yaml
+  #         cat ./deploy.yaml
 
-      - name: Deploy kubernetes
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG_PRODUCTION }}
-        with:
-          args: apply -f ./deploy.yaml --validate=false
+  #     - name: Deploy kubernetes
+  #       uses: actions-hub/kubectl@master
+  #       env:
+  #         KUBE_CONFIG: ${{ secrets.KUBE_CONFIG_PRODUCTION }}
+  #       with:
+  #         args: apply -f ./deploy.yaml --validate=false

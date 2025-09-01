@@ -12,6 +12,9 @@ FROM node:22.17.0-slim
 COPY --from=builder /app /app
 WORKDIR /app
 
+ARG VERSION
+ENV VERSION=${VERSION}
+
 ENV NODE_ENV=production
 ENV HOSTNAME="0.0.0.0"
 CMD ["npm","run", "start:next"]

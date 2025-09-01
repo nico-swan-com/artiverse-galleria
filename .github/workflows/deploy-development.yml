@@ -22,7 +22,7 @@ jobs:
           images: |
             nicoswan/artiverse-gallerria
           tags: |
-            type=raw,value=dev-{{sha}}
+            type=semver,pattern={{version}},suffix=-dev-{{date 'YYYYMMDDHHmmss'}}
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -39,53 +39,55 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
+          build-args: |
+            VERSION=${{ steps.meta.outputs.version }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  deploy-kubernetes:
-    name: Deploy to Kubernetes cygnus-labs.com
-    runs-on: ubuntu-latest
-    environment: production
-    needs: publish-dockerhub
+  # deploy-kubernetes:
+  #   name: Deploy to Kubernetes cygnus-labs.com
+  #   runs-on: ubuntu-latest
+  #   environment: production
+  #   needs: publish-dockerhub
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          sudo apt update && sudo apt install -y gettext-base  && sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/*
+  #     - name: Install dependencies
+  #       run: |
+  #         sudo apt update && sudo apt install -y gettext-base  && sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/*
 
-      - name: Set environment variables
-        id: vars
-        env:
-          NAMESPACE: development
-          CI_PROJECT_NAME: artiverse-gallerria
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-        run: |
-          echo "NAMESPACE=$NAMESPACE" >> $GITHUB_ENV
-          echo "CI_PROJECT_NAME=$CI_PROJECT_NAME" >> $GITHUB_ENV
-          SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
-          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
-          IMAGE_NAME="$DOCKERHUB_USERNAME/$CI_PROJECT_NAME:dev-$SHORT_SHA"
-          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
-        shell: bash
+  #     - name: Set environment variables
+  #       id: vars
+  #       env:
+  #         NAMESPACE: development
+  #         CI_PROJECT_NAME: artiverse-gallerria
+  #         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  #       run: |
+  #         echo "NAMESPACE=$NAMESPACE" >> $GITHUB_ENV
+  #         echo "CI_PROJECT_NAME=$CI_PROJECT_NAME" >> $GITHUB_ENV
+  #         SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+  #         echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
+  #         IMAGE_NAME="$DOCKERHUB_USERNAME/$CI_PROJECT_NAME:dev-$SHORT_SHA"
+  #         echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+  #       shell: bash
 
-      - name: Template update
-        env:
-          REPLICAS: 1
-          NAMESPACE: ${{ env.NAMESPACE }}
-          CI_PROJECT_NAME: ${{ env.CI_PROJECT_NAME }}
-          SHORT_SHA: ${{ env.SHORT_SHA }}
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-        run: |
-          envsubst < ./deploy/deploy.tmpl > ./deploy.yaml
-          cat ./deploy.yaml
+  #     - name: Template update
+  #       env:
+  #         REPLICAS: 1
+  #         NAMESPACE: ${{ env.NAMESPACE }}
+  #         CI_PROJECT_NAME: ${{ env.CI_PROJECT_NAME }}
+  #         SHORT_SHA: ${{ env.SHORT_SHA }}
+  #         IMAGE_NAME: ${{ env.IMAGE_NAME }}
+  #       run: |
+  #         envsubst < ./deploy/deploy.tmpl > ./deploy.yaml
+  #         cat ./deploy.yaml
 
-      - name: Deploy kubernetes
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG_DEVELOPMENT }}
-        with:
-          args: apply -f ./deploy.yaml --validate=false
+  #     - name: Deploy kubernetes
+  #       uses: actions-hub/kubectl@master
+  #       env:
+  #         KUBE_CONFIG: ${{ secrets.KUBE_CONFIG_DEVELOPMENT }}
+  #       with:
+  #         args: apply -f ./deploy.yaml --validate=false
