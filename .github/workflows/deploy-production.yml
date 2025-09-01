@@ -21,6 +21,9 @@ jobs:
   release:
     name: Semantic Release
     runs-on: ubuntu-latest
+    outputs:
+      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
+      new_release_tag: ${{ steps.semantic.outputs.new_release_tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,9 +36,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Semantic Release
+        id: semantic
+        uses: cycjimmy/semantic-release-action@v4
+        with:
+          semantic_version: 21
+          extra_plugins: |
+            @semantic-release/changelog
+            @semantic-release/git
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
 
   # # Cpanel
   # build-cpanel:
@@ -103,6 +112,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release.outputs.new_release_tag }}
 
       - name: Docker meta
         id: meta
@@ -130,7 +141,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           build-args: |
-            VERSION=${{ steps.meta.outputs.version }}
+            VERSION=${{ needs.release.outputs.new_release_version }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
