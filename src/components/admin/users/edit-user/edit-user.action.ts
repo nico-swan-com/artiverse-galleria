@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod'
-import { UsersEntity } from '@/lib/users/model'
+// import { UsersEntity } from '@/lib/users/model'
 import { UsersRepository } from '@/lib/users/users.repository'
 import { UserRoles } from '@/types/users/user-roles.enum'
 import { UserStatus } from '@/types/users/user-status.enum'
@@ -10,6 +10,7 @@ import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
 import { MediaCreate, MediaService } from '@/lib/media'
 import { requireAuthOrSelf } from '@/lib/authentication/require-auth'
+import bcrypt from 'bcryptjs'
 
 export type EditUserFieldErrors = {
   id?: string[]
@@ -92,17 +93,27 @@ async function editUserAction(
       values.avatar = `/api/media/${newAvatarUrl.id}`
     }
 
-    const user = new UsersEntity()
-    user.id = prevState.id
-    user.name = name
-    user.email = email
-    user.avatar = values.avatar
-    user.role = values.role || UserRoles.Client
-    user.status = values.status || UserStatus.Pending
-    if (password) await user.setPassword(password)
+    let hashedPassword = undefined
+    if (password) {
+      const salt = await bcrypt.genSalt(10)
+      hashedPassword = await bcrypt.hash(password, salt)
+    }
+
+    const updateData: any = {
+      id: prevState.id,
+      name,
+      email,
+      avatar: values.avatar,
+      role: values.role || UserRoles.Client,
+      status: values.status || UserStatus.Pending
+    }
+
+    if (hashedPassword) {
+      updateData.password = hashedPassword
+    }
 
     const repository = new UsersRepository()
-    await repository.update(user)
+    await repository.update(updateData)
     revalidateTag('users', 'default')
 
     return {

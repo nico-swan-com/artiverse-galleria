@@ -1,6 +1,7 @@
 import NextAuth, { CredentialsSignin } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { authConfig } from './auth.config'
+import bcrypt from 'bcryptjs'
 
 import { getAvatarUrl } from '../utilities'
 import { UsersRepository } from '../users'
@@ -25,7 +26,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             throw new CredentialsSignin('Invalid credentials')
           }
 
-          const passwordMatch = await user.validatePassword(password)
+          // Manually validate password since Drizzle object doesn't have methods
+          const passwordMatch = await bcrypt.compare(password, user.password)
           const image = getAvatarUrl(user.email, user.name)
 
           if (passwordMatch) {

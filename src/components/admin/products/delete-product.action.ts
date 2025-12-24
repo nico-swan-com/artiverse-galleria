@@ -54,5 +54,3 @@ export async function deleteProductAction(
     }
   }
 }
-
-export default deleteProductAction

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { FindOptionsOrderValue } from 'typeorm'
+import { FindOptionsOrderValue } from '../../types/common/db.type'
 
 import ProductsService from './products.service'
 import { ProductsSortBy } from '../../types/products/products-sort-by.type'

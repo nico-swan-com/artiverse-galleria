@@ -4,7 +4,7 @@ import {
   UsersSortBy
 } from '@/types/users/users-sort-by.type'
 import { getUsersUnstableCache } from '@/lib/users/users.actions'
-import { FindOptionsOrderValue } from 'typeorm'
+import { FindOptionsOrderValue } from '@/types/common/db.type'
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 

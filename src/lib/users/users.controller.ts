@@ -1,6 +1,6 @@
 import Users from './users.service'
 import { NextRequest, NextResponse } from 'next/server'
-import { FindOptionsOrderValue } from 'typeorm'
+import { FindOptionsOrderValue } from '../../types/common/db.type'
 
 import { AuthGuard } from '../authentication/auth-guard-route.decorator'
 import { UsersSortBy } from '../../types/users/users-sort-by.type'

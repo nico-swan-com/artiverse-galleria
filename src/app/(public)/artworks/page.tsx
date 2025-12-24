@@ -1,6 +1,6 @@
 import ProductsService from '@/lib/products/products.service'
 import ArtworksClient from './ArtworksClient'
-import { instanceToPlain } from 'class-transformer'
+
 import { Product } from '@/types/products/product.schema'
 
 // Force dynamic rendering to prevent prerendering issues
@@ -16,9 +16,7 @@ export default async function ArtworksPage() {
     const artworks = products.map((artwork: Product) => artwork)
 
     // Convert to plain objects for client component
-    const plainArtworks = (instanceToPlain(artworks) as unknown[]).map(
-      (a) => a as Product
-    )
+    const plainArtworks = artworks as Product[]
 
     // Get unique categories and styles for filters, filter out undefined
     const categories = [

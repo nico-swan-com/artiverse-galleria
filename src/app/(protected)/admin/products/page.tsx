@@ -5,8 +5,7 @@ import {
   ProductsSortBy
 } from '@/types/products/products-sort-by.type'
 import ProductsService from '@/lib/products/products.service'
-import { instanceToPlain } from 'class-transformer'
-import { FindOptionsOrderValue } from 'typeorm'
+import { FindOptionsOrderValue } from '@/types/common/db.type'
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
@@ -26,7 +25,7 @@ const ProductsServerPage = async (props: { searchParams: SearchParams }) => {
     const service = new ProductsService()
     const { products } = await service.getAll(sortBy, order)
 
-    return <ProductsPage products={instanceToPlain(products) as Product[]} />
+    return <ProductsPage products={products as Product[]} />
   } catch (error) {
     console.error('Failed to fetch products:', error)
     return (

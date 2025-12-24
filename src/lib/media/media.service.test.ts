@@ -1,10 +1,13 @@
 import { MediaService } from './media.service'
 import { MediaRepository } from './media.repository'
-import { Media, MediaCreate } from './model/media.schema'
+import { MediaCreate } from './model/media.schema'
+import { type Media, type NewMedia } from '../database/schema'
 
-jest.mock('@/lib/database/data-source', () => ({}))
 jest.mock('@/lib/products/products.controller', () => ({}))
 jest.mock('@/lib/products/index', () => ({}))
+jest.mock('@/lib/database/drizzle', () => ({
+  db: {}
+}))
 
 jest.mock('./media.repository')
 

@@ -1,13 +1,15 @@
 'use server'
 
 import { z } from 'zod'
-import { UsersEntity } from '@/lib/users/model'
+// import { UsersEntity } from '@/lib/users/model' // Remove entity import
 import { UserRoles } from '@/types/users/user-roles.enum'
 import { UserStatus } from '@/types/users/user-status.enum'
 import { PasswordSchema, UserSchema } from '@/types/users/user.schema'
 import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
 import Users from '@/lib/users/users.service'
+import bcrypt from 'bcryptjs'
+import { NewUser } from '@/lib/database/schema'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function createUserAction(prevState: any, formData: FormData) {
@@ -37,15 +39,18 @@ async function createUserAction(prevState: any, formData: FormData) {
       status: UserStatus.Pending
     })
 
-    const user = new UsersEntity()
     const newPassword = PasswordSchema.parse(password)
-    await user.setPassword(newPassword)
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(newPassword, salt)
 
-    user.name = name
-    user.email = email
-    user.avatar = values.avatar
-    user.role = values.role
-    user.status = values.status
+    const user: NewUser = {
+      name: name,
+      email: email,
+      avatar: values.avatar ?? null,
+      role: values.role,
+      status: values.status,
+      password: hashedPassword
+    }
 
     const services = new Users()
 

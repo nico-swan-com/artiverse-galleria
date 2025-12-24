@@ -34,9 +34,9 @@ function isPlainBufferObject(
  */
 export async function GET(req: NextRequest, context: unknown) {
   try {
-    const { params } = (context || {}) as { params: { id: string } }
+    const { params } = (context || {}) as { params: Promise<{ id: string }> }
     const mediaService = new MediaService()
-    const { id } = params
+    const { id } = await params
     const media = await mediaService.getImageById(id)
     if (!media) {
       throw new ApiError(404, 'Not Found')
@@ -187,9 +187,10 @@ export async function GET(req: NextRequest, context: unknown) {
  */
 export async function DELETE(req: NextRequest, context: unknown) {
   try {
-    const { params } = (context || {}) as { params: { id: string } }
+    const { params } = (context || {}) as { params: Promise<{ id: string }> }
+    const { id } = await params
     const service = new MediaService()
-    const deleted = await service.deleteImage(params.id)
+    const deleted = await service.deleteImage(id)
     if (!deleted) {
       throw new ApiError(404, 'Not found')
     }
@@ -201,14 +202,15 @@ export async function DELETE(req: NextRequest, context: unknown) {
 
 export async function PATCH(req: NextRequest, context: unknown) {
   try {
-    const { params } = (context || {}) as { params: { id: string } }
+    const { params } = (context || {}) as { params: Promise<{ id: string }> }
+    const { id } = await params
     const service = new MediaService()
     const body = await req.json()
     const { fileName, alt, tags } = body
     if (!fileName) {
       throw new ApiError(400, 'File name is required')
     }
-    const updated = await service.updateImageMeta(params.id, {
+    const updated = await service.updateImageMeta(id, {
       fileName,
       alt,
       tags

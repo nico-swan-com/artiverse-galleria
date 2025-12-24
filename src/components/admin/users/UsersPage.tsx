@@ -5,7 +5,7 @@ import UsersList from './UsersList'
 import CreateUserDialog from './create-user/CreateUserDialog'
 import { User } from '@/types/users/user.schema'
 import { UsersSortBy } from '@/types/users/users-sort-by.type'
-import type { FindOptionsOrderValue } from 'typeorm'
+import { FindOptionsOrderValue } from '@/types/common/db.type'
 
 interface UsersProps {
   users: User[]

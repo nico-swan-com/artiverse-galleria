@@ -1,6 +1,6 @@
 import { MediaRepository } from './media.repository'
-import { Media, MediaCreate, MediaUpdate } from './model/media.schema'
-import { MediaEntity } from './model/media.entity'
+import { MediaCreate, MediaUpdate } from './model/media.schema'
+import { Media, NewMedia } from '../database/schema'
 import crypto from 'crypto'
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024
@@ -66,13 +66,15 @@ export class MediaService {
       return existing
     }
 
-    const media = new MediaEntity()
-    media.fileName = file.fileName
-    media.mimeType = file.mimeType
-    media.fileSize = file.fileSize
-    media.data = bufferData
-    media.contentHash = hash
-    return this.mediaRepository.createAndSave(media)
+    const newMedia: NewMedia = {
+      fileName: file.fileName,
+      mimeType: file.mimeType,
+      fileSize: file.fileSize,
+      data: bufferData,
+      contentHash: hash
+    }
+
+    return this.mediaRepository.createAndSave(newMedia)
   }
 
   /**
@@ -96,14 +98,14 @@ export class MediaService {
   ) {
     const media = await this.mediaRepository.getById(id)
     if (!media) throw new Error('Media not found')
-    const update: MediaUpdate = {
+
+    // Check if media is correct type to spread
+    const update: any = {
       ...media,
       fileName: meta.fileName,
-      altText: meta.alt ?? (media as { altText?: string }).altText ?? '',
+      altText: meta.alt ?? (media as any).altText ?? '',
       tags: meta.tags ?? media.tags ?? []
     }
-    return this.mediaRepository.createAndSave(update as MediaEntity)
+    return this.mediaRepository.createAndSave(update)
   }
-
-  // Additional CRUD methods (upload, delete, etc.) can be added here
 }

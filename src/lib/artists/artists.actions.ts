@@ -1,6 +1,6 @@
 import { PaginationParams } from '@/types'
 import { unstable_cache } from 'next/cache'
-import { FindOptionsOrderValue } from 'typeorm'
+import { FindOptionsOrderValue } from '../../types/common/db.type'
 import { artistsRepository } from './artists.repository'
 import { Artist, Artists as ArtistsResult, ArtistsSortBy } from './model'
 

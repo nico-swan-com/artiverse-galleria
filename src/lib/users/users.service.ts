@@ -1,7 +1,7 @@
 import { PaginationParams } from './../../types/common/pagination-params.type'
-import { FindOptionsOrderValue } from 'typeorm'
+import { FindOptionsOrderValue } from '../../types/common/db.type'
 import { usersRepository, UsersRepository } from './users.repository'
-import { User } from './model/user.entity'
+import { User, NewUser } from '../database/schema'
 import { UsersSortBy } from '../../types/users/users-sort-by.type'
 
 export default class Users {
@@ -20,12 +20,12 @@ export default class Users {
     return result
   }
 
-  async create(user: User) {
+  async create(user: NewUser) {
     const result = await this.repository.create(user)
     return result
   }
 
-  async update(user: User) {
+  async update(user: Partial<User> & { id: string }) {
     const result = await this.repository.update(user)
     return result
   }

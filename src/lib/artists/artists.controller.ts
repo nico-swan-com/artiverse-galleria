@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { FindOptionsOrderValue } from 'typeorm'
+import { FindOptionsOrderValue } from '../../types/common/db.type'
 import { ArtistsSortBy } from './model'
 import ArtistsService from './artists.service'
 

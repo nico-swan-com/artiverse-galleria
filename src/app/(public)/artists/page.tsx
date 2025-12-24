@@ -1,7 +1,6 @@
 import ArtistsList from '@/components/public/artists/ArtistList'
 import { Artist } from '@/lib/artists'
 import ArtistsService from '@/lib/artists/artists.service'
-import { instanceToPlain } from 'class-transformer'
 
 // Force dynamic rendering to prevent prerendering issues
 export const dynamic = 'force-dynamic'
@@ -17,7 +16,7 @@ const ArtistsPage = async (props: { searchParams: SearchParams }) => {
 
     return (
       <ArtistsList
-        artists={instanceToPlain(artists) as Artist[]}
+        artists={artists as Artist[]}
         total={total}
         searchQuery={searchQuery}
       ></ArtistsList>

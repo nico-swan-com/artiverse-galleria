@@ -1,8 +1,8 @@
 import { PaginationParams } from '@/types'
-import { instanceToPlain } from 'class-transformer'
+
 import { unstable_cache } from 'next/cache'
-import { FindOptionsOrderValue } from 'typeorm'
-import { User } from './model/user.entity'
+import { FindOptionsOrderValue } from '../../types/common/db.type'
+import { User } from '../database/schema'
 import Users from './users.service'
 import { UsersSortBy } from '../../types/users/users-sort-by.type'
 
@@ -13,7 +13,7 @@ export const getUsersUnstableCache = unstable_cache(
     order: FindOptionsOrderValue
   ) => {
     const result = await new Users().getUsers(pagination, sortBy, order)
-    return instanceToPlain(result)
+    return result
   },
   ['users'],
   {
@@ -25,7 +25,7 @@ export const getUsersUnstableCache = unstable_cache(
 export const createUserUnstableCache = unstable_cache(
   async (user: User) => {
     const result = await new Users().create(user)
-    return instanceToPlain(result)
+    return result
   },
   ['users'],
   {

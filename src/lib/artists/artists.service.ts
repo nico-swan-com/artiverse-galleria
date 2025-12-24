@@ -1,5 +1,5 @@
 import { PaginationParams } from '../../types/common/pagination-params.type'
-import { FindOptionsOrderValue } from 'typeorm'
+import { FindOptionsOrderValue } from '../../types/common/db.type'
 import { artistsRepository, ArtistsRepository } from './artists.repository'
 import {
   Artist,

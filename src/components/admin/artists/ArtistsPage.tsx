@@ -1,5 +1,5 @@
 import PageTransition from '@/components/common/utility/PageTransition'
-import { FindOptionsOrderValue } from 'typeorm'
+import { FindOptionsOrderValue } from '@/types/common/db.type'
 import ArtistsList from './ArtistsList'
 import CreateArtistDialog from './create-artist/CreateArtistDialog'
 import { Artist, ArtistsSortBy } from '@/lib/artists'

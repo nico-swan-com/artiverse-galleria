@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { FindOptionsOrderValue } from 'typeorm'
+import { FindOptionsOrderValue } from '@/types/common/db.type'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowDown, ArrowUp } from 'lucide-react'
 import TablePagination from '@/components/common/ui/TablePagination'
