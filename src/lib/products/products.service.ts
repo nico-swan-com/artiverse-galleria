@@ -43,7 +43,8 @@ export default class ProductsService {
       },
       [tag],
       {
-        tags: [tag, 'products']
+        tags: [tag, 'products'],
+        revalidate: 60
       }
     )
     return getAll(sortBy, order)
