@@ -86,6 +86,22 @@ class ProductsRepository {
     }
   }
 
+  async getByArtistId(artistId: string): Promise<Product[]> {
+    try {
+      const repository = await getRepository(ProductEntity)
+      const products = await repository.find({
+        where: { artistId },
+        relations: ['artist']
+      })
+      return products.map(
+        (product) => plainToInstance(ProductEntity, product) as Product
+      )
+    } catch (error) {
+      console.error('Error getting products by artist:', error)
+      return []
+    }
+  }
+
   async getFeaturedProducts(): Promise<Product[]> {
     try {
       const repository = await getRepository(ProductEntity)

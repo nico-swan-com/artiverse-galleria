@@ -32,11 +32,8 @@ export default async function ArtistDetailPage({
       )
     }
 
-    // Fetch all products and filter by artistId
-    const { products } = await new ProductsService().getAll('createdAt', 'DESC')
-    const artistArtworks = products.filter(
-      (a) => a.artistId && a.artistId === id
-    )
+    // Query products directly by artist ID (optimized - avoids loading all products)
+    const artistArtworks = await new ProductsService().getByArtistId(id)
 
     return (
       <div className='min-h-screen bg-white px-4 py-12 sm:px-6 lg:px-8'>

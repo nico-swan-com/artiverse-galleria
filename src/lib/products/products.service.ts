@@ -138,6 +138,28 @@ export default class ProductsService {
     return getFeaturedProductsCached()
   }
 
+  async getByArtistId(artistId: string): Promise<Product[]> {
+    // Return empty result during build time
+    if (
+      process.env.NODE_ENV === 'production' &&
+      process.env.NEXT_PHASE === 'phase-production-build'
+    ) {
+      return []
+    }
+
+    const tag = `products-artist-${artistId}`
+    const getByArtistIdCached = unstable_cache(
+      async (artistId: string): Promise<Product[]> => {
+        return this.repository.getByArtistId(artistId)
+      },
+      [tag],
+      {
+        tags: [tag, 'products']
+      }
+    )
+    return getByArtistIdCached(artistId)
+  }
+
   async create(product: ProductCreate): Promise<Product> {
     try {
       const result = await this.repository.create(product)
