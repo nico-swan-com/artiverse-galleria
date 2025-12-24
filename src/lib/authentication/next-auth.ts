@@ -1,10 +1,12 @@
 import NextAuth, { CredentialsSignin } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import { authConfig } from './auth.config'
 
 import { getAvatarUrl } from '../utilities'
 import { UsersRepository } from '../users'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig,
   providers: [
     CredentialsProvider({
       async authorize(credentials) {
@@ -47,27 +49,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
     })
   ],
-  secret: process.env.NEXTAUTH_SECRET,
-  session: {
-    strategy: 'jwt'
-  },
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id
-        token.role = user.role
-        token.email = user.email
-        token.picture = user.image
-      }
-      return token
-    },
-    async session({ session, token }) {
-      if (token && typeof token.id === 'string') {
-        session.user.id = token.id
-        session.user.role = token.role
-        session.user.image = token.picture
-      }
-      return session
-    }
-  }
+  secret: process.env.NEXTAUTH_SECRET
 })

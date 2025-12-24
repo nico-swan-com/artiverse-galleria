@@ -31,7 +31,7 @@ export async function deleteProductAction(
     const repository = new ProductsRepository()
 
     await repository.delete(productId)
-    revalidateTag('products')
+    revalidateTag('products', 'default')
     revalidatePath('/admin/products')
 
     return { success: true, message: 'Product removed successfully!' }

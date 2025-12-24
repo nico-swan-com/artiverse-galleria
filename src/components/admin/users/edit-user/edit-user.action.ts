@@ -103,7 +103,7 @@ async function editUserAction(
 
     const repository = new UsersRepository()
     await repository.update(user)
-    revalidateTag('users')
+    revalidateTag('users', 'default')
 
     return {
       ...state,

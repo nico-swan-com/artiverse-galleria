@@ -50,7 +50,7 @@ async function createUserAction(prevState: any, formData: FormData) {
     const services = new Users()
 
     await services.create(user)
-    revalidateTag('users')
+    revalidateTag('users', 'default')
 
     return { success: true, message: 'User created successfully!', ...state }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

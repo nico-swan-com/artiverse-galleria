@@ -161,7 +161,7 @@ export async function productFormAction(
       const createValues = ProductCreateSchema.parse({ ...values })
       await service.create(createValues)
     }
-    revalidateTag('products')
+    revalidateTag('products', 'default')
     return {
       ...values,
       success: true,

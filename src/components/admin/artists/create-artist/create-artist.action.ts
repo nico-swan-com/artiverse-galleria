@@ -121,7 +121,7 @@ async function createArtistAction(
 
     const services = new ArtistsService()
     await services.create(createData)
-    revalidateTag('artists')
+    revalidateTag('artists', 'default')
 
     return {
       ...state,

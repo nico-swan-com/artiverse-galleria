@@ -1,4 +1,7 @@
-import { auth } from '@/lib/authentication'
+import NextAuth from 'next-auth'
+import { authConfig } from '@/lib/authentication/auth.config'
+
+const { auth } = NextAuth(authConfig)
 
 export default auth((req) => {
   if (!req.auth && req.nextUrl.pathname !== '/login') {
@@ -9,6 +12,5 @@ export default auth((req) => {
 })
 
 export const config = {
-  matcher: ['/admin', '/admin/(.*)', '/api/admin/(.*)'],
-  runtime: 'nodejs'
+  matcher: ['/admin', '/admin/(.*)', '/api/admin/(.*)']
 }

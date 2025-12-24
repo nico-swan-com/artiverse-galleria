@@ -124,7 +124,7 @@ export default async function editArtistAction(
 
     const services = new ArtistsService()
     await services.update(updateData)
-    revalidateTag('artists')
+    revalidateTag('artists', 'default')
 
     return {
       ...state,

@@ -45,7 +45,7 @@ async function deleteArtistAction(
       }
       throw error
     }
-    revalidateTag('artists')
+    revalidateTag('artists', 'default')
 
     return { success: true, message: 'Artist removed successfully!' }
   } catch (error: unknown) {

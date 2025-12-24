@@ -19,7 +19,7 @@ async function deleteUserAction(prevState: any, formData: FormData) {
     const repository = new UsersRepository()
 
     await repository.delete(userId)
-    revalidateTag('users')
+    revalidateTag('users', 'default')
 
     return { success: true, message: 'User removed successfully!' }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
