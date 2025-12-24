@@ -13,9 +13,6 @@ export default defineConfig({
     password: process.env.POSTGRES_PASSWORD || 'postgres',
     database: process.env.POSTGRES_DATABASE || 'artiverse_galleria',
     port: parseInt(process.env.POSTGRES_PORT || '5432'),
-    ssl:
-      process.env.NODE_ENV === 'production'
-        ? { rejectUnauthorized: false }
-        : false
+    ssl: false
   }
 })
