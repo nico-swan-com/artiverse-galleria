@@ -17,7 +17,6 @@ const configuration = {
   synchronize: false,
   logging: false
 } as DataSourceOptions
-console.log('Configuration:', configuration)
 
 const dataSource = new DataSource(configuration)
 

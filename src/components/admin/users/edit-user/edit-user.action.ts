@@ -50,15 +50,7 @@ async function editUserAction(
     ? PasswordSchema.parse(newPassword)
     : prevState.password
   const avatarFile = formData.get('avatarFile') || undefined
-  // Debug logging for avatarFile
-  console.log('avatarFile:', avatarFile)
-  if (avatarFile instanceof File) {
-    console.log('avatarFile.name:', avatarFile.name)
-    console.log('avatarFile.size:', avatarFile.size)
-    console.log('avatarFile.type:', avatarFile.type)
-  } else {
-    console.log('avatarFile is not a File instance:', avatarFile)
-  }
+
   const avatar =
     formData.get('avatarUrl')?.toString() || getAvatarUrl(email, name)
 

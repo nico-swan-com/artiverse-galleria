@@ -11,7 +11,7 @@ export class Initial1741552010156 implements MigrationInterface {
       await queryRunner.createDatabase('artiverse', true)
       await queryRunner.createSchema('artiverse', true)
     } catch (error) {
-      console.log('Schema or database might already exist:', error)
+      console.warn('Schema or database might already exist:', error)
     }
   }
 

@@ -46,7 +46,6 @@ const Navbar = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      console.log('Searching for:', searchQuery)
       setSearchQuery('')
       setIsSearchOpen(false)
     }

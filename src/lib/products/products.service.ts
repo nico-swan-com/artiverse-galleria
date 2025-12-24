@@ -38,9 +38,7 @@ export default class ProductsService {
         sortBy: ProductsSortBy,
         order: FindOptionsOrderValue
       ): Promise<Products> => {
-        console.log('Fetching all products', { sortBy, order })
         const result = await this.repository.getAll(sortBy, order)
-        console.log('Fetching all products', result)
         return result
       },
       [tag],
