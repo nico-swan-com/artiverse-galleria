@@ -117,11 +117,15 @@ const createAndInitializeDataSource = async (
     synchronize: false,
     logging: process.env.NODE_ENV === 'development',
     migrations: [__dirname + '/migrations/*.ts'],
+    ssl:
+      process.env.NODE_ENV === 'production'
+        ? { rejectUnauthorized: false }
+        : false,
     // Connection pool configuration for stability
     poolSize: 10,
     extra: {
       // Maximum time (ms) to wait for connection from pool
-      connectionTimeoutMillis: 10000,
+      connectionTimeoutMillis: 30000,
       // Maximum time (ms) a connection can sit idle before being closed
       idleTimeoutMillis: 30000,
       // Query timeout to prevent hanging queries
