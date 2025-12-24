@@ -68,7 +68,7 @@ class ProductsRepository {
       }
     } catch (error) {
       console.error('Error getting products:', error)
-      return { products: [], total: 0 }
+      throw error
     }
   }
 
@@ -82,7 +82,7 @@ class ProductsRepository {
       return found ? (plainToInstance(ProductEntity, found) as Product) : null
     } catch (error) {
       console.error('Error getting product by id:', error)
-      return null
+      throw error
     }
   }
 
@@ -98,7 +98,7 @@ class ProductsRepository {
       )
     } catch (error) {
       console.error('Error getting products by artist:', error)
-      return []
+      throw error
     }
   }
 
@@ -115,8 +115,8 @@ class ProductsRepository {
           )
         : []
     } catch (error) {
-      console.error('Error getting product by id:', error)
-      return []
+      console.error('Error getting featured products:', error)
+      throw error
     }
   }
 
@@ -183,4 +183,6 @@ class ProductsRepository {
   }
 }
 
-export { ProductsRepository }
+const productsRepository = new ProductsRepository()
+
+export { ProductsRepository, productsRepository }

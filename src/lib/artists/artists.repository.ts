@@ -75,8 +75,7 @@ class ArtistsRepository {
       const repository = await getRepository(Artist)
 
       const found = await repository.findOne({
-        where: { id },
-        cache: true
+        where: { id }
       })
 
       if (found) {
