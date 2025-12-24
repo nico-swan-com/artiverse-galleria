@@ -9,6 +9,7 @@ import { PasswordSchema, UserUpdateSchema } from '@/types/users/user.schema'
 import { getAvatarUrl } from '@/lib/utilities'
 import { revalidateTag } from 'next/cache'
 import { MediaCreate, MediaService } from '@/lib/media'
+import { requireAuthOrSelf } from '@/lib/authentication/require-auth'
 
 export type EditUserFieldErrors = {
   id?: string[]
@@ -77,6 +78,9 @@ async function editUserAction(
   }
 
   try {
+    // Authorization: Admin/Editor can edit any user, others can only edit themselves
+    await requireAuthOrSelf(prevState.id)
+
     const values = UserUpdateSchema.parse({
       ...state
     })

@@ -3,6 +3,8 @@
 import { z } from 'zod'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { ProductsRepository } from '@/lib/products/products.repository'
+import { requireAuth } from '@/lib/authentication/require-auth'
+import { UserRoles } from '@/types/users/user-roles.enum'
 
 export type DeleteProductState = {
   success: boolean
@@ -15,6 +17,9 @@ export async function deleteProductAction(
   formData: FormData
 ): Promise<DeleteProductState> {
   try {
+    // Authorization: Only Admin or ShopManager can delete products
+    await requireAuth([UserRoles.Admin, UserRoles.ShopManager])
+
     const ProductIdSchema = z
       .string()
       .nonempty({ message: 'Invalid product ID.' })

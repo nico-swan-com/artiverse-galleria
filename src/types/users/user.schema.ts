@@ -11,16 +11,16 @@ export const PasswordSchema = z
   .min(8, { message: 'Password must be at least 8 characters.' })
   .max(20, { message: 'Password must be less 20 characters.' })
   .refine((password) => /[A-Z]/.test(password), {
-    message: 'No uppercase characters.'
+    message: 'Must contain at least one uppercase letter.'
   })
   .refine((password) => /[a-z]/.test(password), {
-    message: 'No lowercase characters.'
+    message: 'Must contain at least one lowercase letter.'
   })
   .refine((password) => /[0-9]/.test(password), {
-    message: 'No number characters.'
+    message: 'Must contain at least one number.'
   })
   .refine((password) => /[!@#$%^&*()_+\-=`~[\]{}|;:'",.<>?/]/.test(password), {
-    message: 'No special characters.'
+    message: 'Must contain at least one special character.'
   })
 
 export const UpdatePasswordSchema = z

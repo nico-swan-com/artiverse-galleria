@@ -1,14 +1,14 @@
 import { PaginationParams } from './../../types/common/pagination-params.type'
 import { FindOptionsOrderValue } from 'typeorm'
-import { UsersRepository } from './users.repository'
+import { usersRepository, UsersRepository } from './users.repository'
 import { User } from './model/user.entity'
 import { UsersSortBy } from '../../types/users/users-sort-by.type'
 
 export default class Users {
-  repository: UsersRepository
+  private repository: UsersRepository
 
-  constructor() {
-    this.repository = new UsersRepository()
+  constructor(repository: UsersRepository = usersRepository) {
+    this.repository = repository
   }
 
   async getUsers(
@@ -30,8 +30,8 @@ export default class Users {
     return result
   }
 
-  async delete(user: User) {
-    const result = await this.repository.delete(user.id)
+  async delete(id: string) {
+    const result = await this.repository.delete(id)
     return result
   }
 }

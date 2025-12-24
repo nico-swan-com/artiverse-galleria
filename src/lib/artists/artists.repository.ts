@@ -16,18 +16,10 @@ class ArtistsRepository {
   ): Promise<Artists> {
     try {
       const repository = await getRepository(Artist)
-      console.debug('Getting repository for getAll query')
-
-      console.debug('Executing findAndCount query', {
-        sortBy,
-        order
-      })
 
       const [artists, total] = await repository.findAndCount({
         order: { [sortBy]: order }
       })
-
-      console.debug(`Found ${artists.length} artists out of ${total} total`)
 
       return {
         artists: artists as Artist[],
@@ -50,7 +42,6 @@ class ArtistsRepository {
 
     try {
       const repository = await getRepository(Artist)
-      console.debug('Getting repository for paged query')
 
       const searchFilter = searchQuery
         ? {
@@ -62,22 +53,12 @@ class ArtistsRepository {
           }
         : undefined
 
-      console.debug('Executing paged findAndCount query', {
-        skip,
-        limit,
-        sortBy,
-        order,
-        searchFilter: searchFilter?.where
-      })
-
       const [artists, total] = await repository.findAndCount({
         skip,
         take: limit,
         order: { [sortBy]: order },
         where: searchFilter?.where
       })
-
-      console.debug(`Found ${artists.length} artists out of ${total} total`)
 
       return {
         artists: artists as Artist[],
@@ -92,7 +73,6 @@ class ArtistsRepository {
   async getById(id: string): Promise<Artist | null> {
     try {
       const repository = await getRepository(Artist)
-      console.debug(`Getting artist by id: ${id}`)
 
       const found = await repository.findOne({
         where: { id },
@@ -100,11 +80,9 @@ class ArtistsRepository {
       })
 
       if (found) {
-        console.debug('Artist found, transforming result')
         return found as Artist
       }
 
-      console.debug('No artist found with the given id')
       return null
     } catch (error) {
       console.error('Error getting artist by id:', error)
@@ -115,10 +93,8 @@ class ArtistsRepository {
   async create(artist: ArtistCreate): Promise<Artist> {
     try {
       const repository = await getRepository(Artist)
-      console.debug('Creating new artist', { artist })
 
       const created = await repository.save(artist as Partial<Artist>)
-      console.debug('Artist created successfully', { id: created.id })
 
       return created as Artist
     } catch (error) {
@@ -134,10 +110,8 @@ class ArtistsRepository {
       }
 
       const repository = await getRepository(Artist)
-      console.debug('Updating artist', { id: artist.id })
 
       await repository.update(artist.id, artist as Partial<Artist>)
-      console.debug('Artist updated successfully', { id: artist.id })
 
       return
     } catch (error) {
@@ -149,10 +123,8 @@ class ArtistsRepository {
   async delete(id: string): Promise<void> {
     try {
       const repository = await getRepository(Artist)
-      console.debug(`Deleting artist with id: ${id}`)
 
       await repository.delete(id)
-      console.debug('Artist deleted successfully', { id })
 
       return
     } catch (error) {

@@ -8,6 +8,8 @@ import {
   ProductUpdateSchema
 } from '@/types/products/product.schema'
 import { MediaCreate, MediaService } from '@/lib/media'
+import { requireAuth } from '@/lib/authentication/require-auth'
+import { UserRoles } from '@/types/users/user-roles.enum'
 
 export type ProductFormFieldErrors = {
   title?: string[]
@@ -144,6 +146,13 @@ export async function productFormAction(
   }
 
   try {
+    // Authorization: Admin, Editor, or ShopManager can create/edit products
+    await requireAuth([
+      UserRoles.Admin,
+      UserRoles.Editor,
+      UserRoles.ShopManager
+    ])
+
     const service = new ProductsService()
     if (isEdit) {
       const updateValues = ProductUpdateSchema.parse({ ...values, id, sku })

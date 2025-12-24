@@ -2,34 +2,41 @@ import type { NextConfig, SizeLimit } from 'next'
 
 const { BUILD_TYPE } = process.env
 
+// Shared configuration to avoid duplication
+const sharedRemotePatterns = [
+  {
+    protocol: 'https' as const,
+    hostname: 'www.gravatar.com',
+    pathname: '/avatar/**'
+  },
+  {
+    protocol: 'https' as const,
+    hostname: 'images.unsplash.com',
+    pathname: '/**'
+  },
+  {
+    protocol: 'https' as const,
+    hostname: 'img.freepik.com',
+    pathname: '/**'
+  }
+]
+
+const sharedExperimental = {
+  authInterrupts: true,
+  serverActions: {
+    bodySizeLimit:
+      (process.env.SERVER_ACTIONS_BODY_SIZE_LIMIT as SizeLimit) || '10mb'
+  }
+}
+
 const defaultConfig: NextConfig = {
   distDir: '_next',
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'www.gravatar.com',
-        pathname: '/avatar/**'
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        pathname: '/**' // This allows all paths
-      },
-      {
-        protocol: 'https',
-        hostname: 'img.freepik.com',
-        pathname: '/**' // This allows all paths
-      }
-    ]
+    remotePatterns: sharedRemotePatterns
   },
   experimental: {
-    serverMinification: true,
-    authInterrupts: true,
-    serverActions: {
-      bodySizeLimit:
-        (process.env.SERVER_ACTIONS_BODY_SIZE_LIMIT as SizeLimit) || '10mb'
-    }
+    ...sharedExperimental,
+    serverMinification: true
   },
   webpack: (config, { isServer }) => {
     // Preserve Next/webpack defaults and gracefully handle function/undefined externals.
@@ -45,37 +52,17 @@ const defaultConfig: NextConfig = {
 const customServerConfig: NextConfig = {
   distDir: '_next',
   /**
-   * Enable static exports.
+   * Enable standalone mode for custom server.
    *
    * @see https://nextjs.org/docs/app/building-your-application/configuring/custom-server
    */
   output: 'standalone',
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'www.gravatar.com',
-        pathname: '/avatar/**'
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        pathname: '/**' // This allows all paths
-      },
-      {
-        protocol: 'https',
-        hostname: 'img.freepik.com',
-        pathname: '/**' // This allows all paths
-      }
-    ]
+    remotePatterns: sharedRemotePatterns
   },
   experimental: {
-    serverMinification: false,
-    authInterrupts: true,
-    serverActions: {
-      bodySizeLimit:
-        (process.env.SERVER_ACTIONS_BODY_SIZE_LIMIT as SizeLimit) || '10mb'
-    }
+    ...sharedExperimental,
+    serverMinification: false
   }
 }
 
@@ -95,31 +82,11 @@ const staticConfig: NextConfig = {
    */
   images: {
     unoptimized: true,
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'www.gravatar.com',
-        pathname: '/avatar/**'
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        pathname: '/**' // This allows all paths
-      },
-      {
-        protocol: 'https',
-        hostname: 'img.freepik.com',
-        pathname: '/**' // This allows all paths
-      }
-    ]
+    remotePatterns: sharedRemotePatterns
   },
   experimental: {
-    serverMinification: false,
-    authInterrupts: true,
-    serverActions: {
-      bodySizeLimit:
-        (process.env.SERVER_ACTIONS_BODY_SIZE_LIMIT as SizeLimit) || '10mb'
-    }
+    ...sharedExperimental,
+    serverMinification: false
   }
 }
 

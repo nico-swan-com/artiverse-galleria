@@ -4,14 +4,21 @@ import { FindOptionsOrderValue } from 'typeorm'
 
 import { AuthGuard } from '../authentication/auth-guard-route.decorator'
 import { UsersSortBy } from '../../types/users/users-sort-by.type'
+import { PAGINATION } from '@/shared/constants/pagination.constants'
 
 export class UsersController {
   @AuthGuard()
   async getUsers(request: NextRequest): Promise<Response> {
     const searchParams = request.nextUrl.searchParams
     const sortBy = (searchParams.get('sortBy') || 'createdAt') as UsersSortBy
-    const page = parseInt(searchParams.get('page') || '1', 10)
-    const limit = parseInt(searchParams.get('limit') || '5', 10)
+    const page = parseInt(
+      searchParams.get('page') || String(PAGINATION.DEFAULT_PAGE),
+      10
+    )
+    const limit = parseInt(
+      searchParams.get('limit') || String(PAGINATION.DEFAULT_PAGE_SIZE),
+      10
+    )
     const order = (searchParams.get('order') || 'DESC') as FindOptionsOrderValue
 
     const usersService = new Users()

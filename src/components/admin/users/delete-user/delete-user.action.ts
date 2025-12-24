@@ -3,10 +3,15 @@
 import { z } from 'zod'
 import { UsersRepository } from '@/lib/users/users.repository'
 import { revalidateTag } from 'next/cache'
+import { requireAuth } from '@/lib/authentication/require-auth'
+import { UserRoles } from '@/types/users/user-roles.enum'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function deleteUserAction(prevState: any, formData: FormData) {
   try {
+    // Authorization: Only Admin can delete users
+    await requireAuth([UserRoles.Admin])
+
     const UserIdSchema = z.string().nonempty({ message: 'Invalid user ID.' })
 
     const userId = UserIdSchema.parse(formData.get('userId')?.toString())

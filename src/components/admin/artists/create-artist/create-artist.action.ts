@@ -6,6 +6,8 @@ import { revalidateTag } from 'next/cache'
 import { ArtistCreateSchema } from '@/lib/artists'
 import ArtistsService from '@/lib/artists/artists.service'
 import { MediaCreate, MediaService } from '@/lib/media'
+import { requireAuth } from '@/lib/authentication/require-auth'
+import { UserRoles } from '@/types/users/user-roles.enum'
 
 export type CreateArtistFieldErrors = {
   name?: string[]
@@ -106,6 +108,9 @@ async function createArtistAction(
   }
 
   try {
+    // Authorization: Only Admin or Editor can create artists
+    await requireAuth([UserRoles.Admin, UserRoles.Editor])
+
     const values = ArtistCreateSchema.parse({
       ...state
     })

@@ -1,7 +1,6 @@
 import { PaginationParams } from '../../types/common/pagination-params.type'
-import { unstable_cache } from 'next/cache'
 import { FindOptionsOrderValue } from 'typeorm'
-import { ArtistsRepository } from './artists.repository'
+import { artistsRepository, ArtistsRepository } from './artists.repository'
 import {
   Artist,
   ArtistCreate,
@@ -9,44 +8,33 @@ import {
   ArtistsSortBy,
   ArtistUpdate
 } from './model'
+import {
+  getAllArtistsCache,
+  getPagedArtistsCache,
+  getArtistByIdCache
+} from './artists.actions'
+
+// Helper to check if we're in build phase
+const isBuildPhase = () =>
+  process.env.NODE_ENV === 'production' &&
+  process.env.NEXT_PHASE === 'phase-production-build'
 
 export default class ArtistsService {
-  repository: ArtistsRepository
+  private repository: ArtistsRepository
 
-  constructor() {
-    this.repository = new ArtistsRepository()
+  constructor(repository: ArtistsRepository = artistsRepository) {
+    this.repository = repository
   }
 
   async getAll(
     sortBy: ArtistsSortBy,
     order: FindOptionsOrderValue
   ): Promise<ArtistsResult> {
-    // Return empty result during build time
-    if (
-      process.env.NODE_ENV === 'production' &&
-      process.env.NEXT_PHASE === 'phase-production-build'
-    ) {
-      return {
-        artists: [],
-        total: 0
-      }
+    if (isBuildPhase()) {
+      return { artists: [], total: 0 }
     }
 
-    const tag = `artists-${sortBy}-${order}`
-    const getAll = unstable_cache(
-      async (
-        sortBy: ArtistsSortBy,
-        order: FindOptionsOrderValue
-      ): Promise<ArtistsResult> => {
-        const result = await this.repository.getAll(sortBy, order)
-        return result
-      },
-      [tag],
-      {
-        tags: [tag, 'artists']
-      }
-    )
-    return getAll(sortBy, order)
+    return getAllArtistsCache(sortBy, order)
   }
 
   async getPaged(
@@ -55,63 +43,19 @@ export default class ArtistsService {
     order: FindOptionsOrderValue,
     searchQuery?: string
   ): Promise<ArtistsResult> {
-    // Return empty result during build time
-    if (
-      process.env.NODE_ENV === 'production' &&
-      process.env.NEXT_PHASE === 'phase-production-build'
-    ) {
-      return {
-        artists: [],
-        total: 0
-      }
+    if (isBuildPhase()) {
+      return { artists: [], total: 0 }
     }
 
-    const tag = `artists-page-${pagination.page}-limit-${pagination.limit}-${sortBy}-${order}`
-    const getPaged = unstable_cache(
-      async (
-        pagination: PaginationParams,
-        sortBy: ArtistsSortBy,
-        order: FindOptionsOrderValue,
-        searchQuery?: string
-      ): Promise<ArtistsResult> => {
-        const result = await this.repository.getPaged(
-          pagination,
-          sortBy,
-          order,
-          searchQuery
-        )
-        return result
-      },
-      [tag],
-      {
-        tags: [tag, 'artists'],
-        revalidate: 1
-      }
-    )
-    return getPaged(pagination, sortBy, order, searchQuery)
+    return getPagedArtistsCache(pagination, sortBy, order, searchQuery)
   }
 
   async getById(id: string): Promise<Artist | null> {
-    // Return null during build time
-    if (
-      process.env.NODE_ENV === 'production' &&
-      process.env.NEXT_PHASE === 'phase-production-build'
-    ) {
+    if (isBuildPhase()) {
       return null
     }
 
-    const tag = `artist-${id}`
-    const getById = unstable_cache(
-      async (id: string): Promise<Artist | null> => {
-        const result = await this.repository.getById(id)
-        return result
-      },
-      [tag],
-      {
-        tags: [tag, 'artists']
-      }
-    )
-    return getById(id)
+    return getArtistByIdCache(id)
   }
 
   async create(artist: ArtistCreate): Promise<Artist> {

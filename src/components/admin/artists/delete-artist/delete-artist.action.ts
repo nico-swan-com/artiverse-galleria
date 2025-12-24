@@ -3,6 +3,8 @@
 import { z } from 'zod'
 import { revalidateTag } from 'next/cache'
 import { ArtistsRepository } from '@/lib/artists'
+import { requireAuth } from '@/lib/authentication/require-auth'
+import { UserRoles } from '@/types/users/user-roles.enum'
 
 type DeleteArtistState = {
   success: boolean
@@ -15,6 +17,9 @@ async function deleteArtistAction(
   formData: FormData
 ): Promise<DeleteArtistState> {
   try {
+    // Authorization: Only Admin can delete artists
+    await requireAuth([UserRoles.Admin])
+
     const artistIdIdSchema = z
       .string()
       .uuid({ message: 'Invalid artist ID.' })
