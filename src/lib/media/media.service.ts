@@ -1,15 +1,20 @@
 import { MediaRepository } from './media.repository'
 import { MediaCreate, MediaUpdate } from './model/media.schema'
 import { Media, NewMedia } from '../database/schema'
-import crypto from 'crypto'
-
-export const MAX_FILE_SIZE = 5 * 1024 * 1024
+import { FILE_CONFIG } from '../constants/app.constants'
+import { MediaValidator } from './media-validator'
+import { MediaHasher } from './media-hasher'
+import { logger } from '../utilities/logger'
+import {
+  ValidationError,
+  NotFoundError
+} from '../utilities/error-handler.service'
 
 export class MediaService {
   private mediaRepository: MediaRepository
 
-  constructor() {
-    this.mediaRepository = new MediaRepository()
+  constructor(mediaRepository?: MediaRepository) {
+    this.mediaRepository = mediaRepository || new MediaRepository()
   }
 
   /**
@@ -31,25 +36,14 @@ export class MediaService {
 
   /**
    * Upload a new image to the media table.
-   * @param fileName Original file name
-   * @param mimeType MIME type
-   * @param fileSize Size in bytes
-   * @param data Buffer containing image data
+   * @param file - Media file data
    * @returns The created Media entity
    */
   async uploadImage(file: MediaCreate): Promise<Media> {
-    if (!file.fileName || !file.mimeType || !file.fileSize || !file.data) {
-      throw new Error('Invalid media file data')
-    }
+    // Validate file
+    MediaValidator.validateMediaFile(file)
 
-    if (file.fileSize > MAX_FILE_SIZE) {
-      const err = new Error(
-        'File is too large. Maximum allowed size is 5MB.'
-      ) as Error & { status?: number }
-      err.status = 400
-      throw err
-    }
-
+    // Convert to buffer if needed
     let bufferData: Buffer
     if (file.data instanceof File) {
       bufferData = Buffer.from(await file.data.arrayBuffer())
@@ -57,15 +51,20 @@ export class MediaService {
       bufferData = file.data
     }
 
-    // Calculate SHA-256 hash
-    const hash = crypto.createHash('sha256').update(bufferData).digest('hex')
+    // Calculate hash for duplicate detection
+    const hash = await MediaHasher.calculateHash(bufferData)
 
-    // Duplicate detection
+    // Check for duplicates
     const existing = await this.mediaRepository.findByContentHash(hash)
     if (existing) {
+      logger.info('Duplicate media file detected, returning existing', {
+        hash,
+        fileName: file.fileName
+      })
       return existing
     }
 
+    // Create new media record
     const newMedia: NewMedia = {
       fileName: file.fileName,
       mimeType: file.mimeType,
@@ -88,24 +87,35 @@ export class MediaService {
 
   /**
    * Update image metadata.
-   * @param id Media UUID
-   * @param meta Metadata object containing fileName, alt, and tags
+   * @param id - Media UUID
+   * @param meta - Metadata object containing fileName, alt, and tags
    * @returns Updated Media entity
    */
   async updateImageMeta(
     id: string,
     meta: { fileName: string; alt?: string; tags?: string[] }
-  ) {
+  ): Promise<Media> {
     const media = await this.mediaRepository.getById(id)
-    if (!media) throw new Error('Media not found')
-
-    // Check if media is correct type to spread
-    const update: any = {
-      ...media,
-      fileName: meta.fileName,
-      altText: meta.alt ?? (media as any).altText ?? '',
-      tags: meta.tags ?? media.tags ?? []
+    if (!media) {
+      throw new NotFoundError('Media', id)
     }
-    return this.mediaRepository.createAndSave(update)
+
+    // Validate fileName
+    if (!meta.fileName || meta.fileName.trim().length === 0) {
+      throw new ValidationError('File name is required', 'fileName')
+    }
+
+    // Update media metadata
+    const updated = await this.mediaRepository.update(id, {
+      fileName: meta.fileName,
+      altText: meta.alt ?? media.altText ?? '',
+      tags: meta.tags ?? media.tags ?? []
+    })
+
+    if (!updated) {
+      throw new NotFoundError('Media', id)
+    }
+
+    return updated
   }
 }

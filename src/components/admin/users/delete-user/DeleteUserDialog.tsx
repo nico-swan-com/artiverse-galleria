@@ -24,15 +24,20 @@ const DeleteUserDialog = ({ user }: EditUserProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size='icon' variant='ghost'>
-          <Trash className='size-4 text-red-500' />
+        <Button
+          size='icon'
+          variant='ghost'
+          aria-label='Delete user'
+          className='hover:bg-destructive/10 hover:text-destructive'
+        >
+          <Trash className='size-4 text-destructive' />
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle>Remove user</DialogTitle>
           <DialogDescription>
-            <div className='rounded-md bg-red-100 p-4 text-sm text-red-500'>
+            <div className='rounded-md border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive'>
               <p>
                 Warning: This action cannot be undone. The user and all
                 associated data will be permanently deleted.

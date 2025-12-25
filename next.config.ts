@@ -1,6 +1,9 @@
 import type { NextConfig, SizeLimit } from 'next'
-
-const { BUILD_TYPE } = process.env
+// Note: next.config.ts runs at build time, so we need to access env directly
+// The env config validation happens at runtime, not build time
+const BUILD_TYPE = process.env.BUILD_TYPE
+const SERVER_ACTIONS_BODY_SIZE_LIMIT =
+  process.env.SERVER_ACTIONS_BODY_SIZE_LIMIT
 
 // Shared configuration to avoid duplication
 const sharedRemotePatterns = [
@@ -24,8 +27,7 @@ const sharedRemotePatterns = [
 const sharedExperimental = {
   authInterrupts: true,
   serverActions: {
-    bodySizeLimit:
-      (process.env.SERVER_ACTIONS_BODY_SIZE_LIMIT as SizeLimit) || '10mb'
+    bodySizeLimit: (SERVER_ACTIONS_BODY_SIZE_LIMIT as SizeLimit) || '10mb'
   }
 }
 
@@ -40,7 +42,8 @@ const defaultConfig: NextConfig = {
   },
   webpack: (config, { isServer }) => {
     // Preserve Next/webpack defaults and gracefully handle function/undefined externals.
-    const asArray = (val: any) => (Array.isArray(val) ? val : val ? [val] : [])
+    const asArray = (val: unknown): unknown[] =>
+      Array.isArray(val) ? val : val ? [val] : []
     if (isServer) {
       const extra = [
         'pg-hstore',

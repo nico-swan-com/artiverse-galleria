@@ -6,6 +6,9 @@ import bcrypt from 'bcryptjs'
 import { getAvatarUrl } from '../utilities'
 import { UsersRepository } from '../users'
 
+import { env } from '../config/env.config'
+import { logger } from '../utilities/logger'
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
   providers: [
@@ -45,11 +48,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           if (error instanceof CredentialsSignin) {
             throw error
           }
-          console.error('Authentication error:', error)
+          logger.error('Authentication error', error, {
+            email: credentials?.email
+          })
           throw new Error('An unexpected error occurred during authentication')
         }
       }
     })
   ],
-  secret: process.env.NEXTAUTH_SECRET
+  secret: env.NEXTAUTH_SECRET
 })

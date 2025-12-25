@@ -4,15 +4,33 @@ import { z } from 'zod'
 // import { UsersEntity } from '@/lib/users/model' // Remove entity import
 import { UserRoles } from '@/types/users/user-roles.enum'
 import { UserStatus } from '@/types/users/user-status.enum'
-import { PasswordSchema, UserSchema } from '@/types/users/user.schema'
+import { PasswordSchema, UserCreateSchema } from '@/types/users/user.schema'
 import { getAvatarUrl } from '@/lib/utilities'
-import { revalidateTag } from 'next/cache'
+import { revalidateTag, revalidatePath } from 'next/cache'
 import Users from '@/lib/users/users.service'
 import bcrypt from 'bcryptjs'
 import { NewUser } from '@/lib/database/schema'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function createUserAction(prevState: any, formData: FormData) {
+export type CreateUserFieldErrors = {
+  name?: string[]
+  email?: string[]
+  password?: string[]
+  database?: string[]
+  [key: string]: string[] | undefined
+}
+
+export type CreateUserState = {
+  success: boolean
+  message: string
+  name: string
+  email: string
+  errors: CreateUserFieldErrors
+}
+
+async function createUserAction(
+  prevState: CreateUserState | undefined,
+  formData: FormData
+): Promise<CreateUserState> {
   const name = formData.get('name')?.toString() || ''
   const email = formData.get('email')?.toString() || ''
   const password = formData.get('password')?.toString() || ''
@@ -31,7 +49,7 @@ async function createUserAction(prevState: any, formData: FormData) {
     }
   }
   try {
-    const values = UserSchema.parse({
+    const values = UserCreateSchema.parse({
       name,
       email,
       avatar: getAvatarUrl(email, name),
@@ -39,9 +57,21 @@ async function createUserAction(prevState: any, formData: FormData) {
       status: UserStatus.Pending
     })
 
-    const newPassword = PasswordSchema.parse(password)
+    // Validate password separately with safeParse for better error handling
+    const passwordResult = PasswordSchema.safeParse(password)
+    if (!passwordResult.success) {
+      return {
+        success: false,
+        message: '', // No message needed - UI indicator shows requirements
+        ...state,
+        errors: {
+          password: passwordResult.error.errors.map((e) => e.message)
+        }
+      }
+    }
+
     const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(newPassword, salt)
+    const hashedPassword = await bcrypt.hash(passwordResult.data, salt)
 
     const user: NewUser = {
       name: name,
@@ -56,26 +86,28 @@ async function createUserAction(prevState: any, formData: FormData) {
 
     await services.create(user)
     revalidateTag('users', 'default')
+    revalidatePath('/admin/users')
 
     return { success: true, message: 'User created successfully!', ...state }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
         message: 'Validation error. Please check the fields.',
         ...state,
-        errors: error.flatten().fieldErrors
+        errors: error.flatten().fieldErrors as CreateUserFieldErrors
       }
     } else {
       console.error(error)
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error occurred'
       return {
         success: false,
         message: 'Failed to create user.',
         ...state,
         errors: {
-          database: [error.message]
-        } as { [x: string]: string[] | undefined }
+          database: [errorMessage]
+        }
       }
     }
   }

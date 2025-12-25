@@ -1,9 +1,10 @@
 import { createServer } from 'http'
 import { parse } from 'url'
 import next from 'next'
+import { env } from './src/lib/config/env.config'
 
-const port = parseInt(process.env.PORT || '3000', 10)
-const dev = process.env.NODE_ENV !== 'production'
+const port = parseInt(env.PORT, 10)
+const dev = env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
@@ -15,7 +16,7 @@ app.prepare().then(() => {
 
   console.log(
     `> Server listening at http://localhost:${port} as ${
-      dev ? 'development' : process.env.NODE_ENV
+      dev ? 'development' : env.NODE_ENV
     }`
   )
 })

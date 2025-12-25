@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useActionState, useEffect, useState } from 'react'
+import React, { useActionState, useEffect, useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -42,10 +42,18 @@ const initialFormState: EditUserState = {
 
 const MAX_FILE_SIZE = 1024 * 1024 // 1MB in bytes
 
+// Simple email validation regex
+const isValidEmail = (email: string): boolean => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+}
+
 const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
   const [showPasswordFields, setShowPasswordFields] = useState(false)
+  const [isPasswordValid, setIsPasswordValid] = useState(false)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [avatarError, setAvatarError] = useState<string | null>(null)
+  const [name, setName] = useState(user.name)
+  const [email, setEmail] = useState(user.email)
   const [state, formAction, isPending] = useActionState<
     EditUserState,
     FormData
@@ -62,6 +70,14 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
   const [avatarPreview, setAvatarPreview] = useState<string | undefined>(
     undefined
   )
+
+  // Compute form validity
+  const isFormValid = useMemo(() => {
+    const isNameValid = name.trim().length >= 2
+    const isEmailValid = isValidEmail(email)
+    const isPasswordOk = !showPasswordFields || isPasswordValid
+    return isNameValid && isEmailValid && isPasswordOk && !avatarError
+  }, [name, email, showPasswordFields, isPasswordValid, avatarError])
 
   useEffect(() => {
     if (state.success && !!state.message && !isPending) {
@@ -127,7 +143,7 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
     <form action={handleFormAction} className='mt-4 space-y-4'>
       <Input id='userId' name='userId' type='hidden' defaultValue={user.id} />
       <div className='space-y-2'>
-        <label htmlFor='avatarFile'>Avatar</label>
+        <Label htmlFor='avatarFile'>Avatar</Label>
         <AvatarImageInput
           url={
             avatarPreview || state.avatar || getAvatarUrl(user.email, user.name)
@@ -139,13 +155,16 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
       </div>
 
       <div className='space-y-2'>
-        <Label htmlFor='name'>Name</Label>
+        <Label htmlFor='name'>
+          Name <span className='text-destructive'>*</span>
+        </Label>
         <Input
           id='name'
           name='name'
           placeholder='John Doe'
           required
-          defaultValue={user.name}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
         {!state.success && state.errors?.name && (
           <p className='text-sm font-medium text-destructive'>
@@ -154,15 +173,23 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
         )}
       </div>
       <div className='space-y-2'>
-        <Label htmlFor='email'>Email</Label>
+        <Label htmlFor='email'>
+          Email <span className='text-destructive'>*</span>
+        </Label>
         <Input
           id='email'
           name='email'
           type='email'
           placeholder='john@example.com'
-          defaultValue={user.email}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
+        {email && !isValidEmail(email) && (
+          <p className='text-sm font-medium text-destructive'>
+            Please enter a valid email address
+          </p>
+        )}
         {!state.success && state.errors?.email && (
           <p className='text-sm font-medium text-destructive'>
             {state.errors.email.join(', ')}
@@ -170,7 +197,9 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
         )}
       </div>
       <div className='space-y-2'>
-        <Label htmlFor='role'>Role</Label>
+        <Label htmlFor='role'>
+          Role <span className='text-destructive'>*</span>
+        </Label>
         <Select name='role' defaultValue={user.role}>
           <SelectTrigger>
             <SelectValue placeholder='Select role' />
@@ -190,7 +219,9 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
         )}
       </div>
       <div className='space-y-2'>
-        <Label htmlFor='status'>Status</Label>
+        <Label htmlFor='status'>
+          Status <span className='text-destructive'>*</span>
+        </Label>
         <Select name='status' defaultValue={user.status}>
           <SelectTrigger>
             <SelectValue placeholder='Select status' />
@@ -212,6 +243,7 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
 
       {!showPasswordFields && (
         <Button
+          type='button'
           className='w-full'
           variant='secondary'
           onClick={() => setShowPasswordFields(true)}
@@ -219,32 +251,23 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
           Change Password
         </Button>
       )}
-      <Input
-        id='password'
-        name='password'
-        type='hidden'
-        defaultValue={user.password}
-      />
+
       {showPasswordFields && (
-        <>
-          <div className='space-y-2'>
-            <Label htmlFor='newPassword'>Password</Label>
-            <PasswordInput id='newPassword' name='newPassword' required />
-            {!state.success && state.errors?.password && (
-              <p className='text-sm font-medium text-destructive'>
-                Password must be between 8 and 20 characters long and include
-                uppercase letters, lowercase letters, numbers, and at least one
-                special character.
-              </p>
-            )}
-          </div>
-        </>
+        <div className='space-y-2'>
+          <Label htmlFor='newPassword'>Password</Label>
+          <PasswordInput
+            id='newPassword'
+            name='newPassword'
+            required
+            onValidChange={setIsPasswordValid}
+          />
+        </div>
       )}
 
       <div className='flex justify-end pt-4'>
         <Button
           type='submit'
-          disabled={isPending || !!avatarError}
+          disabled={isPending || !isFormValid}
           className='w-full'
         >
           {isPending ? 'Updating user...' : 'Update user'}

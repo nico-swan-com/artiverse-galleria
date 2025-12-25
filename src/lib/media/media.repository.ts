@@ -1,7 +1,8 @@
-import { Media } from '../database/schema'
+import { Media, NewMedia } from '../database/schema'
 import { db } from '../database/drizzle'
 import { media } from '../database/schema'
 import { eq } from 'drizzle-orm'
+import { logger } from '../utilities/logger'
 
 // We need to support MediaEntity signature in createAndSave because usages pass the entity.
 // But we should treat it as data object.
@@ -10,23 +11,23 @@ export class MediaRepository {
   async getAll(): Promise<Media[]> {
     try {
       const all = await db.query.media.findMany()
-      return all as unknown as Media[]
+      return all as Media[]
     } catch (error) {
-      console.error('Error getting all media', { error })
+      logger.error('Error getting all media', error)
       throw error
     }
   }
   async getById(id: string): Promise<Media | null> {
     try {
       const found = await db.query.media.findFirst({ where: eq(media.id, id) })
-      return found as unknown as Media
+      return found as Media | null
     } catch (error) {
-      console.error(`Error getting image by ID:${id}`, { error })
+      logger.error('Error getting image by ID', error, { id })
       throw error
     }
   }
 
-  async createAndSave(mediaData: any): Promise<Media> {
+  async createAndSave(mediaData: NewMedia): Promise<Media> {
     try {
       // Ensure updatedAt is always a Date
       const data = {
@@ -36,9 +37,9 @@ export class MediaRepository {
       }
 
       const [saved] = await db.insert(media).values(data).returning()
-      return saved as unknown as Media
+      return saved as Media
     } catch (error) {
-      console.error('Error saving media', { error })
+      logger.error('Error saving media', error)
       throw error
     }
   }
@@ -55,7 +56,30 @@ export class MediaRepository {
       // Or use .returning({ id: media.id }) to check if deleted.
       return true
     } catch (error) {
-      console.error(`Error deleting image by ID:${id}`, { error })
+      logger.error('Error deleting image by ID', error, { id })
+      throw error
+    }
+  }
+
+  async update(
+    id: string,
+    updateData: Partial<NewMedia>
+  ): Promise<Media | null> {
+    try {
+      const data = {
+        ...updateData,
+        updatedAt: new Date()
+      }
+
+      const [updated] = await db
+        .update(media)
+        .set(data)
+        .where(eq(media.id, id))
+        .returning()
+
+      return updated as Media | null
+    } catch (error) {
+      logger.error('Error updating media', error, { id })
       throw error
     }
   }
@@ -65,10 +89,10 @@ export class MediaRepository {
       const found = await db.query.media.findFirst({
         where: eq(media.contentHash, contentHash)
       })
-      return found as unknown as Media
+      return found as Media | null
     } catch (error) {
-      console.error(`Error finding media by content hash: ${contentHash}`, {
-        error
+      logger.error('Error finding media by content hash', error, {
+        contentHash
       })
       throw error
     }

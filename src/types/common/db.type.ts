@@ -4,12 +4,12 @@ export type FindOptionsOrderValue =
   | { [key: string]: FindOptionsOrderValue }
 
 export interface UpdateResult {
-  raw: any
+  raw: unknown
   affected?: number
-  generatedMaps: any[]
+  generatedMaps: unknown[]
 }
 
 export interface DeleteResult {
-  raw: any
+  raw: unknown
   affected?: number | null
 }

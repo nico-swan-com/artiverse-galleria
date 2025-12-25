@@ -3,20 +3,13 @@
 import React, { useActionState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import { formInitialState } from '@/types'
 import deleteUserAction from './delete-user.action'
 import { User } from '@/types/users/user.schema'
-import { UserRoles } from '@/types/users/user-roles.enum'
-import { UserStatus } from '@/types/users/user-status.enum'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { getAvatarUrl } from '@/lib/utilities'
+import { Badge } from '@/components/ui/badge'
 
 interface DeleteUserFormProps {
   user: User
@@ -40,63 +33,35 @@ const DeleteUserForm = ({ user, onClose }: DeleteUserFormProps) => {
   return (
     <form action={formAction} className='mt-4 space-y-4'>
       <Input id='userId' name='userId' type='hidden' defaultValue={user.id} />
-      <div className='space-y-2'>
-        <Label htmlFor='name'>Name</Label>
-        <Input
-          id='name'
-          name='name'
-          placeholder='John Doe'
-          disabled
-          defaultValue={user.name}
-        />
+
+      {/* User summary card */}
+      <div className='flex items-center gap-4 rounded-lg border bg-muted/50 p-4'>
+        <Avatar className='size-12'>
+          <AvatarImage
+            src={user.avatar || getAvatarUrl(user.email, user.name)}
+            alt={user.name}
+          />
+          <AvatarFallback>
+            {user.name.substring(0, 2).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+        <div className='flex-1'>
+          <p className='font-medium'>{user.name}</p>
+          <p className='text-sm text-muted-foreground'>{user.email}</p>
+          <div className='mt-1 flex gap-2'>
+            <Badge variant='outline'>{user.role}</Badge>
+            <Badge variant={user.status === 'Active' ? 'default' : 'secondary'}>
+              {user.status}
+            </Badge>
+          </div>
+        </div>
       </div>
 
-      <div className='space-y-2'>
-        <Label htmlFor='email'>Email</Label>
-        <Input
-          id='email'
-          name='email'
-          type='email'
-          placeholder='john@example.com'
-          defaultValue={user.email}
-          disabled
-        />
-      </div>
-
-      <div className='space-y-2'>
-        <Label htmlFor='role'>Role</Label>
-        <Select name='role' defaultValue={user.role} disabled>
-          <SelectTrigger>
-            <SelectValue placeholder='Select role' />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.values(UserRoles).map((role) => (
-              <SelectItem key={role} value={role}>
-                {role}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className='space-y-2'>
-        <Label htmlFor='status'>Status</Label>
-        <Select name='status' defaultValue={user.status} disabled>
-          <SelectTrigger>
-            <SelectValue placeholder='Select status' />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.values(UserStatus).map((status) => (
-              <SelectItem key={status} value={status}>
-                {status}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className='flex justify-end pt-4'>
-        <Button type='submit' disabled={isPending} className='w-full'>
+      <div className='flex justify-end gap-2 pt-4'>
+        <Button type='button' variant='outline' onClick={onClose}>
+          Cancel
+        </Button>
+        <Button type='submit' variant='destructive' disabled={isPending}>
           {isPending ? 'Removing user...' : 'Remove user'}
         </Button>
       </div>

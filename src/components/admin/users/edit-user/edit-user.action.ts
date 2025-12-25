@@ -7,10 +7,11 @@ import { UserRoles } from '@/types/users/user-roles.enum'
 import { UserStatus } from '@/types/users/user-status.enum'
 import { PasswordSchema, UserUpdateSchema } from '@/types/users/user.schema'
 import { getAvatarUrl } from '@/lib/utilities'
-import { revalidateTag } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { MediaCreate, MediaService } from '@/lib/media'
 import { requireAuthOrSelf } from '@/lib/authentication/require-auth'
 import bcrypt from 'bcryptjs'
+import { User } from '@/lib/database/schema'
 
 export type EditUserFieldErrors = {
   id?: string[]
@@ -47,10 +48,9 @@ async function editUserAction(
   const name = formData.get('name')?.toString() || ''
   const email = formData.get('email')?.toString() || ''
   const newPassword = formData.get('newPassword')?.toString() || ''
-  const password = !!newPassword
-    ? PasswordSchema.parse(newPassword)
-    : prevState.password
   const avatarFile = formData.get('avatarFile') || undefined
+  const role = formData.get('role')?.toString() || prevState.role || ''
+  const status = formData.get('status')?.toString() || prevState.status || ''
 
   const avatar =
     formData.get('avatarUrl')?.toString() || getAvatarUrl(email, name)
@@ -61,10 +61,10 @@ async function editUserAction(
     message: '',
     name,
     email,
-    password,
+    password: prevState.password,
     newPassword,
-    role: prevState.role || '',
-    status: prevState.status || '',
+    role,
+    status,
     avatar,
     avatarFile: avatarFile instanceof File ? avatarFile : undefined,
     errors: {}
@@ -74,8 +74,26 @@ async function editUserAction(
     // Authorization: Admin/Editor can edit any user, others can only edit themselves
     await requireAuthOrSelf(prevState.id)
 
+    // Validate password if provided
+    let validatedPassword: string | undefined
+    if (newPassword) {
+      const passwordResult = PasswordSchema.safeParse(newPassword)
+      if (!passwordResult.success) {
+        return {
+          ...state,
+          success: false,
+          message: '', // No message needed - UI indicator shows requirements
+          errors: {
+            newPassword: passwordResult.error.errors.map((e) => e.message)
+          }
+        }
+      }
+      validatedPassword = passwordResult.data
+    }
+
     const values = UserUpdateSchema.parse({
-      ...state
+      ...state,
+      password: validatedPassword || prevState.password
     })
 
     if (avatarFile instanceof File) {
@@ -94,12 +112,22 @@ async function editUserAction(
     }
 
     let hashedPassword = undefined
-    if (password) {
+    if (validatedPassword) {
       const salt = await bcrypt.genSalt(10)
-      hashedPassword = await bcrypt.hash(password, salt)
+      hashedPassword = await bcrypt.hash(validatedPassword, salt)
     }
 
-    const updateData: any = {
+    type UserUpdateData = Partial<User> & {
+      id: string
+      name: string
+      email: string
+      avatar?: string | null
+      role: UserRoles
+      status: UserStatus
+      password?: string
+    }
+
+    const updateData: UserUpdateData = {
       id: prevState.id,
       name,
       email,
@@ -115,6 +143,7 @@ async function editUserAction(
     const repository = new UsersRepository()
     await repository.update(updateData)
     revalidateTag('users', 'default')
+    revalidatePath('/admin/users')
 
     return {
       ...state,

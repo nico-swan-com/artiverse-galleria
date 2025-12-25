@@ -2,12 +2,20 @@
 
 import { z } from 'zod'
 import { UsersRepository } from '@/lib/users/users.repository'
-import { revalidateTag } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { requireAuth } from '@/lib/authentication/require-auth'
 import { UserRoles } from '@/types/users/user-roles.enum'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function deleteUserAction(prevState: any, formData: FormData) {
+export type DeleteUserState = {
+  success: boolean
+  message: string
+  errors?: Record<string, string[]>
+}
+
+async function deleteUserAction(
+  prevState: DeleteUserState | undefined,
+  formData: FormData
+): Promise<DeleteUserState> {
   try {
     // Authorization: Only Admin can delete users
     await requireAuth([UserRoles.Admin])
@@ -20,23 +28,25 @@ async function deleteUserAction(prevState: any, formData: FormData) {
 
     await repository.delete(userId)
     revalidateTag('users', 'default')
+    revalidatePath('/admin/users')
 
     return { success: true, message: 'User removed successfully!' }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        errors: error.flatten().fieldErrors,
+        errors: error.flatten().fieldErrors as Record<string, string[]>,
         message: 'Validation error. Please check the fields.'
       }
     } else {
       console.error(error)
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error occurred'
       return {
         success: false,
         message: 'Failed to remove user.',
         errors: {
-          database: [error.message]
+          database: [errorMessage]
         }
       }
     }

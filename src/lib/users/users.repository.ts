@@ -9,6 +9,8 @@ import { users, type User, type NewUser } from '../database/schema'
 import { eq, desc, asc, count } from 'drizzle-orm'
 import { UsersResult } from '../../types/users/users.type'
 import { UsersSortBy } from '../../types/users/users-sort-by.type'
+import { User as AppUser } from '../../types/users/user.schema'
+import { logger } from '../utilities/logger'
 
 class UsersRepository {
   async getUsers(
@@ -33,9 +35,9 @@ class UsersRepository {
       const rows = await db.select({ count: count() }).from(users)
       const total = rows[0].count
 
-      return { users: data as unknown as any[], total }
+      return { users: data as unknown as AppUser[], total }
     } catch (error) {
-      console.error('Error getting users:', error)
+      logger.error('Error getting users', error, { sortBy, order })
       throw error
     }
   }
@@ -50,7 +52,7 @@ class UsersRepository {
       })
       return found as Omit<User, 'password'> | null
     } catch (error) {
-      console.error('Error getting user by id:', error)
+      logger.error('Error getting user by id', error, { id })
       throw error
     }
   }
@@ -66,7 +68,7 @@ class UsersRepository {
       })
       return found as User | null
     } catch (error) {
-      console.error('Error getting user by email:', error)
+      logger.error('Error getting user by email', error, { email })
       throw error
     }
   }
@@ -83,24 +85,39 @@ class UsersRepository {
       const { password, ...safeUser } = created
       return safeUser
     } catch (error) {
-      console.error('Error creating user:', error)
+      logger.error('Error creating user', error)
       throw error
     }
   }
 
   async update(user: Partial<User> & { id: string }): Promise<UpdateResult> {
+    const { id, ...updateData } = user
     try {
-      await db
+      logger.info('Updating user', {
+        userId: id,
+        fields: Object.keys(updateData)
+      })
+
+      const result = await db
         .update(users)
         .set({
-          ...user,
+          ...updateData,
           updatedAt: new Date()
         })
-        .where(eq(users.id, user.id))
+        .where(eq(users.id, id))
+        .returning()
 
-      return { raw: [], affected: 1, generatedMaps: [] } as UpdateResult
+      logger.info('User updated successfully', {
+        userId: id,
+        rowsAffected: result.length
+      })
+      return {
+        raw: result,
+        affected: result.length,
+        generatedMaps: []
+      } as UpdateResult
     } catch (error) {
-      console.error('Error updating user:', error)
+      logger.error('Error updating user', error, { userId: id })
       throw error
     }
   }
@@ -110,7 +127,7 @@ class UsersRepository {
       await db.delete(users).where(eq(users.id, id))
       return { raw: [], affected: 1 } as DeleteResult
     } catch (error) {
-      console.error('Error deleting user:', error)
+      logger.error('Error deleting user', error, { id })
       throw error
     }
   }

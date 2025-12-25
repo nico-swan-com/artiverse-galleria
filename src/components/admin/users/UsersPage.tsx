@@ -6,6 +6,7 @@ import CreateUserDialog from './create-user/CreateUserDialog'
 import { User } from '@/types/users/user.schema'
 import { UsersSortBy } from '@/types/users/users-sort-by.type'
 import { FindOptionsOrderValue } from '@/types/common/db.type'
+import { UserRoles } from '@/types/users/user-roles.enum'
 
 interface UsersProps {
   users: User[]
@@ -14,6 +15,7 @@ interface UsersProps {
   total: number
   sortBy: UsersSortBy
   order: FindOptionsOrderValue
+  currentUserRole: UserRoles
 }
 
 const UsersPage = ({
@@ -22,7 +24,8 @@ const UsersPage = ({
   limit,
   total,
   sortBy,
-  order
+  order,
+  currentUserRole
 }: UsersProps) => {
   return (
     <PageTransition>
@@ -39,6 +42,7 @@ const UsersPage = ({
           limit={limit}
           sortBy={sortBy}
           order={order}
+          currentUserRole={currentUserRole}
         />
       </div>
     </PageTransition>

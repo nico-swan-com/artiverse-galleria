@@ -5,7 +5,16 @@ import { ArtistCreate, Artists, ArtistsSortBy, ArtistUpdate } from './model'
 import { Artist } from './model/artist.schema'
 import { db } from '../database/drizzle'
 import { artists } from '../database/schema'
-import { eq, ilike, or, desc, asc, count } from 'drizzle-orm'
+import { eq, desc, asc, count } from 'drizzle-orm'
+import {
+  validateSearchQuery,
+  buildSearchFilter
+} from '../utilities/search-query.util'
+import {
+  mapArtistsToAppType,
+  mapArtistToAppType
+} from '../database/mappers/artist.mapper'
+import { logger } from '../utilities/logger'
 
 class ArtistsRepository {
   async getAll(
@@ -19,11 +28,11 @@ class ArtistsRepository {
       })
 
       return {
-        artists: result as unknown as Artist[],
+        artists: mapArtistsToAppType(result),
         total: result.length
       }
     } catch (error) {
-      console.error('Error getting artists:', error)
+      logger.error('Error getting artists', error, { sortBy, order })
       throw error
     }
   }
@@ -38,14 +47,13 @@ class ArtistsRepository {
     const offset = (page - 1) * limit
     const orderDir = order === 'DESC' ? desc : asc
 
-    // Build where clause
-    const searchFilter = searchQuery
-      ? or(
-          ilike(artists.name, `%${searchQuery}%`),
-          ilike(artists.specialization, `%${searchQuery}%`),
-          ilike(artists.location, `%${searchQuery}%`)
-        )
-      : undefined
+    // Validate and build search filter
+    const validatedQuery = validateSearchQuery(searchQuery)
+    const searchFilter = buildSearchFilter(validatedQuery, [
+      artists.name,
+      artists.specialization,
+      artists.location
+    ])
 
     try {
       const data = await db.query.artists.findMany({
@@ -62,11 +70,16 @@ class ArtistsRepository {
       const total = rows[0].count
 
       return {
-        artists: data as unknown as Artist[],
+        artists: mapArtistsToAppType(data),
         total
       }
     } catch (error) {
-      console.error('Error getting paged artists:', error)
+      logger.error('Error getting paged artists', error, {
+        pagination,
+        sortBy,
+        order,
+        searchQuery
+      })
       throw error // Let the service layer handle the error
     }
   }
@@ -78,12 +91,12 @@ class ArtistsRepository {
       })
 
       if (found) {
-        return found as unknown as Artist
+        return mapArtistToAppType(found)
       }
 
       return null
     } catch (error) {
-      console.error('Error getting artist by id:', error)
+      logger.error('Error getting artist by id', error, { id })
       throw error
     }
   }
@@ -98,9 +111,9 @@ class ArtistsRepository {
         })
         .returning()
 
-      return created as unknown as Artist
+      return mapArtistToAppType(created)
     } catch (error) {
-      console.error('Error creating artist:', error)
+      logger.error('Error creating artist', error)
       throw error
     }
   }
@@ -112,11 +125,12 @@ class ArtistsRepository {
       }
 
       const { id, ...updateData } = artist
-      const definedUpdates: any = {}
+      type UpdateFields = Partial<Omit<ArtistUpdate, 'id'>>
+      const definedUpdates: UpdateFields = {}
       for (const key in updateData) {
-        const val = (updateData as any)[key]
+        const val = updateData[key as keyof typeof updateData]
         if (val !== undefined) {
-          definedUpdates[key] = val
+          ;(definedUpdates as Record<string, unknown>)[key] = val
         }
       }
       definedUpdates.updatedAt = new Date()
@@ -125,7 +139,7 @@ class ArtistsRepository {
 
       return
     } catch (error) {
-      console.error('Error updating artist:', error)
+      logger.error('Error updating artist', error, { artistId: artist.id })
       throw error
     }
   }
@@ -135,7 +149,7 @@ class ArtistsRepository {
       await db.delete(artists).where(eq(artists.id, id))
       return
     } catch (error) {
-      console.error('Error deleting artist:', error)
+      logger.error('Error deleting artist', error, { id })
       throw error
     }
   }

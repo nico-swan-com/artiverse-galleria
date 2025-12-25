@@ -5,11 +5,15 @@ import {
 } from '@/types/users/users-sort-by.type'
 import { getUsersUnstableCache } from '@/lib/users/users.actions'
 import { FindOptionsOrderValue } from '@/types/common/db.type'
+import { auth } from '@/lib/authentication/next-auth'
+import { UserRoles } from '@/types/users/user-roles.enum'
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
 const UsersServerPage = async (props: { searchParams: SearchParams }) => {
   const params = await props.searchParams
+  const session = await auth()
+  const currentUserRole = (session?.user?.role as UserRoles) || UserRoles.Client
 
   const sortBy = (
     typeof params.sortBy === 'string' && isValidUsersSortKey(params.sortBy)
@@ -36,6 +40,7 @@ const UsersServerPage = async (props: { searchParams: SearchParams }) => {
       total={total}
       sortBy={sortBy}
       order={order}
+      currentUserRole={currentUserRole}
     />
   )
 }

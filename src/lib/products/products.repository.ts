@@ -6,7 +6,11 @@ import { FindOptionsOrderValue } from '../../types/common/db.type' // Keeping ty
 // schema
 import { db } from '../database/drizzle'
 import { products, artists } from '../database/schema'
-import { eq, ilike, or, and, ne, sql, desc, asc, count } from 'drizzle-orm'
+import { eq, and, ne, or, sql, desc, asc, count } from 'drizzle-orm'
+import {
+  validateSearchQuery,
+  buildSearchFilter
+} from '../utilities/search-query.util'
 import { ProductsSortBy } from '../../types/products/products-sort-by.type'
 import { Products } from '../../types/products/products.type'
 import {
@@ -14,6 +18,12 @@ import {
   ProductUpdate,
   Product
 } from '../../types/products/product.schema'
+import {
+  mapProductsWithArtistToAppType,
+  mapProductWithArtistToAppType,
+  mapProductToAppType
+} from '../database/mappers/product.mapper'
+import { logger } from '../utilities/logger'
 
 class ProductsRepository {
   async getAll(
@@ -29,28 +39,14 @@ class ProductsRepository {
         }
       })
 
-      const convertedResult = result.map((p) => ({
-        ...p,
-        price: Number(p.price),
-        sales: Number(p.sales),
-        stock: Number(p.stock),
-        yearCreated: p.yearCreated ?? undefined,
-        medium: p.medium ?? undefined,
-        dimensions: p.dimensions ?? undefined,
-        weight: p.weight ?? undefined,
-        style: p.style ?? undefined,
-        featureImage: p.featureImage ?? undefined,
-        images: p.images ?? undefined,
-        artistId: p.artistId ?? undefined,
-        deletedAt: p.deletedAt ?? undefined
-      })) as unknown as Product[]
+      const convertedResult = mapProductsWithArtistToAppType(result)
 
       return {
         products: convertedResult,
         total: result.length
       }
     } catch (error) {
-      console.error('Error getting products', { error })
+      logger.error('Error getting products', error, { sortByField, sortOrder })
       throw error
     }
   }
@@ -65,14 +61,13 @@ class ProductsRepository {
     const offset = (page - 1) * limit
     const orderDir = sortOrder === 'DESC' ? desc : asc
 
-    // Build where clause
-    const searchFilter = searchQuery
-      ? or(
-          ilike(products.title, `%${searchQuery}%`),
-          ilike(products.description, `%${searchQuery}%`),
-          ilike(products.category, `%${searchQuery}%`)
-        )
-      : undefined
+    // Validate and build search filter
+    const validatedQuery = validateSearchQuery(searchQuery)
+    const searchFilter = buildSearchFilter(validatedQuery, [
+      products.title,
+      products.description,
+      products.category
+    ])
 
     try {
       // Get data
@@ -95,28 +90,19 @@ class ProductsRepository {
         .where(searchFilter)
       const total = rows[0].count
 
-      const convertedResult = data.map((p) => ({
-        ...p,
-        price: Number(p.price),
-        sales: Number(p.sales),
-        stock: Number(p.stock),
-        yearCreated: p.yearCreated ?? undefined,
-        medium: p.medium ?? undefined,
-        dimensions: p.dimensions ?? undefined,
-        weight: p.weight ?? undefined,
-        style: p.style ?? undefined,
-        featureImage: p.featureImage ?? undefined,
-        images: p.images ?? undefined,
-        artistId: p.artistId ?? undefined,
-        deletedAt: p.deletedAt ?? undefined
-      })) as unknown as Product[]
+      const convertedResult = mapProductsWithArtistToAppType(data)
 
       return {
         products: convertedResult,
         total
       }
     } catch (error) {
-      console.error('Error getting products:', error)
+      logger.error('Error getting paged products', error, {
+        pagination,
+        sortByField,
+        sortOrder,
+        searchQuery
+      })
       throw error
     }
   }
@@ -132,23 +118,9 @@ class ProductsRepository {
 
       if (!found) return null
 
-      return {
-        ...found,
-        price: Number(found.price),
-        sales: Number(found.sales),
-        stock: Number(found.stock),
-        yearCreated: found.yearCreated ?? undefined,
-        medium: found.medium ?? undefined,
-        dimensions: found.dimensions ?? undefined,
-        weight: found.weight ?? undefined,
-        style: found.style ?? undefined,
-        featureImage: found.featureImage ?? undefined,
-        images: found.images ?? undefined,
-        artistId: found.artistId ?? undefined,
-        deletedAt: found.deletedAt ?? undefined
-      } as unknown as Product
+      return mapProductWithArtistToAppType(found)
     } catch (error) {
-      console.error('Error getting product by id:', error)
+      logger.error('Error getting product by id', error, { id })
       throw error
     }
   }
@@ -162,23 +134,9 @@ class ProductsRepository {
         }
       })
 
-      return result.map((p) => ({
-        ...p,
-        price: Number(p.price),
-        sales: Number(p.sales),
-        stock: Number(p.stock),
-        yearCreated: p.yearCreated ?? undefined,
-        medium: p.medium ?? undefined,
-        dimensions: p.dimensions ?? undefined,
-        weight: p.weight ?? undefined,
-        style: p.style ?? undefined,
-        featureImage: p.featureImage ?? undefined,
-        images: p.images ?? undefined,
-        artistId: p.artistId ?? undefined,
-        deletedAt: p.deletedAt ?? undefined
-      })) as unknown as Product[]
+      return mapProductsWithArtistToAppType(result)
     } catch (error) {
-      console.error('Error getting products by artist:', error)
+      logger.error('Error getting products by artist', error, { artistId })
       throw error
     }
   }
@@ -192,23 +150,9 @@ class ProductsRepository {
         }
       })
 
-      return result.map((p) => ({
-        ...p,
-        price: Number(p.price),
-        sales: Number(p.sales),
-        stock: Number(p.stock),
-        yearCreated: p.yearCreated ?? undefined,
-        medium: p.medium ?? undefined,
-        dimensions: p.dimensions ?? undefined,
-        weight: p.weight ?? undefined,
-        style: p.style ?? undefined,
-        featureImage: p.featureImage ?? undefined,
-        images: p.images ?? undefined,
-        artistId: p.artistId ?? undefined,
-        deletedAt: p.deletedAt ?? undefined
-      })) as unknown as Product[]
+      return mapProductsWithArtistToAppType(result)
     } catch (error) {
-      console.error('Error getting featured products:', error)
+      logger.error('Error getting featured products', error)
       throw error
     }
   }
@@ -239,23 +183,9 @@ class ProductsRepository {
         })
         .returning()
 
-      return {
-        ...inserted,
-        price: Number(inserted.price),
-        sales: Number(inserted.sales),
-        stock: Number(inserted.stock),
-        yearCreated: inserted.yearCreated ?? undefined,
-        medium: inserted.medium ?? undefined,
-        dimensions: inserted.dimensions ?? undefined,
-        weight: inserted.weight ?? undefined,
-        style: inserted.style ?? undefined,
-        featureImage: inserted.featureImage ?? undefined,
-        images: inserted.images ?? undefined,
-        artistId: inserted.artistId ?? undefined,
-        deletedAt: inserted.deletedAt ?? undefined
-      } as unknown as Product
+      return mapProductToAppType(inserted)
     } catch (error) {
-      console.error('Error creating product:', error)
+      logger.error('Error creating product', error)
       throw error
     }
   }
@@ -267,9 +197,10 @@ class ProductsRepository {
       const { id, ...updateData } = product
 
       // Prepare update object, filtering undefined
-      const definedUpdates: any = {}
+      type UpdateFields = Partial<Omit<ProductUpdate, 'id'>>
+      const definedUpdates: Record<string, unknown> = {}
       for (const key in updateData) {
-        const val = (updateData as any)[key]
+        const val = updateData[key as keyof typeof updateData]
         if (val !== undefined) {
           if (key === 'price' || key === 'sales') {
             definedUpdates[key] = val.toString()
@@ -285,7 +216,7 @@ class ProductsRepository {
 
       return
     } catch (error) {
-      console.error('Error updating product:', error)
+      logger.error('Error updating product', error, { productId: product.id })
       throw error
     }
   }
@@ -295,7 +226,7 @@ class ProductsRepository {
       await db.delete(products).where(eq(products.id, id))
       return
     } catch (error) {
-      console.error('Error deleting product:', error)
+      logger.error('Error deleting product', error, { id })
       throw error
     }
   }
@@ -332,24 +263,19 @@ class ProductsRepository {
       // Result will be { products: ..., artists: ... } objects
       // We need to map it back to structure expected.
 
-      return result.map(({ products: p, artists: a }) => ({
-        ...p,
-        artist: a,
-        price: Number(p.price),
-        sales: Number(p.sales),
-        stock: Number(p.stock),
-        yearCreated: p.yearCreated ?? undefined,
-        medium: p.medium ?? undefined,
-        dimensions: p.dimensions ?? undefined,
-        weight: p.weight ?? undefined,
-        style: p.style ?? undefined,
-        featureImage: p.featureImage ?? undefined,
-        images: p.images ?? undefined,
-        artistId: p.artistId ?? undefined,
-        deletedAt: p.deletedAt ?? undefined
-      })) as unknown as Product[]
+      return result.map(({ products: p, artists: a }) => {
+        const product = mapProductToAppType(p)
+        return {
+          ...product,
+          artist: a ?? undefined
+        } as Product
+      })
     } catch (error) {
-      console.error('Error finding related products:', error)
+      logger.error('Error finding related products', error, {
+        artworkId,
+        category,
+        artistId
+      })
       throw error
     }
   }

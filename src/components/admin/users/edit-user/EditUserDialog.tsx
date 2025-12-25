@@ -25,14 +25,16 @@ const EditUserDialog = ({ user }: EditUserProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size='icon' variant='ghost'>
+        <Button size='icon' variant='ghost' aria-label='Edit user'>
           <Pencil className='size-4' />
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle>Update user</DialogTitle>
-          <DialogDescription></DialogDescription>
+          <DialogDescription>
+            Update user profile, role, and status
+          </DialogDescription>
         </DialogHeader>
         <Suspense
           fallback={<Skeleton className='h-[20px] w-full rounded-full' />}

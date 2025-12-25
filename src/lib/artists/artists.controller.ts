@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { FindOptionsOrderValue } from '../../types/common/db.type'
 import { ArtistsSortBy } from './model'
 import ArtistsService from './artists.service'
+import { validateSearchQuery } from '../utilities/search-query.util'
 
 export class ArtistsController {
   async getAllArtistsPublic(request: NextRequest): Promise<Response> {
@@ -29,13 +30,13 @@ export class ArtistsController {
     const page = parseInt(searchParams.get('page') || '1', 10)
     const limit = parseInt(searchParams.get('limit') || '3', 10)
     const order = (searchParams.get('order') || 'DESC') as FindOptionsOrderValue
-    const query = searchParams.get('query')
+    const query = validateSearchQuery(searchParams.get('query'))
 
     const { artists, total } = await artistsService.getPaged(
       { page, limit },
       sortBy,
       order,
-      query || undefined
+      query
     )
 
     const sanitizedArtists = artists.map(

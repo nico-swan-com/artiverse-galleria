@@ -1,35 +1,18 @@
 'use server'
 
 import nodemailer from 'nodemailer'
-const SMTP_SERVER_HOST = process.env.SMTP_SERVER_HOST
-const SMTP_SERVER_USERNAME = process.env.SMTP_SERVER_USERNAME
-const SMTP_SERVER_PASSWORD = process.env.SMTP_SERVER_PASSWORD
-const SITE_MAIL_RECEIVER = process.env.SITE_MAIL_RECEIVER
-const SMTP_SERVER_PORT = process.env.SMTP_SERVER_PORT
-const SMTP_SERVER_SECURE = process.env.SMTP_SERVER_SECURE
-const SMTP_SIMULATOR = process.env.SMTP_SIMULATOR || 'true'
-
-if (
-  !SMTP_SERVER_HOST ||
-  !SMTP_SERVER_USERNAME ||
-  !SMTP_SERVER_PASSWORD ||
-  !SITE_MAIL_RECEIVER ||
-  !SMTP_SERVER_PORT ||
-  !SMTP_SERVER_SECURE
-) {
-  throw new Error(
-    'Please set SMTP_SERVER_HOST, SMTP_SERVER_USERNAME, SMTP_SERVER_PASSWORD, SITE_MAIL_RECEIVER, SMTP_SERVER_PORT, SMTP_SERVER_SECURE environment variables.'
-  )
-}
+import { env } from '../config/env.config'
+import { SMTP_CONFIG } from '../constants/app.constants'
+import { logger } from '../utilities/logger'
 
 const transporter = nodemailer.createTransport({
   service: 'smtp',
-  host: SMTP_SERVER_HOST,
-  port: Number(SMTP_SERVER_PORT),
-  secure: SMTP_SERVER_SECURE === 'true',
+  host: env.SMTP_SERVER_HOST,
+  port: env.SMTP_SERVER_PORT,
+  secure: env.SMTP_SERVER_SECURE,
   auth: {
-    user: SMTP_SERVER_USERNAME,
-    pass: SMTP_SERVER_PASSWORD
+    user: env.SMTP_SERVER_USERNAME,
+    pass: env.SMTP_SERVER_PASSWORD
   }
 })
 
@@ -48,27 +31,31 @@ export async function sendMail({
 }) {
   const emailOptions = {
     from: email,
-    to: sendTo || SITE_MAIL_RECEIVER,
+    to: sendTo || env.SITE_MAIL_RECEIVER,
     subject: subject,
     text: text,
     html: html ? html : ''
   }
 
-  if (SMTP_SIMULATOR === 'true') {
+  if (env.SMTP_SIMULATOR) {
     // Simulate an API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    console.log('Message Sent', emailOptions)
+    await new Promise((resolve) =>
+      setTimeout(resolve, SMTP_CONFIG.SIMULATOR_DELAY)
+    )
+    logger.info('Message sent (simulated)', { emailOptions })
     return
   }
 
   try {
     await transporter.verify()
   } catch (error) {
-    console.error('Something Went Wrong', error)
+    logger.error('SMTP connection verification failed', error)
     return
   }
   const info = await transporter.sendMail(emailOptions)
-  console.log('Message Sent', info.messageId)
-  console.log('Mail sent to', SITE_MAIL_RECEIVER)
+  logger.info('Message sent', {
+    messageId: info.messageId,
+    recipient: env.SITE_MAIL_RECEIVER
+  })
   return info
 }

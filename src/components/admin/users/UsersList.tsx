@@ -5,8 +5,8 @@ import React from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { format } from 'date-fns'
 import { Badge } from '@/components/ui/badge'
-import EditUserDialog from './edit-user/EditUserDialog'
-import DeleteUserDialog from './delete-user/DeleteUserDialog'
+import EditUserSheet from './edit-user/EditUserDialog'
+import DeleteUserSheet from './delete-user/DeleteUserDialog'
 import {
   Table,
   TableBody,
@@ -22,6 +22,7 @@ import TablePagination from '@/components/common/ui/TablePagination'
 import { User } from '@/types/users/user.schema'
 import { UsersSortBy } from '@/types/users/users-sort-by.type'
 import { getAvatarUrl } from '@/lib/utilities/get-avatar-url'
+import { UserRoles } from '@/types/users/user-roles.enum'
 
 interface UsersListProps {
   users: User[]
@@ -30,6 +31,7 @@ interface UsersListProps {
   limit: number
   sortBy: UsersSortBy
   order: FindOptionsOrderValue
+  currentUserRole: UserRoles
 }
 
 const UsersList = ({
@@ -38,7 +40,8 @@ const UsersList = ({
   page,
   limit,
   sortBy,
-  order
+  order,
+  currentUserRole
 }: UsersListProps) => {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -130,7 +133,7 @@ const UsersList = ({
             </TableHeader>
             <TableBody>
               {users.map((user) => (
-                <TableRow key={user.id}>
+                <TableRow key={user.id} className='hover:bg-muted/50'>
                   <TableCell>
                     <div className='flex items-center gap-3'>
                       <Avatar>
@@ -166,8 +169,10 @@ const UsersList = ({
                     {format(new Date(user.createdAt), 'MMM d, yyyy')}
                   </TableCell>
                   <TableCell className='text-end'>
-                    <EditUserDialog user={user} />
-                    <DeleteUserDialog user={user} />
+                    <EditUserSheet user={user} />
+                    {currentUserRole === UserRoles.Admin && (
+                      <DeleteUserSheet user={user} />
+                    )}
                   </TableCell>
                 </TableRow>
               ))}

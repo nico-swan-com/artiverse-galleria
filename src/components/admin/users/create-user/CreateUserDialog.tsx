@@ -27,7 +27,9 @@ const CreateUserDialog = () => {
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle>Add new user</DialogTitle>
-          <DialogDescription></DialogDescription>
+          <DialogDescription>
+            Create a new user account with email and password
+          </DialogDescription>
         </DialogHeader>
         <Suspense>
           <CreateUserForm onClose={() => setOpen(false)} />

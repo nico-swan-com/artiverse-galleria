@@ -5,31 +5,36 @@ import { getUsers } from './data/users'
 import { artists as artistsData } from './data/artists'
 import { artworks as productsData } from './data/artworks'
 import { mediaFiles as mediaData } from './data/media'
-import { Table, getTableName, sql } from 'drizzle-orm'
+import { Table } from 'drizzle-orm'
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
+import type * as schema from './schema'
+import { logger } from '../utilities/logger'
 
-async function resetTable(db: any, table: Table) {
+type Database = NodePgDatabase<typeof schema>
+
+async function resetTable(db: Database, table: Table) {
   return db.delete(table)
 }
 
 async function seed() {
   try {
-    console.log('🌱 Starting seed...')
+    logger.info('Starting database seed')
 
     // 1. Clean up existing data in reverse order of dependency
-    console.log('🧹 Cleaning database...')
+    logger.info('Cleaning database')
     await resetTable(db, products)
     await resetTable(db, artists)
     await resetTable(db, media)
     await resetTable(db, users)
 
     // 2. Seed Users
-    console.log('👤 Seeding users...')
+    logger.info('Seeding users')
     const usersData = await getUsers()
     await db.insert(users).values(usersData)
-    console.log('✅ Users seeded')
+    logger.info('Users seeded', { count: usersData.length })
 
     // 3. Seed Media
-    console.log('🖼️ Seeding media...')
+    logger.info('Seeding media')
     // Media data usually has 'id' which might conflict if we allow auto-gen, but here we provide IDs
     // Convert hex string data to Buffer and date strings to Date objects
     const mediaDataWithBuffers = mediaData.map((item) => ({
@@ -39,15 +44,15 @@ async function seed() {
       updatedAt: new Date(item.updatedAt)
     }))
     await db.insert(media).values(mediaDataWithBuffers)
-    console.log('✅ Media seeded')
+    logger.info('Media seeded', { count: mediaDataWithBuffers.length })
 
     // 4. Seed Artists
-    console.log('🎨 Seeding artists...')
+    logger.info('Seeding artists')
     await db.insert(artists).values(artistsData)
-    console.log('✅ Artists seeded')
+    logger.info('Artists seeded', { count: artistsData.length })
 
     // 5. Seed Products
-    console.log('📦 Seeding products...')
+    logger.info('Seeding products')
     // Convert price and sales from number to string for decimal type
     // Ensure featureImage is a string (not File)
     // Filter images array to only include strings
@@ -66,14 +71,18 @@ async function seed() {
         : item.images
     }))
     await db.insert(products).values(productsDataWithStringPrice)
-    console.log('✅ Products seeded')
+    logger.info('Products seeded', {
+      count: productsDataWithStringPrice.length
+    })
 
-    console.log('✅ Seeding completed!')
-    process.exit(0)
+    logger.info('Seeding completed successfully')
   } catch (error) {
-    console.error('❌ Seeding failed:', error)
-    process.exit(1)
+    logger.error('Seeding failed', error)
+    throw error
   }
 }
 
-seed()
+seed().catch((error) => {
+  logger.error('Fatal error during seeding', error)
+  process.exit(1)
+})

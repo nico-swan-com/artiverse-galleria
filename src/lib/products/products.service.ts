@@ -9,30 +9,46 @@ import {
   ProductCreate,
   ProductUpdate
 } from '../../types/products/product.schema'
+import { isBuildPhase } from '../utilities/build-phase.util'
+import { CacheTagGenerator } from '../cache/cache-tag.util'
+import { CACHE_CONFIG } from '../constants/app.constants'
+import { logger } from '../utilities/logger'
 
+/**
+ * ProductsService handles business logic for product operations
+ * Provides caching, build-phase handling, and delegates to repository
+ */
 export default class ProductsService {
-  repository: ProductsRepository
+  private repository: ProductsRepository
 
-  constructor() {
-    this.repository = new ProductsRepository()
+  /**
+   * Creates a new ProductsService instance
+   * @param repository - Optional ProductsRepository instance for dependency injection
+   */
+  constructor(repository?: ProductsRepository) {
+    this.repository = repository || new ProductsRepository()
   }
 
+  /**
+   * Get all products with sorting
+   * @param sortBy - Field to sort by
+   * @param order - Sort order (ASC or DESC)
+   * @returns Products with total count
+   */
   async getAll(
     sortBy: ProductsSortBy,
     order: FindOptionsOrderValue
   ): Promise<Products> {
     // Return empty result during build time
-    if (
-      process.env.NODE_ENV === 'production' &&
-      process.env.NEXT_PHASE === 'phase-production-build'
-    ) {
+    if (isBuildPhase()) {
       return {
         products: [],
         total: 0
       }
     }
 
-    const tag = `products-${sortBy}-${order}`
+    const orderStr = typeof order === 'string' ? order : 'DESC'
+    const tag = CacheTagGenerator.products(sortBy, orderStr)
     const getAll = unstable_cache(
       async (
         sortBy: ProductsSortBy,
@@ -43,8 +59,8 @@ export default class ProductsService {
       },
       [tag],
       {
-        tags: [tag, 'products'],
-        revalidate: 60
+        tags: [tag, CACHE_CONFIG.TAGS.PRODUCTS],
+        revalidate: CACHE_CONFIG.DEFAULT_REVALIDATE
       }
     )
     return getAll(sortBy, order)
@@ -57,17 +73,19 @@ export default class ProductsService {
     searchQuery?: string
   ): Promise<Products> {
     // Return empty result during build time
-    if (
-      process.env.NODE_ENV === 'production' &&
-      process.env.NEXT_PHASE === 'phase-production-build'
-    ) {
+    if (isBuildPhase()) {
       return {
         products: [],
         total: 0
       }
     }
 
-    const tag = `products-page-${pagination.page}-limit-${pagination.limit}-${sortBy}-${order}`
+    const tag = CacheTagGenerator.productsPaged(
+      pagination.page,
+      pagination.limit,
+      sortBy,
+      typeof order === 'string' ? order : 'DESC'
+    )
     const getPaged = unstable_cache(
       async (
         pagination: PaginationParams,
@@ -85,23 +103,25 @@ export default class ProductsService {
       },
       [tag],
       {
-        tags: [tag, 'products'],
-        revalidate: 1
+        tags: [tag, CACHE_CONFIG.TAGS.PRODUCTS],
+        revalidate: CACHE_CONFIG.SHORT_REVALIDATE
       }
     )
     return getPaged(pagination, sortBy, order, searchQuery)
   }
 
+  /**
+   * Get a single product by ID
+   * @param id - Product ID
+   * @returns Product or null if not found
+   */
   async getById(id: string): Promise<Product | null> {
     // Return null during build time
-    if (
-      process.env.NODE_ENV === 'production' &&
-      process.env.NEXT_PHASE === 'phase-production-build'
-    ) {
+    if (isBuildPhase()) {
       return null
     }
 
-    const tag = `product-${id}`
+    const tag = CacheTagGenerator.product(id)
     const getById = unstable_cache(
       async (id: string): Promise<Product | null> => {
         const result = await this.repository.getById(id)
@@ -109,86 +129,109 @@ export default class ProductsService {
       },
       [tag],
       {
-        tags: [tag, 'products']
+        tags: [tag, CACHE_CONFIG.TAGS.PRODUCTS]
       }
     )
     return getById(id)
   }
 
+  /**
+   * Get featured products
+   * @returns Array of featured products
+   */
   async getFeaturedProducts(): Promise<Product[]> {
     // Return empty result during build time
-    if (
-      process.env.NODE_ENV === 'production' &&
-      process.env.NEXT_PHASE === 'phase-production-build'
-    ) {
+    if (isBuildPhase()) {
       return []
     }
 
-    const tag = `featured-products`
+    const tag = CacheTagGenerator.featuredProducts()
     const getFeaturedProductsCached = unstable_cache(
       async (): Promise<Product[]> => {
         return this.repository.getFeaturedProducts()
       },
       [tag],
       {
-        tags: [tag]
+        tags: [tag, CACHE_CONFIG.TAGS.PRODUCTS]
       }
     )
     return getFeaturedProductsCached()
   }
 
+  /**
+   * Get products by artist ID
+   * @param artistId - Artist ID
+   * @returns Array of products by the artist
+   */
   async getByArtistId(artistId: string): Promise<Product[]> {
     // Return empty result during build time
-    if (
-      process.env.NODE_ENV === 'production' &&
-      process.env.NEXT_PHASE === 'phase-production-build'
-    ) {
+    if (isBuildPhase()) {
       return []
     }
 
-    const tag = `products-artist-${artistId}`
+    const tag = CacheTagGenerator.productsByArtist(artistId)
     const getByArtistIdCached = unstable_cache(
       async (artistId: string): Promise<Product[]> => {
         return this.repository.getByArtistId(artistId)
       },
       [tag],
       {
-        tags: [tag, 'products']
+        tags: [tag, CACHE_CONFIG.TAGS.PRODUCTS]
       }
     )
     return getByArtistIdCached(artistId)
   }
 
+  /**
+   * Create a new product
+   * @param product - Product creation data
+   * @returns Created product
+   */
   async create(product: ProductCreate): Promise<Product> {
     try {
       const result = await this.repository.create(product)
       return result
     } catch (error) {
-      console.error('Error creating product:', error)
+      logger.error('Error creating product', error)
       throw error
     }
   }
 
+  /**
+   * Update an existing product
+   * @param product - Product update data (must include id)
+   */
   async update(product: ProductUpdate): Promise<void> {
     try {
       await this.repository.update(product)
       return
     } catch (error) {
-      console.error('Error updating product:', error)
+      logger.error('Error updating product', error, { productId: product.id })
       throw error
     }
   }
 
+  /**
+   * Delete a product by ID
+   * @param id - Product ID to delete
+   */
   async delete(id: string): Promise<void> {
     try {
       await this.repository.delete(id)
       return
     } catch (error) {
-      console.error('Error deleting product:', error)
+      logger.error('Error deleting product', error, { id })
       throw error
     }
   }
 
+  /**
+   * Find related products based on category and artist
+   * @param artworkId - ID of the artwork to exclude from results
+   * @param category - Product category to match
+   * @param artistId - Artist ID to match
+   * @returns Array of related products (max 4, randomly ordered)
+   */
   async findRelated(
     artworkId: string,
     category: string,
@@ -202,7 +245,11 @@ export default class ProductsService {
       )
       return result
     } catch (error) {
-      console.error('Error finding related products:', error)
+      logger.error('Error finding related products', error, {
+        artworkId,
+        category,
+        artistId
+      })
       throw error
     }
   }
