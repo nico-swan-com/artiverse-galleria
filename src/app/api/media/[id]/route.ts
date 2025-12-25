@@ -272,9 +272,12 @@ export async function GET(req: NextRequest, context: unknown) {
     const headers = new Headers()
     headers.set('Content-Type', outputFormat)
     headers.set('Content-Length', processedBuffer.byteLength.toString())
+    const hasTimestamp = url.searchParams.has('t')
     headers.set(
       'Cache-Control',
-      `public, max-age=${CACHE_CONFIG.LONG_CACHE_DURATION}, immutable`
+      hasTimestamp
+        ? 'no-store, no-cache, must-revalidate, proxy-revalidate'
+        : `public, max-age=60, no-cache`
     )
     headers.set('ETag', etag)
 

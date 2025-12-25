@@ -5,17 +5,12 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 import { ProductsRepository } from '@/lib/products/products.repository'
 import { requireAuth } from '@/lib/authentication/require-auth'
 import { UserRoles } from '@/types/users/user-roles.enum'
-
-export type DeleteProductState = {
-  success: boolean
-  message: string
-  errors?: Record<string, string[]>
-}
+import { FormState } from '@/types/common/form-state.type'
 
 export async function deleteProductAction(
-  prevState: DeleteProductState,
+  prevState: FormState,
   formData: FormData
-): Promise<DeleteProductState> {
+): Promise<FormState> {
   try {
     // Authorization: Only Admin or ShopManager can delete products
     await requireAuth([UserRoles.Admin, UserRoles.ShopManager])

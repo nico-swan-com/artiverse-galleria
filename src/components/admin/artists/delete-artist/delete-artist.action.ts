@@ -5,17 +5,12 @@ import { revalidateTag } from 'next/cache'
 import { ArtistsRepository } from '@/lib/artists'
 import { requireAuth } from '@/lib/authentication/require-auth'
 import { UserRoles } from '@/types/users/user-roles.enum'
-
-type DeleteArtistState = {
-  success: boolean
-  message: string
-  errors?: Record<string, string[]>
-}
+import { FormState } from '@/types/common/form-state.type'
 
 async function deleteArtistAction(
-  prevState: DeleteArtistState,
+  prevState: FormState,
   formData: FormData
-): Promise<DeleteArtistState> {
+): Promise<FormState> {
   try {
     // Authorization: Only Admin can delete artists
     await requireAuth([UserRoles.Admin])

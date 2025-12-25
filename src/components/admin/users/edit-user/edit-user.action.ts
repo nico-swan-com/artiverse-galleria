@@ -52,9 +52,12 @@ async function editUserAction(
   const role = formData.get('role')?.toString() || prevState.role || ''
   const status = formData.get('status')?.toString() || prevState.status || ''
 
+  // Clean previous avatar URL from query params if it's a local media URL
+  const cleanPrevAvatar = prevState.avatar?.split('?')[0]
+
   const avatar =
     formData.get('avatarUrl')?.toString() ||
-    prevState.avatar ||
+    cleanPrevAvatar ||
     getAvatarUrl(email, name)
 
   const state: EditUserState = {
@@ -150,7 +153,8 @@ async function editUserAction(
     return {
       ...state,
       success: true,
-      message: 'User changed successfully!'
+      message: 'User changed successfully!',
+      avatar: values.avatar ? `${values.avatar}?t=${Date.now()}` : values.avatar
     }
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {

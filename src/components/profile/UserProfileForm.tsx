@@ -22,20 +22,16 @@ import {
   CollapsibleContent,
   CollapsibleTrigger
 } from '@/components/ui/collapsible'
+import { formInitialState } from '@/types/common/form-state.type'
 
 interface UserProfileFormProps {
   user: User
 }
 
-const initialFormState = {
-  success: false,
-  message: ''
-}
-
 const UserProfileForm = ({ user }: UserProfileFormProps) => {
   const [state, formAction, isPending] = useActionState(
     updateProfileAction,
-    initialFormState
+    formInitialState
   )
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
@@ -187,7 +183,6 @@ const UserProfileForm = ({ user }: UserProfileFormProps) => {
               <div className='space-y-2'>
                 <Label htmlFor='password'>New Password</Label>
                 <PasswordInput
-                  asChild
                   id='password'
                   name='password'
                   onValidChange={setIsPasswordValid}

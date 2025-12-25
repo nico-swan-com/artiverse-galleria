@@ -6,10 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import { formInitialState } from '@/types'
-import {
-  deleteProductAction,
-  DeleteProductState
-} from './delete-product.action'
+import { deleteProductAction } from './delete-product.action'
 import { ProductDelete } from '@/types/products/product.schema'
 
 interface DeleteProductFormProps {
@@ -20,7 +17,7 @@ interface DeleteProductFormProps {
 const DeleteProductForm = ({ product, onClose }: DeleteProductFormProps) => {
   const [state, formAction, isPending] = useActionState(
     deleteProductAction,
-    formInitialState as DeleteProductState
+    formInitialState
   )
 
   useEffect(() => {

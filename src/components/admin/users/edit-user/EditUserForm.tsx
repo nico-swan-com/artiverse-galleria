@@ -146,7 +146,11 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
         <Label htmlFor='avatarFile'>Avatar</Label>
         <AvatarImageInput
           url={
-            avatarPreview || state.avatar || getAvatarUrl(user.email, user.name)
+            avatarPreview ||
+            state.avatar ||
+            (user.avatar && user.updatedAt
+              ? `${user.avatar}?v=${new Date(user.updatedAt).getTime()}`
+              : getAvatarUrl(user.email, user.name))
           }
           onChangeAction={handleAvatarChange}
           maxFileSize={MAX_FILE_SIZE}

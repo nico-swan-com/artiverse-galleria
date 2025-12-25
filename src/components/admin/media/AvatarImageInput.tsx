@@ -1,7 +1,7 @@
 'use client'
 
 import { CircleUserRoundIcon, Pencil } from 'lucide-react'
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import AvatarCropDialog from './AvatarCropDialog'
@@ -38,6 +38,10 @@ export default function AvatarImageInput({
   const inputRef = useRef<HTMLInputElement>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(url || null)
   const [fileError, setFileError] = useState<string | null>(null)
+
+  useEffect(() => {
+    setPreviewUrl(url || null)
+  }, [url])
 
   // Cropper state
   const [cropDialogOpen, setCropDialogOpen] = useState(false)

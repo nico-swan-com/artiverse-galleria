@@ -5,17 +5,12 @@ import { UsersRepository } from '@/lib/users/users.repository'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { requireAuth } from '@/lib/authentication/require-auth'
 import { UserRoles } from '@/types/users/user-roles.enum'
-
-export type DeleteUserState = {
-  success: boolean
-  message: string
-  errors?: Record<string, string[]>
-}
+import { FormState } from '@/types/common/form-state.type'
 
 async function deleteUserAction(
-  prevState: DeleteUserState | undefined,
+  prevState: FormState | undefined,
   formData: FormData
-): Promise<DeleteUserState> {
+): Promise<FormState> {
   try {
     // Authorization: Only Admin can delete users
     await requireAuth([UserRoles.Admin])

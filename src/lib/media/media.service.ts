@@ -173,4 +173,31 @@ export class MediaService {
     }
     return this.mediaRepository.createAndSave(newMedia)
   }
+  /**
+   * Process and upload a raw File.
+   * @param file - The standard File object
+   * @param tag - Optional tag to add to the media
+   * @returns Object containing the uploaded Media entity and its URL
+   */
+  async processAndUploadImage(
+    file: File,
+    tag?: string
+  ): Promise<{ url: string; media: Media }> {
+    const buffer = Buffer.from(await file.arrayBuffer())
+
+    const mediaCreate: MediaCreate = {
+      fileName: file.name,
+      mimeType: file.type,
+      fileSize: file.size,
+      data: buffer,
+      tags: tag ? [tag] : undefined
+    }
+
+    const media = await this.uploadImage(mediaCreate)
+
+    return {
+      url: `/api/media/${media.id}`,
+      media
+    }
+  }
 }
