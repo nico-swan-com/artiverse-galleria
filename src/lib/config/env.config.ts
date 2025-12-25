@@ -58,27 +58,58 @@ const envSchema = z.object({
  * Validated environment configuration
  * Throws error if validation fails at startup
  */
-export const env = envSchema.parse({
-  NODE_ENV: process.env.NODE_ENV,
-  NEXT_PHASE: process.env.NEXT_PHASE,
-  PORT: process.env.PORT,
-  POSTGRES_HOST: process.env.POSTGRES_HOST,
-  POSTGRES_PORT: process.env.POSTGRES_PORT,
-  POSTGRES_USER: process.env.POSTGRES_USER,
-  POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
-  POSTGRES_DATABASE: process.env.POSTGRES_DATABASE,
-  POSTGRES_SSL: process.env.POSTGRES_SSL,
-  SMTP_SERVER_HOST: process.env.SMTP_SERVER_HOST,
-  SMTP_SERVER_USERNAME: process.env.SMTP_SERVER_USERNAME,
-  SMTP_SERVER_PASSWORD: process.env.SMTP_SERVER_PASSWORD,
-  SITE_MAIL_RECEIVER: process.env.SITE_MAIL_RECEIVER,
-  SMTP_SERVER_PORT: process.env.SMTP_SERVER_PORT,
-  SMTP_SERVER_SECURE: process.env.SMTP_SERVER_SECURE,
-  SMTP_SIMULATOR: process.env.SMTP_SIMULATOR,
-  NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
-  BUILD_TYPE: process.env.BUILD_TYPE,
-  SERVER_ACTIONS_BODY_SIZE_LIMIT: process.env.SERVER_ACTIONS_BODY_SIZE_LIMIT
-})
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const skipValidation =
+  !!process.env.SKIP_ENV_VALIDATION ||
+  process.env.npm_lifecycle_event === 'lint'
+
+export const env = (
+  skipValidation
+    ? {
+        NODE_ENV: process.env.NODE_ENV,
+        NEXT_PHASE: process.env.NEXT_PHASE,
+        PORT: process.env.PORT,
+        POSTGRES_HOST: process.env.POSTGRES_HOST,
+        POSTGRES_PORT: process.env.POSTGRES_PORT,
+        POSTGRES_USER: process.env.POSTGRES_USER,
+        POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
+        POSTGRES_DATABASE: process.env.POSTGRES_DATABASE,
+        POSTGRES_SSL: process.env.POSTGRES_SSL,
+        SMTP_SERVER_HOST: process.env.SMTP_SERVER_HOST,
+        SMTP_SERVER_USERNAME: process.env.SMTP_SERVER_USERNAME,
+        SMTP_SERVER_PASSWORD: process.env.SMTP_SERVER_PASSWORD,
+        SITE_MAIL_RECEIVER: process.env.SITE_MAIL_RECEIVER,
+        SMTP_SERVER_PORT: process.env.SMTP_SERVER_PORT,
+        SMTP_SERVER_SECURE: process.env.SMTP_SERVER_SECURE,
+        SMTP_SIMULATOR: process.env.SMTP_SIMULATOR,
+        NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+        BUILD_TYPE: process.env.BUILD_TYPE,
+        SERVER_ACTIONS_BODY_SIZE_LIMIT:
+          process.env.SERVER_ACTIONS_BODY_SIZE_LIMIT
+      }
+    : envSchema.parse({
+        NODE_ENV: process.env.NODE_ENV,
+        NEXT_PHASE: process.env.NEXT_PHASE,
+        PORT: process.env.PORT,
+        POSTGRES_HOST: process.env.POSTGRES_HOST,
+        POSTGRES_PORT: process.env.POSTGRES_PORT,
+        POSTGRES_USER: process.env.POSTGRES_USER,
+        POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
+        POSTGRES_DATABASE: process.env.POSTGRES_DATABASE,
+        POSTGRES_SSL: process.env.POSTGRES_SSL,
+        SMTP_SERVER_HOST: process.env.SMTP_SERVER_HOST,
+        SMTP_SERVER_USERNAME: process.env.SMTP_SERVER_USERNAME,
+        SMTP_SERVER_PASSWORD: process.env.SMTP_SERVER_PASSWORD,
+        SITE_MAIL_RECEIVER: process.env.SITE_MAIL_RECEIVER,
+        SMTP_SERVER_PORT: process.env.SMTP_SERVER_PORT,
+        SMTP_SERVER_SECURE: process.env.SMTP_SERVER_SECURE,
+        SMTP_SIMULATOR: process.env.SMTP_SIMULATOR,
+        NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+        BUILD_TYPE: process.env.BUILD_TYPE,
+        SERVER_ACTIONS_BODY_SIZE_LIMIT:
+          process.env.SERVER_ACTIONS_BODY_SIZE_LIMIT
+      })
+) as EnvConfig
 
 /**
  * Type-safe environment configuration
