@@ -12,7 +12,7 @@ export default async function ProtectedLayout({
   const session = await auth()
 
   if (!session?.user) {
-    redirect('/auth/login')
+    redirect('/login')
   }
 
   const role = session.user.role as UserRoles
