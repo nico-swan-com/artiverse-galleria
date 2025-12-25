@@ -1,7 +1,7 @@
 import { Media, NewMedia } from '../database/schema'
 import { db } from '../database/drizzle'
 import { media } from '../database/schema'
-import { eq } from 'drizzle-orm'
+import { eq, and, arrayContains } from 'drizzle-orm'
 import { logger } from '../utilities/logger'
 
 // We need to support MediaEntity signature in createAndSave because usages pass the entity.
@@ -10,8 +10,22 @@ import { logger } from '../utilities/logger'
 export class MediaRepository {
   async getAll(): Promise<Media[]> {
     try {
-      const all = await db.query.media.findMany()
-      return all as Media[]
+      const all = await db.query.media.findMany({
+        columns: {
+          id: true,
+          fileName: true,
+          mimeType: true,
+          fileSize: true,
+          altText: true,
+          contentHash: true,
+          tags: true,
+          createdAt: true,
+          updatedAt: true
+        }
+      })
+      // Cast to Media[] but note that 'data' will be missing
+      // Logic that requires 'data' should use getById
+      return all as unknown as Media[]
     } catch (error) {
       logger.error('Error getting all media', error)
       throw error
@@ -93,6 +107,23 @@ export class MediaRepository {
     } catch (error) {
       logger.error('Error finding media by content hash', error, {
         contentHash
+      })
+      throw error
+    }
+  }
+  async findByNameAndTag(fileName: string, tag: string): Promise<Media | null> {
+    try {
+      const found = await db.query.media.findFirst({
+        where: and(
+          eq(media.fileName, fileName),
+          arrayContains(media.tags, [tag])
+        )
+      })
+      return found as Media | null
+    } catch (error) {
+      logger.error('Error finding media by name and tag', error, {
+        fileName,
+        tag
       })
       throw error
     }

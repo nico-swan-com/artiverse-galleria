@@ -118,4 +118,59 @@ export class MediaService {
 
     return updated
   }
+  /**
+   * Upload or replace a user avatar.
+   * Checks for existing media with same fileName and 'user avatar' tag.
+   * If found, overwrites it. Otherwise creates new (ignoring hash duplicates to ensure naming).
+   */
+  async uploadOrReplaceUserAvatar(file: MediaCreate): Promise<Media> {
+    // Validate file
+    MediaValidator.validateMediaFile(file)
+
+    // Convert to buffer if needed
+    let bufferData: Buffer
+    if (file.data instanceof File) {
+      bufferData = Buffer.from(await file.data.arrayBuffer())
+    } else {
+      bufferData = file.data
+    }
+
+    // Calculate hash
+    const hash = await MediaHasher.calculateHash(bufferData)
+
+    // Check for existing by name and tag
+    const existing = await this.mediaRepository.findByNameAndTag(
+      file.fileName,
+      'user avatar'
+    )
+
+    if (existing) {
+      // Update
+      const updated = await this.mediaRepository.update(existing.id, {
+        fileName: file.fileName,
+        mimeType: file.mimeType,
+        fileSize: file.fileSize,
+        data: bufferData,
+        contentHash: hash,
+        altText: file.altText,
+        tags: file.tags
+      })
+      if (!updated) {
+        throw new NotFoundError('Media', existing.id)
+      }
+      return updated
+    }
+
+    // Create new
+    const newMedia: NewMedia = {
+      fileName: file.fileName,
+      mimeType: file.mimeType,
+      fileSize: file.fileSize,
+      data: bufferData,
+      contentHash: hash,
+      altText: file.altText,
+      tags: file.tags
+    }
+    return this.mediaRepository.createAndSave(newMedia)
+  }
 }

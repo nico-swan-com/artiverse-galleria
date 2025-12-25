@@ -102,14 +102,14 @@ async function editUserAction(
       const mediaFiles = new MediaService()
       const data = await avatarFile.arrayBuffer()
       const newImage: MediaCreate = {
-        fileName: avatarFile.name,
+        fileName: name,
         fileSize: avatarFile.size,
         mimeType: avatarFile.type,
         data: Buffer.from(data),
         altText: name,
-        tags: ['avatar', 'user', 'profile']
+        tags: ['user avatar', 'user', 'profile']
       }
-      const newAvatarUrl = await mediaFiles.uploadImage(newImage)
+      const newAvatarUrl = await mediaFiles.uploadOrReplaceUserAvatar(newImage)
       values.avatar = `/api/media/${newAvatarUrl.id}`
     }
 
