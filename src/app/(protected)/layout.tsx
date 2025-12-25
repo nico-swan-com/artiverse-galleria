@@ -59,6 +59,12 @@ export default function DashboardLayout({
       title: 'Media',
       icon: <Images size={18} />,
       path: '/admin/media'
+    },
+    {
+      id: 'profile',
+      title: 'Profile',
+      icon: <UserRound size={18} />,
+      path: '/profile'
     }
     // {
     //   title: 'Blog',

@@ -21,6 +21,11 @@ const sharedRemotePatterns = [
     protocol: 'https' as const,
     hostname: 'img.freepik.com',
     pathname: '/**'
+  },
+  {
+    protocol: 'https' as const,
+    hostname: 'github.com',
+    pathname: '/**'
   }
 ]
 
