@@ -53,7 +53,9 @@ async function editUserAction(
   const status = formData.get('status')?.toString() || prevState.status || ''
 
   const avatar =
-    formData.get('avatarUrl')?.toString() || getAvatarUrl(email, name)
+    formData.get('avatarUrl')?.toString() ||
+    prevState.avatar ||
+    getAvatarUrl(email, name)
 
   const state: EditUserState = {
     id: prevState.id,
