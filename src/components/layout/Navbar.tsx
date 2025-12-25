@@ -6,10 +6,19 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ShoppingCart, Search, Menu, X, User } from 'lucide-react'
+import { ShoppingCart, Search, Menu, X, User, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Logo from '../admin/users/create-user/logo/Logo'
 import { Button } from '../ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '../ui/dropdown-menu'
+import { signOut } from 'next-auth/react'
 
 const Navbar = () => {
   const { data: session } = useSession()
@@ -114,13 +123,36 @@ const Navbar = () => {
             )}
           </Link>
 
-          {!session && (
-            <Button asChild variant='outline' size='sm'>
-              <Link href='/login'>
-                <User className='mr-2 size-4' />
-                Login
-              </Link>
-            </Button>
+          {session ? (
+            <div className='flex items-center gap-2'>
+              <Button
+                variant='ghost'
+                size='icon'
+                className='relative h-9 w-9 rounded-full'
+                asChild
+              >
+                <Link href='/profile'>
+                  <User size={24} />
+                </Link>
+              </Button>
+              <Button
+                variant='ghost'
+                size='icon'
+                onClick={() => signOut({ callbackUrl: '/' })}
+                title='Log out'
+              >
+                <LogOut size={24} />
+              </Button>
+            </div>
+          ) : (
+            <div className='flex items-center gap-2'>
+              <Button asChild variant='ghost' size='sm'>
+                <Link href='/login'>Login</Link>
+              </Button>
+              <Button asChild size='sm'>
+                <Link href='/register'>Register</Link>
+              </Button>
+            </div>
           )}
 
           {isMobile && (

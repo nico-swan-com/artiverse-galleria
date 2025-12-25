@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/sheet'
 
 import { Pencil } from 'lucide-react'
-import { useState, Suspense } from 'react'
+import { useState, Suspense, useCallback } from 'react'
 import EditUserForm from './EditUserForm'
 import { Skeleton } from '@/components/ui/skeleton'
 import { User } from '@/types/users/user.schema'
@@ -21,6 +21,10 @@ type EditUserProps = {
 
 const EditUserSheet = ({ user }: EditUserProps) => {
   const [isOpen, setOpen] = useState(false)
+
+  const handleClose = useCallback(() => {
+    setOpen(false)
+  }, [])
 
   return (
     <Sheet open={isOpen} onOpenChange={setOpen}>
@@ -39,7 +43,7 @@ const EditUserSheet = ({ user }: EditUserProps) => {
         <Suspense
           fallback={<Skeleton className='h-[20px] w-full rounded-full' />}
         >
-          {user && <EditUserForm user={user} onClose={() => setOpen(false)} />}
+          {user && <EditUserForm user={user} onClose={handleClose} />}
         </Suspense>
       </SheetContent>
     </Sheet>

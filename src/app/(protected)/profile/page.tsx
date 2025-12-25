@@ -18,7 +18,7 @@ const ProfilePage = async () => {
   const session = await auth()
 
   if (!session?.user?.id) {
-    redirect('/auth/login')
+    redirect('/')
   }
 
   const currentUser = await db.query.users.findFirst({
@@ -31,48 +31,92 @@ const ProfilePage = async () => {
 
   return (
     <PageTransition>
-      <div className='max-w-4xl space-y-6'>
-        <div>
-          <h1 className='text-3xl font-bold tracking-tight'>Profile</h1>
+      <div className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
+        <div className='mb-8'>
+          <h1 className='text-2xl font-bold text-gray-900'>Profile Settings</h1>
           <p className='text-muted-foreground'>
-            Manage your account settings and preferences.
+            Manage your account preferences and personal information.
           </p>
         </div>
 
-        <Tabs defaultValue='general' className='w-full'>
-          <TabsList className='grid w-full grid-cols-3 lg:w-[400px]'>
-            <TabsTrigger value='general'>General</TabsTrigger>
-            <TabsTrigger value='activity'>Activity</TabsTrigger>
-            <TabsTrigger value='billing'>Billing</TabsTrigger>
-          </TabsList>
+        <Tabs
+          defaultValue='general'
+          className='flex flex-col gap-8 lg:flex-row'
+        >
+          <div className='w-full lg:w-64'>
+            <TabsList className='flex h-auto w-full flex-col space-y-1 bg-transparent p-0'>
+              <TabsTrigger
+                value='general'
+                className='w-full justify-start rounded-md px-4 py-2 font-medium data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm'
+              >
+                General
+              </TabsTrigger>
+              <TabsTrigger
+                value='activity'
+                className='w-full justify-start rounded-md px-4 py-2 font-medium data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm'
+              >
+                Activity
+              </TabsTrigger>
+              <TabsTrigger
+                value='billing'
+                className='w-full justify-start rounded-md px-4 py-2 font-medium data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm'
+              >
+                Billing
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
-          <TabsContent value='general' className='mt-6 rounded-md border p-6'>
-            <UserProfileForm user={JSON.parse(JSON.stringify(currentUser))} />
-          </TabsContent>
-
-          <TabsContent value='activity' className='mt-6 rounded-md border p-6'>
-            <div className='flex h-[200px] flex-col items-center justify-center text-center'>
-              <div className='rounded-full bg-muted p-4'>
-                <span className='text-2xl'>📊</span>
+          <div className='flex-1'>
+            <TabsContent value='general' className='mt-0'>
+              <div className='overflow-hidden rounded-lg bg-white shadow-sm'>
+                <div className='border-b border-gray-100 bg-white p-6'>
+                  <h2 className='text-lg font-semibold text-gray-900'>
+                    General Information
+                  </h2>
+                  <p className='text-sm text-muted-foreground'>
+                    Update your photo and personal details.
+                  </p>
+                </div>
+                <div className='p-6'>
+                  <UserProfileForm
+                    user={JSON.parse(JSON.stringify(currentUser))}
+                  />
+                </div>
               </div>
-              <h3 className='mt-4 text-lg font-medium'>Activity Tracking</h3>
-              <p className='mt-2 text-sm text-muted-foreground'>
-                Your recent activity and history will appear here.
-              </p>
-            </div>
-          </TabsContent>
+            </TabsContent>
 
-          <TabsContent value='billing' className='mt-6 rounded-md border p-6'>
-            <div className='flex h-[200px] flex-col items-center justify-center text-center'>
-              <div className='rounded-full bg-muted p-4'>
-                <span className='text-2xl'>💳</span>
+            <TabsContent value='activity' className='mt-0'>
+              <div className='overflow-hidden rounded-lg bg-white p-6 shadow-sm'>
+                <div className='flex h-[200px] flex-col items-center justify-center text-center'>
+                  <div className='mb-4 rounded-full bg-gray-50 p-4'>
+                    <span className='text-2xl'>📊</span>
+                  </div>
+                  <h3 className='text-lg font-medium text-gray-900'>
+                    Activity Tracking
+                  </h3>
+                  <p className='mt-1 text-sm text-gray-500'>
+                    Your recent activity and history will appear here.
+                  </p>
+                </div>
               </div>
-              <h3 className='mt-4 text-lg font-medium'>Billing & Payments</h3>
-              <p className='mt-2 text-sm text-muted-foreground'>
-                Payment history and subscriptions will appear here.
-              </p>
-            </div>
-          </TabsContent>
+            </TabsContent>
+
+            <TabsContent value='billing' className='mt-0'>
+              <div className='overflow-hidden rounded-lg bg-white p-6 shadow-sm'>
+                <div className='flex h-[200px] flex-col items-center justify-center text-center'>
+                  <div className='mb-4 rounded-full bg-gray-50 p-4'>
+                    <span className='text-2xl'>💳</span>
+                  </div>
+                  <h3 className='text-lg font-medium text-gray-900'>
+                    Billing & Payments
+                  </h3>
+                  <p className='mt-1 text-sm text-gray-500'>
+                    Payment history and subscriptions will appear here.
+                  </p>
+                </div>
+              </div>
+            </TabsContent>
+          </div>
         </Tabs>
       </div>
     </PageTransition>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useEffect } from 'react'
 import { Button } from '../ui/button'
 import {
   Card,
@@ -13,7 +13,7 @@ import {
 import { Input } from '../ui/input'
 import submitLogin, { LoginState } from './submit-login.action'
 import { Label } from '../ui/label'
-import { redirect } from 'next/navigation'
+import Link from 'next/link'
 
 interface LoginFormProps {
   callbackUrl?: string
@@ -33,9 +33,11 @@ const LoginForm = ({ callbackUrl }: LoginFormProps) => {
     initialFormState
   )
 
-  if (state.success) {
-    redirect(callbackUrl || '/')
-  }
+  useEffect(() => {
+    if (state.success) {
+      window.location.href = callbackUrl || '/'
+    }
+  }, [state.success, callbackUrl])
 
   return (
     <Card className='border-gray-100 shadow-elevated'>
@@ -65,11 +67,22 @@ const LoginForm = ({ callbackUrl }: LoginFormProps) => {
             <Input id='password' name='password' type='password' required />
           </div>
         </CardContent>
-        <CardFooter>
-          <p aria-live='polite'>{state?.message}</p>
+        <CardFooter className='flex flex-col space-y-4'>
+          <p aria-live='polite' className='text-sm text-destructive'>
+            {state?.message}
+          </p>
           <Button type='submit' className='w-full' disabled={isPending}>
             {isPending ? 'Signing in...' : 'Sign in'}
           </Button>
+          <div className='text-center text-sm text-muted-foreground'>
+            Don&apos;t have an account?{' '}
+            <Link
+              href='/register'
+              className='text-primary underline-offset-4 hover:underline'
+            >
+              Register
+            </Link>
+          </div>
         </CardFooter>
       </form>
     </Card>
