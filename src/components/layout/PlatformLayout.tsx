@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { SessionProvider } from 'next-auth/react'
+import { Breadcrumbs } from '../common/ui/Breadcrumbs'
 
 export default function PlatformLayout({
   children
@@ -86,6 +87,7 @@ export default function PlatformLayout({
           <MobileNavbar menuItems={menuItems} />
           <main className='flex-1 transition-all duration-300 ease-in-out'>
             <div className='mx-auto max-w-7xl px-4 py-6 sm:px-6 md:px-8'>
+              <Breadcrumbs />
               <AnimatePresence mode='wait'>{children}</AnimatePresence>
             </div>
           </main>
