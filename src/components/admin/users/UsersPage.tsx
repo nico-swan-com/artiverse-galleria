@@ -2,7 +2,7 @@
 
 import PageTransition from '@/components/common/utility/PageTransition'
 import UsersList from './UsersList'
-import CreateUserDialog from './create-user/CreateUserDialog'
+import CreateUserSheet from './create-user/CreateUserDialog'
 import { User } from '@/types/users/user.schema'
 import { UsersSortBy } from '@/types/users/users-sort-by.type'
 import { FindOptionsOrderValue } from '@/types/common/db.type'
@@ -32,7 +32,7 @@ const UsersPage = ({
       <div className='space-y-6'>
         <div className='flex items-center justify-between'>
           <h1 className='text-3xl font-bold tracking-tight'>Users</h1>
-          <CreateUserDialog />
+          <CreateUserSheet />
         </div>
 
         <UsersList

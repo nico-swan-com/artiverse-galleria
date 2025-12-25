@@ -1,29 +1,29 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from '@/components/ui/sheet'
 
 import { Trash } from 'lucide-react'
 import { useState, Suspense } from 'react'
 import DeleteUserForm from './DeleteUserForm'
 import { User } from '@/types/users/user.schema'
 
-type EditUserProps = {
+type DeleteUserProps = {
   user: User | null
 }
 
-const DeleteUserDialog = ({ user }: EditUserProps) => {
+const DeleteUserSheet = ({ user }: DeleteUserProps) => {
   const [isOpen, setOpen] = useState(false)
 
   return (
-    <Dialog open={isOpen} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <Sheet open={isOpen} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
         <Button
           size='icon'
           variant='ghost'
@@ -32,11 +32,11 @@ const DeleteUserDialog = ({ user }: EditUserProps) => {
         >
           <Trash className='size-4 text-destructive' />
         </Button>
-      </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px]'>
-        <DialogHeader>
-          <DialogTitle>Remove user</DialogTitle>
-          <DialogDescription>
+      </SheetTrigger>
+      <SheetContent className='overflow-y-auto'>
+        <SheetHeader>
+          <SheetTitle>Remove user</SheetTitle>
+          <SheetDescription asChild>
             <div className='rounded-md border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive'>
               <p>
                 Warning: This action cannot be undone. The user and all
@@ -46,16 +46,16 @@ const DeleteUserDialog = ({ user }: EditUserProps) => {
                 <strong>Are you sure you want to remove this user?</strong>
               </p>
             </div>
-          </DialogDescription>
-        </DialogHeader>
+          </SheetDescription>
+        </SheetHeader>
         <Suspense>
           {user && (
             <DeleteUserForm user={user} onClose={() => setOpen(false)} />
           )}
         </Suspense>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   )
 }
 
-export default DeleteUserDialog
+export default DeleteUserSheet

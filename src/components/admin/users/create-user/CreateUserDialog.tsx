@@ -2,41 +2,41 @@
 
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from '@/components/ui/sheet'
 import { UserPlus } from 'lucide-react'
 import { useState, Suspense } from 'react'
 import CreateUserForm from './CreateUserForm'
 
-const CreateUserDialog = () => {
+const CreateUserSheet = () => {
   const [isOpen, setOpen] = useState(false)
 
   return (
-    <Dialog open={isOpen} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <Sheet open={isOpen} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
         <Button>
           <UserPlus className='mr-2 size-4' />
           Add user
         </Button>
-      </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px]'>
-        <DialogHeader>
-          <DialogTitle>Add new user</DialogTitle>
-          <DialogDescription>
+      </SheetTrigger>
+      <SheetContent className='overflow-y-auto'>
+        <SheetHeader>
+          <SheetTitle>Add new user</SheetTitle>
+          <SheetDescription>
             Create a new user account with email and password
-          </DialogDescription>
-        </DialogHeader>
+          </SheetDescription>
+        </SheetHeader>
         <Suspense>
           <CreateUserForm onClose={() => setOpen(false)} />
         </Suspense>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   )
 }
 
-export default CreateUserDialog
+export default CreateUserSheet
