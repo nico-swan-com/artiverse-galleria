@@ -43,23 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className='flex h-16 items-center justify-between border-b border-sidebar-border px-4'>
         {!isCollapsed && (
           <div className='flex items-center space-x-2'>
-            <div className='flex size-8 items-center justify-center rounded-md bg-primary'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='currentColor'
-                strokeWidth='2'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                className='size-5 text-white'
-              >
-                <circle cx='12' cy='12' r='10' />
-                <path d='M8 12h8' />
-                <path d='M12 8v8' />
-              </svg>
-            </div>
-            <span className='text-lg font-semibold'>Commerce</span>
+            <span className='text-lg font-semibold'>Artiverse</span>
           </div>
         )}
         <Button
@@ -72,7 +56,51 @@ const Sidebar: React.FC<SidebarProps> = ({
         </Button>
       </div>
       <div className='flex-1 overflow-y-auto py-4'>
-        <ul className='space-y-1 px-2'>
+        <div className='border-b border-sidebar-border px-4 pb-4'>
+          <div className='flex items-center gap-3'>
+            {!isCollapsed && (
+              <Link
+                href='/profile'
+                className='flex cursor-pointer items-center gap-3 transition-opacity hover:opacity-80'
+              >
+                <Avatar className='size-14'>
+                  <AvatarImage
+                    className='rounded'
+                    src={session?.user?.image || ''}
+                  />
+                  <AvatarFallback>{session?.user?.name}</AvatarFallback>
+                </Avatar>
+                <div className='flex flex-1 items-center justify-between'>
+                  <div>
+                    <p className='text-sm font-medium'>{session?.user?.name}</p>
+                    <p className='text-xs text-muted-foreground'>
+                      {session?.user?.email}
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => signOut()}
+                    variant='ghost'
+                    size='icon'
+                    className='text-muted-foreground hover:text-foreground'
+                  >
+                    <LogOut size={18} />
+                  </Button>
+                </div>
+              </Link>
+            )}
+            {isCollapsed && (
+              <Button
+                onClick={() => signOut()}
+                variant='ghost'
+                size='icon'
+                className='text-muted-foreground hover:text-foreground'
+              >
+                <LogOut size={18} />
+              </Button>
+            )}
+          </div>
+        </div>
+        <ul className='space-y-1 px-2 pt-4'>
           {menuItems.map((item) => (
             <li key={item.path}>
               <Link
@@ -93,43 +121,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             </li>
           ))}
         </ul>
-      </div>
-
-      <div className='border-t border-sidebar-border p-4'>
-        <div className='flex items-center gap-3'>
-          <Avatar className='size-14'>
-            <AvatarImage className='rounded' src={session?.user?.image || ''} />
-            <AvatarFallback>{session?.user?.name}</AvatarFallback>
-          </Avatar>
-          {!isCollapsed && (
-            <div className='flex flex-1 items-center justify-between'>
-              <div>
-                <p className='text-sm font-medium'>{session?.user?.name}</p>
-                <p className='text-xs text-muted-foreground'>
-                  {session?.user?.email}
-                </p>
-              </div>
-              <Button
-                onClick={() => signOut()}
-                variant='ghost'
-                size='icon'
-                className='text-muted-foreground hover:text-foreground'
-              >
-                <LogOut size={18} />
-              </Button>
-            </div>
-          )}
-          {isCollapsed && (
-            <Button
-              onClick={() => signOut()}
-              variant='ghost'
-              size='icon'
-              className='text-muted-foreground hover:text-foreground'
-            >
-              <LogOut size={18} />
-            </Button>
-          )}
-        </div>
       </div>
     </div>
   )

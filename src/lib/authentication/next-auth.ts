@@ -31,7 +31,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           // Manually validate password since Drizzle object doesn't have methods
           const passwordMatch = await bcrypt.compare(password, user.password)
-          const image = getAvatarUrl(user.email, user.name)
+          const image = user.avatar || getAvatarUrl(user.email, user.name)
 
           if (passwordMatch) {
             return {

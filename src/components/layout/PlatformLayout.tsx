@@ -42,7 +42,10 @@ export default function PlatformLayout({
       icon: (
         <>
           <div className='relative'>
-            <Palette size={12} className='absolute right-0 top-[2] mr-[-8]' />
+            <Palette
+              size={12}
+              className='absolute right-0 top-[2px] mr-[-8px]'
+            />
             <UserRound size={18} />
           </div>
         </>
