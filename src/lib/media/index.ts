@@ -1,9 +1,11 @@
 /**
  * Media Domain Exports
+ *
+ * @deprecated Import from '@/features/media' instead.
+ * This file re-exports from the new feature location for backwards compatibility.
  */
-export * from './media.repository'
-export * from './media.service'
-export * from './media.controller'
-export * from './media.actions'
-export * from './media.errors'
-export * from './model/media.schema'
+
+// Re-export from new feature location
+export * from '@/features/media/lib'
+export * from '@/features/media/actions'
+export * from '@/features/media/types'
