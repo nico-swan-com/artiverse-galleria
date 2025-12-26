@@ -57,38 +57,47 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
       <div className='flex-1 overflow-y-auto py-4'>
         <div className='border-b border-sidebar-border px-4 pb-4'>
-          <div className='flex items-center gap-3'>
-            {!isCollapsed && (
-              <Link
-                href='/profile'
-                className='flex cursor-pointer items-center gap-3 transition-opacity hover:opacity-80'
-              >
-                <Avatar className='size-14'>
-                  <AvatarImage
-                    className='rounded'
-                    src={session?.user?.image || ''}
-                  />
-                  <AvatarFallback>{session?.user?.name}</AvatarFallback>
-                </Avatar>
-                <div className='flex flex-1 items-center justify-between'>
+          <div
+            className={cn(
+              'flex items-center',
+              isCollapsed ? 'justify-center' : 'gap-3'
+            )}
+          >
+            {!isCollapsed ? (
+              <>
+                <Link
+                  href='/profile'
+                  className='flex cursor-pointer items-center gap-3 transition-opacity hover:opacity-80'
+                >
+                  <Avatar className='size-14'>
+                    <AvatarImage
+                      className='size-14 rounded'
+                      src={session?.user?.image || ''}
+                    />
+                    <AvatarFallback className='flex size-14 items-center justify-center rounded bg-muted text-sm'>
+                      {session?.user?.name?.charAt(0) || '?'}
+                    </AvatarFallback>
+                  </Avatar>
                   <div>
                     <p className='text-sm font-medium'>{session?.user?.name}</p>
                     <p className='text-xs text-muted-foreground'>
                       {session?.user?.email}
                     </p>
                   </div>
-                  <Button
-                    onClick={() => signOut()}
-                    variant='ghost'
-                    size='icon'
-                    className='text-muted-foreground hover:text-foreground'
-                  >
-                    <LogOut size={18} />
-                  </Button>
-                </div>
-              </Link>
-            )}
-            {isCollapsed && (
+                </Link>
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    signOut()
+                  }}
+                  variant='ghost'
+                  size='icon'
+                  className='ml-auto text-muted-foreground hover:text-foreground'
+                >
+                  <LogOut size={18} />
+                </Button>
+              </>
+            ) : (
               <Button
                 onClick={() => signOut()}
                 variant='ghost'
