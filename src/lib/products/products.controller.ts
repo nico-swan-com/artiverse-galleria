@@ -24,7 +24,7 @@ export class ProductsController {
       { page, limit },
       sortBy,
       order,
-      query
+      { searchQuery: query }
     )
 
     const sanitizedProducts = products.map(

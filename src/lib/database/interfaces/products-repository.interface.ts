@@ -7,6 +7,7 @@ import {
   ProductUpdate,
   Product
 } from '../../../types/products/product.schema'
+import { ProductFilters } from '../../../types/products/product-filters.type'
 
 /**
  * Products repository interface
@@ -21,7 +22,7 @@ export interface IProductsRepository {
     pagination: PaginationParams,
     sortByField?: ProductsSortBy,
     sortOrder?: FindOptionsOrderValue,
-    searchQuery?: string
+    filters?: ProductFilters
   ): Promise<Products>
 
   getById(id: string): Promise<Product | null>

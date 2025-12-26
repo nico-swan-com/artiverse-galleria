@@ -1,4 +1,5 @@
 import { CACHE_CONFIG } from '../constants/app.constants'
+import { ProductFilters } from '../../types/products/product-filters.type'
 
 /**
  * Generates cache tags for different entity types
@@ -31,9 +32,11 @@ export class CacheTagGenerator {
     page: number,
     limit: number,
     sortBy?: string,
-    order?: string
+    order?: string,
+    filters?: ProductFilters
   ): string {
-    return `products-page-${page}-limit-${limit}-${sortBy || 'createdAt'}-${order || 'DESC'}`
+    const filterKey = filters ? JSON.stringify(filters) : ''
+    return `products-page-${page}-limit-${limit}-${sortBy || 'createdAt'}-${order || 'DESC'}-${filterKey}`
   }
 
   /**
@@ -99,5 +102,13 @@ export class CacheTagGenerator {
    */
   static media(): string {
     return CACHE_CONFIG.TAGS.MEDIA
+  }
+
+  static categories(): string {
+    return 'categories'
+  }
+
+  static styles(): string {
+    return 'styles'
   }
 }

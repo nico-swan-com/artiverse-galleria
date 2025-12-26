@@ -18,6 +18,7 @@ import {
   ProductUpdate,
   Product
 } from '../../types/products/product.schema'
+import { ProductFilters } from '../../types/products/product-filters.type'
 import {
   mapProductsWithArtistToAppType,
   mapProductWithArtistToAppType,
@@ -55,24 +56,38 @@ class ProductsRepository {
     pagination: PaginationParams,
     sortByField: ProductsSortBy = 'createdAt',
     sortOrder: FindOptionsOrderValue = 'DESC',
-    searchQuery?: string
+    filters: ProductFilters = {}
   ): Promise<Products> {
     const { page, limit } = pagination
     const offset = (page - 1) * limit
     const orderDir = sortOrder === 'DESC' ? desc : asc
+    const { searchQuery, category, style, minPrice, maxPrice } = filters
 
     // Validate and build search filter
     const validatedQuery = validateSearchQuery(searchQuery)
-    const searchFilter = buildSearchFilter(validatedQuery, [
+    const searchConditions = buildSearchFilter(validatedQuery, [
       products.title,
       products.description,
       products.category
     ])
 
+    // Build additional filters
+    const filterConditions = []
+    if (searchConditions) filterConditions.push(searchConditions)
+    if (category) filterConditions.push(eq(products.category, category))
+    if (style) filterConditions.push(eq(products.style, style))
+    if (minPrice !== undefined)
+      filterConditions.push(sql`${products.price} >= ${minPrice}`)
+    if (maxPrice !== undefined)
+      filterConditions.push(sql`${products.price} <= ${maxPrice}`)
+
+    const finalFilter =
+      filterConditions.length > 0 ? and(...filterConditions) : undefined
+
     try {
       // Get data
       const data = await db.query.products.findMany({
-        where: searchFilter,
+        where: finalFilter,
         limit: limit,
         offset: offset,
         orderBy: [orderDir(products[sortByField])],
@@ -82,12 +97,10 @@ class ProductsRepository {
       })
 
       // Get count
-      // Drizzle doesn't have a simple findAndCount yet in query builder, need separate query
-      // efficient mapping:
       const rows = await db
         .select({ count: count() })
         .from(products)
-        .where(searchFilter)
+        .where(finalFilter)
       const total = rows[0].count
 
       const convertedResult = mapProductsWithArtistToAppType(data)
@@ -101,7 +114,7 @@ class ProductsRepository {
         pagination,
         sortByField,
         sortOrder,
-        searchQuery
+        filters
       })
       throw error
     }
@@ -276,6 +289,36 @@ class ProductsRepository {
         category,
         artistId
       })
+      throw error
+    }
+  }
+
+  async getCategories(): Promise<string[]> {
+    try {
+      const result = await db
+        .selectDistinct({ category: products.category })
+        .from(products)
+        .where(ne(products.category, ''))
+        .orderBy(asc(products.category))
+
+      return result.map((r) => r.category).filter(Boolean) as string[]
+    } catch (error) {
+      logger.error('Error getting categories', error)
+      throw error
+    }
+  }
+
+  async getStyles(): Promise<string[]> {
+    try {
+      const result = await db
+        .selectDistinct({ style: products.style })
+        .from(products)
+        .where(ne(products.style, ''))
+        .orderBy(asc(products.style))
+
+      return result.map((r) => r.style).filter(Boolean) as string[]
+    } catch (error) {
+      logger.error('Error getting styles', error)
       throw error
     }
   }

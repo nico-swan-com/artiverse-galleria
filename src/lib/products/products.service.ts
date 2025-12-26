@@ -9,6 +9,7 @@ import {
   ProductCreate,
   ProductUpdate
 } from '../../types/products/product.schema'
+import { ProductFilters } from '../../types/products/product-filters.type'
 import { isBuildPhase } from '../utilities/build-phase.util'
 import { CacheTagGenerator } from '../cache/cache-tag.util'
 import { CACHE_CONFIG } from '../constants/app.constants'
@@ -70,7 +71,7 @@ export default class ProductsService {
     pagination: PaginationParams,
     sortBy: ProductsSortBy,
     order: FindOptionsOrderValue,
-    searchQuery?: string
+    filters?: ProductFilters
   ): Promise<Products> {
     // Return empty result during build time
     if (isBuildPhase()) {
@@ -84,20 +85,21 @@ export default class ProductsService {
       pagination.page,
       pagination.limit,
       sortBy,
-      typeof order === 'string' ? order : 'DESC'
+      typeof order === 'string' ? order : 'DESC',
+      filters
     )
     const getPaged = unstable_cache(
       async (
         pagination: PaginationParams,
         sortBy: ProductsSortBy,
         order: FindOptionsOrderValue,
-        searchQuery?: string
+        filters?: ProductFilters
       ): Promise<Products> => {
         const result = await this.repository.getPaged(
           pagination,
           sortBy,
           order,
-          searchQuery
+          filters
         )
         return result
       },
@@ -107,7 +109,7 @@ export default class ProductsService {
         revalidate: CACHE_CONFIG.SHORT_REVALIDATE
       }
     )
-    return getPaged(pagination, sortBy, order, searchQuery)
+    return getPaged(pagination, sortBy, order, filters)
   }
 
   /**
@@ -252,5 +254,45 @@ export default class ProductsService {
       })
       throw error
     }
+  }
+
+  /**
+   * Get all unique categories
+   */
+  async getCategories(): Promise<string[]> {
+    if (isBuildPhase()) return []
+
+    const tag = CacheTagGenerator.categories()
+    const getCategories = unstable_cache(
+      async () => {
+        return this.repository.getCategories()
+      },
+      [tag],
+      {
+        tags: [tag, CACHE_CONFIG.TAGS.PRODUCTS],
+        revalidate: CACHE_CONFIG.LONG_CACHE_DURATION
+      }
+    )
+    return getCategories()
+  }
+
+  /**
+   * Get all unique styles
+   */
+  async getStyles(): Promise<string[]> {
+    if (isBuildPhase()) return []
+
+    const tag = CacheTagGenerator.styles()
+    const getStyles = unstable_cache(
+      async () => {
+        return this.repository.getStyles()
+      },
+      [tag],
+      {
+        tags: [tag, CACHE_CONFIG.TAGS.PRODUCTS],
+        revalidate: CACHE_CONFIG.LONG_CACHE_DURATION
+      }
+    )
+    return getStyles()
   }
 }
