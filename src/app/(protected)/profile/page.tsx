@@ -7,6 +7,8 @@ import React from 'react'
 import PageTransition from '@/components/common/utility/PageTransition'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import UserProfileForm from '@/components/profile/UserProfileForm'
+import OrderHistory from '@/components/profile/OrderHistory'
+import ActivityFeed from '@/components/profile/ActivityFeed'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -87,33 +89,13 @@ const ProfilePage = async () => {
 
             <TabsContent value='activity' className='mt-0'>
               <div className='overflow-hidden rounded-lg bg-white p-6 shadow-sm'>
-                <div className='flex h-[200px] flex-col items-center justify-center text-center'>
-                  <div className='mb-4 rounded-full bg-gray-50 p-4'>
-                    <span className='text-2xl'>📊</span>
-                  </div>
-                  <h3 className='text-lg font-medium text-gray-900'>
-                    Activity Tracking
-                  </h3>
-                  <p className='mt-1 text-sm text-gray-500'>
-                    Your recent activity and history will appear here.
-                  </p>
-                </div>
+                <ActivityFeed />
               </div>
             </TabsContent>
 
             <TabsContent value='billing' className='mt-0'>
               <div className='overflow-hidden rounded-lg bg-white p-6 shadow-sm'>
-                <div className='flex h-[200px] flex-col items-center justify-center text-center'>
-                  <div className='mb-4 rounded-full bg-gray-50 p-4'>
-                    <span className='text-2xl'>💳</span>
-                  </div>
-                  <h3 className='text-lg font-medium text-gray-900'>
-                    Billing & Payments
-                  </h3>
-                  <p className='mt-1 text-sm text-gray-500'>
-                    Payment history and subscriptions will appear here.
-                  </p>
-                </div>
+                <OrderHistory />
               </div>
             </TabsContent>
           </div>
