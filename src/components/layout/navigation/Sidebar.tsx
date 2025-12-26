@@ -26,7 +26,16 @@ const Sidebar: React.FC<SidebarProps> = ({
   const pathname = usePathname()
   const isMobile = useIsMobile()
   const { data: session, status } = useSession()
-  const isSessionLoading = status === 'loading'
+  const [hasMounted, setHasMounted] = React.useState(false)
+
+  // Track when the component has mounted on the client
+  React.useEffect(() => {
+    setHasMounted(true)
+  }, [])
+
+  // Show loading state until mounted and session is available
+  // This prevents showing "?" fallback during SSR-to-CSR hydration
+  const isSessionLoading = !hasMounted || status === 'loading'
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed)
