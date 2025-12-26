@@ -9,7 +9,6 @@ export * from './get-avatar-url'
 export * from './get-image-src'
 export * from './image'
 export * from './html-escape'
-export * from './build-phase.util'
 
 // Logger
 export * from './logger'
