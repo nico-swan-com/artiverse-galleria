@@ -1,4 +1,4 @@
-import Dashboard from '@/components/admin/Dashboard'
+import AnalyticsDashboard from '@/components/admin/AnalyticsDashboard'
 import { auth } from '@/lib/authentication'
 import { redirect } from 'next/navigation'
 
@@ -9,7 +9,11 @@ const AdminPage = async () => {
     return redirect('/login')
   }
 
-  return <Dashboard />
+  return (
+    <div className='p-6'>
+      <AnalyticsDashboard />
+    </div>
+  )
 }
 
 export default AdminPage

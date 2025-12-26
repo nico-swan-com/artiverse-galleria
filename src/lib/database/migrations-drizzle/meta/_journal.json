@@ -22,6 +22,13 @@
       "when": 1766780635223,
       "tag": "0002_chief_jane_foster",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1766783060529,
+      "tag": "0003_wakeful_hedge_knight",
+      "breakpoints": true
     }
   ]
 }

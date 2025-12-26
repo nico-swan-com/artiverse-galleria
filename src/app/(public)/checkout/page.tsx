@@ -59,6 +59,17 @@ const Checkout = () => {
     setSubtotal(total)
   }, [cart, router, success])
 
+  // Track checkout start
+  useEffect(() => {
+    if (cart.length > 0 && !success) {
+      import('@/features/analytics/actions/analytics.actions').then(
+        ({ trackCheckoutStart }) => {
+          trackCheckoutStart().catch(console.error)
+        }
+      )
+    }
+  }, []) // Run once on mount
+
   const handleChange = (
     event:
       | React.ChangeEvent<HTMLInputElement>

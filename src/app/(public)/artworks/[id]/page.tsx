@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation'
 
 import { Product } from '@/types/products/product.schema'
 
+import { trackArtworkView } from '@/features/analytics/actions/analytics.actions'
+
 // Force dynamic rendering to prevent prerendering issues
 export const dynamic = 'force-dynamic'
 
@@ -17,6 +19,10 @@ export default async function ArtworkDetailPage({
   try {
     const product = await new ProductsService().getById(id)
     if (!product) return notFound()
+
+    // Track artwork view
+    // We don't await this to avoid blocking rendering
+    trackArtworkView(id, product.title).catch(console.error)
 
     // Enrich with artist, ensuring createdAt/updatedAt are always present
     const artwork = product as Product

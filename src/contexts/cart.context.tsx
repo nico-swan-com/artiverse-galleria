@@ -96,6 +96,13 @@ export const CartProvider = ({ children }: ChildrenProps) => {
     toast('Added to cart', {
       description: `${artwork.title} has been added to your cart.`
     })
+
+    // Track add to cart
+    import('@/features/analytics/actions/analytics.actions').then(
+      ({ trackCartAdd }) => {
+        trackCartAdd(artwork.id, artwork.title).catch(console.error)
+      }
+    )
   }
 
   // Check if item is in cart

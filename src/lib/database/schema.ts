@@ -227,3 +227,17 @@ export type NewOrderItem = InferInsertModel<typeof orderItems>
 
 export type OrderEvent = InferSelectModel<typeof orderEvents>
 export type NewOrderEvent = InferInsertModel<typeof orderEvents>
+
+// Analytics events table for tracking user activity
+export const analyticsEvents = artiverseSchema.table('analytics_events', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  eventType: varchar('event_type', { length: 50 }).notNull(),
+  userId: uuid('user_id').references(() => users.id),
+  sessionId: varchar('session_id', { length: 100 }),
+  path: varchar('path', { length: 255 }),
+  metadata: text('metadata'), // JSON string for additional data
+  createdAt: timestamp('created_at').defaultNow().notNull()
+})
+
+export type AnalyticsEventDb = InferSelectModel<typeof analyticsEvents>
+export type NewAnalyticsEvent = InferInsertModel<typeof analyticsEvents>

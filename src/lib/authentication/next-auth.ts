@@ -56,5 +56,32 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
     })
   ],
+  events: {
+    async signIn({ user }) {
+      if (user.id) {
+        // Use service directly since this is server-side
+        const { analyticsService } = await import('@/features/analytics/lib')
+        analyticsService
+          .trackEvent({
+            eventType: 'user_login',
+            userId: user.id,
+            path: '/login'
+          })
+          .catch((err) => logger.error('Analytics error', err))
+      }
+    },
+    async createUser({ user }) {
+      if (user.id) {
+        const { analyticsService } = await import('@/features/analytics/lib')
+        analyticsService
+          .trackEvent({
+            eventType: 'user_register',
+            userId: user.id,
+            path: '/register'
+          })
+          .catch((err) => logger.error('Analytics error', err))
+      }
+    }
+  },
   secret: env.NEXTAUTH_SECRET
 })

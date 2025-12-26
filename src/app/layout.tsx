@@ -5,6 +5,7 @@ import { SessionProvider } from 'next-auth/react'
 import QueryProvider from '@/contexts/query-provider.context'
 import { Toaster } from 'sonner'
 import AnimatePresenceWrapper from '@/components/common/utility/AnimatePresenceWrapper'
+import { AnalyticsTracker } from '@/features/analytics/components'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -38,6 +39,7 @@ export default async function RootLayout({
               {children}
             </AnimatePresenceWrapper>
             <Toaster />
+            <AnalyticsTracker />
           </QueryProvider>
         </SessionProvider>
       </body>

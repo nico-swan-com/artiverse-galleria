@@ -19,6 +19,7 @@ import {
 } from '../types/billing.types'
 import { NewOrder, NewOrderItem } from '@/lib/database/schema'
 import { logger } from '@/lib/utilities/logger'
+import { notificationService } from '@/features/notifications'
 
 export class BillingService {
   private paymentProvider: PaymentProvider
@@ -83,7 +84,14 @@ export class BillingService {
     })
 
     // Return order in the format expected by the rest of the application
-    return this.mapDbOrderToOrder(dbOrder, input.items)
+    const order = this.mapDbOrderToOrder(dbOrder, input.items)
+
+    // Send order confirmation email (non-blocking)
+    notificationService.sendOrderConfirmation(order).catch((err) => {
+      logger.error('Failed to send order confirmation email', err)
+    })
+
+    return order
   }
 
   /**
@@ -214,8 +222,18 @@ export class BillingService {
     )
 
     if (verification.success && verification.status === 'complete') {
-      await this.updateOrderStatus(orderId, 'paid')
+      await this.updateOrderStatus(
+        orderId,
+        'paid',
+        'payment_completed',
+        `Payment completed successfully - R${order.total.toLocaleString()}`
+      )
       logger.info('Payment completed successfully', { orderId, paymentId })
+
+      // Send payment confirmation email (non-blocking)
+      notificationService.sendPaymentConfirmation(order).catch((err) => {
+        logger.error('Failed to send payment confirmation email', err)
+      })
     } else {
       logger.warn('Payment verification failed', {
         orderId,

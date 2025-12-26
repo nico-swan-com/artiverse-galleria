@@ -10,6 +10,8 @@ import { UserRoles } from '@/types/users/user-roles.enum'
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
+export const dynamic = 'force-dynamic'
+
 const UsersServerPage = async (props: { searchParams: SearchParams }) => {
   const params = await props.searchParams
   const session = await auth()

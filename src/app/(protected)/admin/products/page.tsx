@@ -9,6 +9,8 @@ import { FindOptionsOrderValue } from '@/types/common/db.type'
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
+export const dynamic = 'force-dynamic'
+
 const ProductsServerPage = async (props: { searchParams: SearchParams }) => {
   const params = await props.searchParams
 
