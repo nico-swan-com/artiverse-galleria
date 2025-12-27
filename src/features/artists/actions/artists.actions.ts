@@ -3,6 +3,7 @@ import { unstable_cache } from 'next/cache'
 import { FindOptionsOrderValue } from '@/types/common/db.type'
 import { artistsRepository } from '../lib/artists.repository'
 import { Artist, Artists as ArtistsResult, ArtistsSortBy } from '../types'
+import { logger } from '@/lib/utilities/logger'
 
 /**
  * Cached function to get all artists.
@@ -13,8 +14,14 @@ export const getAllArtistsCache = unstable_cache(
     sortBy: ArtistsSortBy,
     order: FindOptionsOrderValue
   ): Promise<ArtistsResult> => {
-    const result = await artistsRepository.getAll(sortBy, order)
-    return result
+    try {
+      const result = await artistsRepository.getAll(sortBy, order)
+      return result
+    } catch (error) {
+      logger.error('Error getting all artists', error, { sortBy, order })
+      // Return empty result on error to prevent page crashes
+      return { artists: [], total: 0 }
+    }
   },
   ['artists-all'],
   {

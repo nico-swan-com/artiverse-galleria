@@ -9,6 +9,8 @@ import Hero from '@/components/public/sections/hero/Hero'
 import ProductsService from '@/features/products/lib/products.service'
 import ArtistsService from '@/features/artists/lib/artists.service'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Artiverse Galleria | Discover Unique Art from World Artists',
   description:
@@ -95,9 +97,27 @@ const Home = async () => {
   const productsService = new ProductsService()
   const artistsService = new ArtistsService()
 
-  const featuredArtworks = await productsService.getFeaturedProducts()
-  const { artists } = await artistsService.getAll('createdAt', 'DESC')
-  const featuredArtists = artists.slice(0, 3)
+  let featuredArtworks: Awaited<
+    ReturnType<typeof productsService.getFeaturedProducts>
+  > = []
+  let featuredArtists: Awaited<
+    ReturnType<typeof artistsService.getAll>
+  >['artists'] = []
+
+  try {
+    featuredArtworks = await productsService.getFeaturedProducts()
+  } catch (error) {
+    console.error('Error fetching featured artworks:', error)
+    // featuredArtworks already defaults to empty array
+  }
+
+  try {
+    const artistsResult = await artistsService.getAll('createdAt', 'DESC')
+    featuredArtists = artistsResult.artists.slice(0, 3)
+  } catch (error) {
+    console.error('Error fetching featured artists:', error)
+    // featuredArtists already defaults to empty array
+  }
 
   return (
     <>

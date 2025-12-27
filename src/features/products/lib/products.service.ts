@@ -150,11 +150,18 @@ export default class ProductsService {
     const tag = CacheTagGenerator.featuredProducts()
     const getFeaturedProductsCached = unstable_cache(
       async (): Promise<Product[]> => {
-        return this.repository.getFeaturedProducts()
+        try {
+          return await this.repository.getFeaturedProducts()
+        } catch (error) {
+          logger.error('Error getting featured products', error)
+          // Return empty array on error to prevent page crashes
+          return []
+        }
       },
       [tag],
       {
-        tags: [tag, CACHE_CONFIG.TAGS.PRODUCTS]
+        tags: [tag, CACHE_CONFIG.TAGS.PRODUCTS],
+        revalidate: CACHE_CONFIG.DEFAULT_REVALIDATE
       }
     )
     return getFeaturedProductsCached()
