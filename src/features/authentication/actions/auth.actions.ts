@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod'
-import { LoginSchema } from './login.schema'
+import { LoginSchema } from '../components/login.schema'
 import { signIn } from '@/features/authentication/lib'
 import { CredentialsSignin } from 'next-auth'
 

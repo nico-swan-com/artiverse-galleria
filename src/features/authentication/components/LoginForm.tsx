@@ -11,7 +11,7 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import submitLogin, { LoginState } from './submit-login.action'
+import submitLogin, { LoginState } from '../actions/auth.actions'
 import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 

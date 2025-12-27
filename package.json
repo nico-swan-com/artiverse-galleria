@@ -69,9 +69,8 @@
     "recharts": "^2.15.1",
     "shadcn": "^2.4.0-canary.10",
     "sharp": "^0.34.2",
-    "simplex-noise": "^4.0.3",
     "sonner": "^2.0.1",
-    "swagger-ui-react": "^5.31.0",
+    "swagger-ui-react": "^4.19.0",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.24.2"
@@ -91,7 +90,6 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/swagger-ui-react": "^5.18.0",
-    "@types/three": "^0.174.0",
     "@typescript-eslint/eslint-plugin": "^8.25.0",
     "@typescript-eslint/parser": "^8.25.0",
     "dotenv": "^17.2.3",

@@ -2,20 +2,13 @@ name: Deploy production
 
 on:
   push:
-    # TODO: Change to 'main' when ready for production
-    branches: ['fake-main']
+    branches: ['main']
   workflow_dispatch:
 
 permissions:
   contents: write
   pull-requests: read
   packages: write
-
-# # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-# concurrency:
-#   group: 'pages'
-#   cancel-in-progress: false
 
 jobs:
   release:
@@ -46,64 +39,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # # Cpanel
-  # build-cpanel:
-  #   name: Build standalone
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-
-  #     - name: Install dependencies
-  #       id: setup
-  #       uses: ./.github/actions/setup-node
-
-  #     - name: Build
-  #       env:
-  #         BUILD_TYPE: standalone
-  #         NEXT_TELEMETRY_DISABLED: 1
-  #       run: |
-  #         echo "Building $BUILD_TYPE"
-  #         ${{ steps.setup.outputs.manager }} run build:standalone
-  #       shell: bash
-
-  #     - name: Upload build artifacts
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: build-standalone-artifacts
-  #         path: |
-  #           ./_next
-  #           ./node_modules
-  #           ./server.js
-  #           ./package.json
-  #           ./package-lock.json
-  #           ./public
-  #           ./next.config.ts
-
-  # deploy-cpanel:
-  #   name: Deploy to cpanel
-  #   runs-on: ubuntu-latest
-  #   environment: production
-  #   needs: build-cpanel
-  #   steps:
-  #     - name: Download standalone build artifacts
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: build-standalone-artifacts
-
-  #     - name: Deploy to cPanel via FTP
-  #       id: deployment
-  #       uses: SamKirkland/FTP-Deploy-Action@4.3.3
-  #       with:
-  #         server: ${{ secrets.FTP_HOST }}
-  #         username: ${{ secrets.FTP_USERNAME }}
-  #         password: ${{ secrets.FTP_PASSWORD }}
-  #         local-dir: ./
-  #         server-dir: /home/nicoswan/website-next-app/
-  #         protocol: ftp
-  #         timeout: 300000
-
-  # Kubernetes
   publish-dockerhub:
     name: Build Publish docker image to docker hub
     runs-on: ubuntu-latest
@@ -145,50 +80,3 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-  # deploy-kubernetes:
-  #   name: Deploy to Kubernetes cygnus-labs.com
-  #   runs-on: ubuntu-latest
-  #   environment: production
-  #   needs: publish-dockerhub
-
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-
-  #     - name: Install dependencies
-  #       run: |
-  #         sudo apt update && sudo apt install -y gettext-base  && sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/*
-
-  #     - name: Set environment variables
-  #       id: vars
-  #       env:
-  #         NAMESPACE: production
-  #         CI_PROJECT_NAME: artiverse-gallerria
-  #         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-  #       run: |
-  #         echo "NAMESPACE=$NAMESPACE" >> $GITHUB_ENV
-  #         echo "CI_PROJECT_NAME=$CI_PROJECT_NAME" >> $GITHUB_ENV
-  #         SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
-  #         echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
-  #         IMAGE_NAME="$DOCKERHUB_USERNAME/$CI_PROJECT_NAME:sha-$SHORT_SHA"
-  #         echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
-  #       shell: bash
-
-  #     - name: Template update
-  #       env:
-  #         REPLICAS: 1
-  #         NAMESPACE: ${{ env.NAMESPACE }}
-  #         CI_PROJECT_NAME: ${{ env.CI_PROJECT_NAME }}
-  #         SHORT_SHA: ${{ env.SHORT_SHA }}
-  #         IMAGE_NAME: ${{ env.IMAGE_NAME }}
-  #       run: |
-  #         envsubst < ./deploy/deploy.tmpl > ./deploy.yaml
-  #         cat ./deploy.yaml
-
-  #     - name: Deploy kubernetes
-  #       uses: actions-hub/kubectl@master
-  #       env:
-  #         KUBE_CONFIG: ${{ secrets.KUBE_CONFIG_PRODUCTION }}
-  #       with:
-  #         args: apply -f ./deploy.yaml --validate=false
