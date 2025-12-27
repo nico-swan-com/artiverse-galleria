@@ -152,14 +152,13 @@ describe('MediaService', () => {
       )
     })
 
-    it('should upload image with File data', async () => {
+    it('should upload image with Buffer data', async () => {
       const fileData = Buffer.from('test file')
-      const mockFile = new File([fileData], 'test.png', { type: 'image/png' })
       const file: MediaCreate = {
         fileName: 'test.png',
         mimeType: 'image/png',
         fileSize: fileData.length,
-        data: mockFile
+        data: fileData
       }
       const mockHash = 'b'.repeat(64)
       const mockMedia: Media = {
@@ -178,15 +177,9 @@ describe('MediaService', () => {
       mockRepo.findByContentHash.mockResolvedValue(null)
       mockRepo.createAndSave.mockResolvedValue(mockMedia)
 
-      // Mock File.arrayBuffer
-      Object.defineProperty(mockFile, 'arrayBuffer', {
-        value: jest.fn().mockResolvedValue(fileData.buffer)
-      })
-
       const result = await service.uploadImage(file)
 
       expect(result).toEqual(mockMedia)
-      expect(mockFile.arrayBuffer).toHaveBeenCalled()
     })
 
     it('should return existing media if duplicate hash found', async () => {
@@ -237,9 +230,14 @@ describe('MediaService', () => {
 
   describe('updateImageMeta', () => {
     it('should update media metadata', async () => {
+      const fileData = Buffer.from('test')
       const existingMedia: Media = {
         id: '1',
         fileName: 'old.jpg',
+        mimeType: 'image/jpeg',
+        fileSize: fileData.length,
+        data: fileData,
+        createdAt: new Date(),
         altText: 'Old alt',
         tags: ['old-tag']
       } as Media
@@ -268,10 +266,17 @@ describe('MediaService', () => {
     })
 
     it('should use existing altText if alt not provided', async () => {
+      const fileData = Buffer.from('test')
       const existingMedia: Media = {
         id: '1',
         fileName: 'test.jpg',
+        mimeType: 'image/jpeg',
+        fileSize: fileData.length,
+        data: fileData,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         altText: 'Existing alt',
+        contentHash: null,
         tags: []
       } as Media
       const updatedMedia: Media = {
@@ -442,22 +447,22 @@ describe('MediaService', () => {
       expect(mockRepo.createAndSave).not.toHaveBeenCalled()
     })
 
-    it('should handle File data type', async () => {
+    it('should handle Buffer data type', async () => {
       const fileData = Buffer.from('avatar data')
-      const mockFile = new File([fileData], 'avatar.jpg', {
-        type: 'image/jpeg'
-      })
       const file: MediaCreate = {
         fileName: 'avatar.jpg',
         mimeType: 'image/jpeg',
         fileSize: fileData.length,
-        data: mockFile
+        data: fileData
       }
       const mockHash = 'f'.repeat(64)
       const mockMedia: Media = {
         id: '1',
         fileName: 'avatar.jpg',
+        mimeType: 'image/jpeg',
+        fileSize: fileData.length,
         data: fileData,
+        createdAt: new Date(),
         contentHash: mockHash
       } as Media
 
@@ -468,13 +473,9 @@ describe('MediaService', () => {
       mockRepo.findByNameAndTag.mockResolvedValue(null)
       mockRepo.createAndSave.mockResolvedValue(mockMedia)
 
-      Object.defineProperty(mockFile, 'arrayBuffer', {
-        value: jest.fn().mockResolvedValue(fileData.buffer)
-      })
-
       await service.uploadOrReplaceUserAvatar(file)
 
-      expect(mockFile.arrayBuffer).toHaveBeenCalled()
+      expect(mockRepo.createAndSave).toHaveBeenCalled()
     })
 
     it('should throw NotFoundError if update fails', async () => {

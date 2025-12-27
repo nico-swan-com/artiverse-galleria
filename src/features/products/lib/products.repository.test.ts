@@ -3,7 +3,8 @@ import { db } from '@/lib/database/drizzle'
 import * as Mappers from '@/lib/database/mappers/product.mapper'
 import type {
   ProductCreate,
-  ProductUpdate
+  ProductUpdate,
+  Product
 } from '@/types/products/product.schema'
 
 // Mock dependencies
@@ -105,9 +106,23 @@ describe('ProductsRepository', () => {
   describe('getAll', () => {
     it('should return mapped products with default sorting', async () => {
       const mockDbResult = [{ id: 'p1' }]
-      const mockMappedResult = [{ id: 'p1', title: 'Product 1' }]
+      const mockMappedResult: Product[] = [
+        {
+          id: 'p1',
+          title: 'Product 1',
+          description: 'Description',
+          price: 100,
+          stock: 10,
+          sales: 0,
+          productType: 'physical',
+          category: 'art',
+          featured: false
+        }
+      ]
 
-      mockDbInfo.query.products.findMany.mockResolvedValue(mockDbResult)
+      ;(mockDbInfo.query.products.findMany as jest.Mock).mockResolvedValue(
+        mockDbResult
+      )
       ;(Mappers.mapProductsWithArtistToAppType as jest.Mock).mockReturnValue(
         mockMappedResult
       )
@@ -121,7 +136,9 @@ describe('ProductsRepository', () => {
 
     it('should handle errors', async () => {
       const error = new Error('Database error')
-      mockDbInfo.query.products.findMany.mockRejectedValue(error)
+      ;(mockDbInfo.query.products.findMany as jest.Mock).mockRejectedValue(
+        error
+      )
 
       await expect(repository.getAll()).rejects.toThrow('Database error')
     })
@@ -130,10 +147,24 @@ describe('ProductsRepository', () => {
   describe('getPaged', () => {
     it('should return paged products', async () => {
       const mockDbResult = [{ id: 'p1' }]
-      const mockMappedResult = [{ id: 'p1', title: 'Product 1' }]
+      const mockMappedResult: Product[] = [
+        {
+          id: 'p1',
+          title: 'Product 1',
+          description: 'Description',
+          price: 100,
+          stock: 10,
+          sales: 0,
+          productType: 'physical',
+          category: 'art',
+          featured: false
+        }
+      ]
       const mockCountResult = [{ count: 10 }]
 
-      mockDbInfo.query.products.findMany.mockResolvedValue(mockDbResult)
+      ;(mockDbInfo.query.products.findMany as jest.Mock).mockResolvedValue(
+        mockDbResult
+      )
 
       // Mock the select chain for count
       const mockSelectCount = {
@@ -157,11 +188,13 @@ describe('ProductsRepository', () => {
     })
 
     it('should apply search filter', async () => {
-      const mockDbResult = []
-      const mockMappedResult = []
+      const mockDbResult: unknown[] = []
+      const mockMappedResult: Product[] = []
       const mockCountResult = [{ count: 0 }]
 
-      mockDbInfo.query.products.findMany.mockResolvedValue(mockDbResult)
+      ;(mockDbInfo.query.products.findMany as jest.Mock).mockResolvedValue(
+        mockDbResult
+      )
       const mockSelectCount = {
         from: jest.fn().mockReturnThis(),
         where: jest.fn().mockResolvedValue(mockCountResult)
@@ -184,11 +217,13 @@ describe('ProductsRepository', () => {
     })
 
     it('should apply category filter', async () => {
-      const mockDbResult = []
-      const mockMappedResult = []
+      const mockDbResult: unknown[] = []
+      const mockMappedResult: Product[] = []
       const mockCountResult = [{ count: 0 }]
 
-      mockDbInfo.query.products.findMany.mockResolvedValue(mockDbResult)
+      ;(mockDbInfo.query.products.findMany as jest.Mock).mockResolvedValue(
+        mockDbResult
+      )
       const mockSelectCount = {
         from: jest.fn().mockReturnThis(),
         where: jest.fn().mockResolvedValue(mockCountResult)
@@ -210,11 +245,13 @@ describe('ProductsRepository', () => {
     })
 
     it('should apply price range filters', async () => {
-      const mockDbResult = []
-      const mockMappedResult = []
+      const mockDbResult: unknown[] = []
+      const mockMappedResult: Product[] = []
       const mockCountResult = [{ count: 0 }]
 
-      mockDbInfo.query.products.findMany.mockResolvedValue(mockDbResult)
+      ;(mockDbInfo.query.products.findMany as jest.Mock).mockResolvedValue(
+        mockDbResult
+      )
       const mockSelectCount = {
         from: jest.fn().mockReturnThis(),
         where: jest.fn().mockResolvedValue(mockCountResult)
@@ -237,7 +274,9 @@ describe('ProductsRepository', () => {
 
     it('should handle errors', async () => {
       const error = new Error('Database error')
-      mockDbInfo.query.products.findMany.mockRejectedValue(error)
+      ;(mockDbInfo.query.products.findMany as jest.Mock).mockRejectedValue(
+        error
+      )
 
       const mockSelectCount = {
         from: jest.fn().mockReturnThis(),
@@ -254,9 +293,21 @@ describe('ProductsRepository', () => {
   describe('getById', () => {
     it('should return mapped product if found', async () => {
       const mockDbResult = { id: 'p1' }
-      const mockMappedResult = { id: 'p1', title: 'Product 1' }
+      const mockMappedResult: Product = {
+        id: 'p1',
+        title: 'Product 1',
+        description: 'Description',
+        price: 100,
+        stock: 10,
+        sales: 0,
+        productType: 'physical',
+        category: 'art',
+        featured: false
+      }
 
-      mockDbInfo.query.products.findFirst.mockResolvedValue(mockDbResult)
+      ;(mockDbInfo.query.products.findFirst as jest.Mock).mockResolvedValue(
+        mockDbResult
+      )
       ;(Mappers.mapProductWithArtistToAppType as jest.Mock).mockReturnValue(
         mockMappedResult
       )
@@ -268,14 +319,18 @@ describe('ProductsRepository', () => {
     })
 
     it('should return null if not found', async () => {
-      mockDbInfo.query.products.findFirst.mockResolvedValue(null)
+      ;(mockDbInfo.query.products.findFirst as jest.Mock).mockResolvedValue(
+        null
+      )
       const result = await repository.getById('p1')
       expect(result).toBeNull()
     })
 
     it('should handle errors', async () => {
       const error = new Error('Database error')
-      mockDbInfo.query.products.findFirst.mockRejectedValue(error)
+      ;(mockDbInfo.query.products.findFirst as jest.Mock).mockRejectedValue(
+        error
+      )
 
       await expect(repository.getById('p1')).rejects.toThrow('Database error')
     })
@@ -284,11 +339,24 @@ describe('ProductsRepository', () => {
   describe('getByArtistId', () => {
     it('should return products by artist id', async () => {
       const mockDbResult = [{ id: 'p1', artistId: 'a1' }]
-      const mockMappedResult = [
-        { id: 'p1', title: 'Product 1', artistId: 'a1' }
+      const mockMappedResult: Product[] = [
+        {
+          id: 'p1',
+          title: 'Product 1',
+          artistId: 'a1',
+          description: 'Description',
+          price: 100,
+          stock: 10,
+          sales: 0,
+          productType: 'physical',
+          category: 'art',
+          featured: false
+        }
       ]
 
-      mockDbInfo.query.products.findMany.mockResolvedValue(mockDbResult)
+      ;(mockDbInfo.query.products.findMany as jest.Mock).mockResolvedValue(
+        mockDbResult
+      )
       ;(Mappers.mapProductsWithArtistToAppType as jest.Mock).mockReturnValue(
         mockMappedResult
       )
@@ -301,7 +369,9 @@ describe('ProductsRepository', () => {
 
     it('should handle errors', async () => {
       const error = new Error('Database error')
-      mockDbInfo.query.products.findMany.mockRejectedValue(error)
+      ;(mockDbInfo.query.products.findMany as jest.Mock).mockRejectedValue(
+        error
+      )
 
       await expect(repository.getByArtistId('a1')).rejects.toThrow(
         'Database error'
@@ -312,11 +382,23 @@ describe('ProductsRepository', () => {
   describe('getFeaturedProducts', () => {
     it('should return featured products', async () => {
       const mockDbResult = [{ id: 'p1', featured: true }]
-      const mockMappedResult = [
-        { id: 'p1', title: 'Product 1', featured: true }
+      const mockMappedResult: Product[] = [
+        {
+          id: 'p1',
+          title: 'Product 1',
+          featured: true,
+          description: 'Description',
+          price: 100,
+          stock: 10,
+          sales: 0,
+          productType: 'physical',
+          category: 'art'
+        }
       ]
 
-      mockDbInfo.query.products.findMany.mockResolvedValue(mockDbResult)
+      ;(mockDbInfo.query.products.findMany as jest.Mock).mockResolvedValue(
+        mockDbResult
+      )
       ;(Mappers.mapProductsWithArtistToAppType as jest.Mock).mockReturnValue(
         mockMappedResult
       )
@@ -329,7 +411,9 @@ describe('ProductsRepository', () => {
 
     it('should handle errors', async () => {
       const error = new Error('Database error')
-      mockDbInfo.query.products.findMany.mockRejectedValue(error)
+      ;(mockDbInfo.query.products.findMany as jest.Mock).mockRejectedValue(
+        error
+      )
 
       await expect(repository.getFeaturedProducts()).rejects.toThrow(
         'Database error'
@@ -347,7 +431,8 @@ describe('ProductsRepository', () => {
         sales: 0,
         category: 'Art',
         artistId: 'a1',
-        productType: 'physical'
+        productType: 'physical',
+        featured: false
       }
       const inserted = { id: 'new', ...input, price: '100', sales: '0' }
       const mapped = { id: 'new', ...input }
@@ -373,6 +458,7 @@ describe('ProductsRepository', () => {
         sales: 0,
         category: 'Art',
         productType: 'physical',
+        featured: false,
         yearCreated: 2023,
         medium: 'Oil',
         style: 'modern'
@@ -398,7 +484,8 @@ describe('ProductsRepository', () => {
         stock: 10,
         sales: 0,
         category: 'Art',
-        productType: 'physical'
+        productType: 'physical',
+        featured: false
       }
       const error = new Error('Database error')
 

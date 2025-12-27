@@ -34,6 +34,15 @@ describe('ArtistsController', () => {
         {
           id: '1',
           name: 'Artist 1',
+          email: 'artist1@example.com',
+          image: 'image.jpg',
+          featured: false,
+          styles: [],
+          biography: 'Test biography with at least 10 characters',
+          specialization: 'Painting',
+          location: 'New York',
+          exhibitions: [],
+          statement: 'Test statement with at least 10 characters',
           createdAt: new Date(),
           updatedAt: new Date()
         }
@@ -54,7 +63,16 @@ describe('ArtistsController', () => {
       expect(data.artists).toEqual([
         {
           id: '1',
-          name: 'Artist 1'
+          name: 'Artist 1',
+          email: 'artist1@example.com',
+          image: 'image.jpg',
+          featured: false,
+          styles: [],
+          biography: 'Test biography with at least 10 characters',
+          specialization: 'Painting',
+          location: 'New York',
+          exhibitions: [],
+          statement: 'Test statement with at least 10 characters'
         }
       ])
       expect(data.total).toBe(1)
@@ -81,13 +99,30 @@ describe('ArtistsController', () => {
         {
           id: '1',
           name: 'Artist 1',
+          email: 'artist1@example.com',
+          image: 'image.jpg',
+          featured: false,
+          styles: [],
+          biography: 'Bio with at least 10 characters',
+          specialization: 'Painting',
+          location: 'New York',
+          exhibitions: [],
+          statement: 'Test statement with at least 10 characters',
           createdAt: new Date('2023-01-01'),
-          updatedAt: new Date('2023-01-02'),
-          bio: 'Bio'
+          updatedAt: new Date('2023-01-02')
         },
         {
           id: '2',
           name: 'Artist 2',
+          email: 'artist2@example.com',
+          image: 'image2.jpg',
+          featured: false,
+          styles: [],
+          biography: 'Biography with at least 10 characters',
+          specialization: 'Sculpture',
+          location: 'Los Angeles',
+          exhibitions: [],
+          statement: 'Statement with at least 10 characters',
           createdAt: new Date('2023-01-01'),
           updatedAt: new Date('2023-01-02')
         }
@@ -105,8 +140,32 @@ describe('ArtistsController', () => {
       const data = await response.json()
 
       expect(data.artists).toEqual([
-        { id: '1', name: 'Artist 1', bio: 'Bio' },
-        { id: '2', name: 'Artist 2' }
+        {
+          id: '1',
+          name: 'Artist 1',
+          email: 'artist1@example.com',
+          image: 'image.jpg',
+          featured: false,
+          styles: [],
+          biography: 'Bio with at least 10 characters',
+          specialization: 'Painting',
+          location: 'New York',
+          exhibitions: [],
+          statement: 'Test statement with at least 10 characters'
+        },
+        {
+          id: '2',
+          name: 'Artist 2',
+          email: 'artist2@example.com',
+          image: 'image2.jpg',
+          featured: false,
+          styles: [],
+          biography: 'Biography with at least 10 characters',
+          specialization: 'Sculpture',
+          location: 'Los Angeles',
+          exhibitions: [],
+          statement: 'Statement with at least 10 characters'
+        }
       ])
       expect(data.artists[0]).not.toHaveProperty('createdAt')
       expect(data.artists[0]).not.toHaveProperty('updatedAt')
@@ -119,6 +178,15 @@ describe('ArtistsController', () => {
         {
           id: '1',
           name: 'Artist 1',
+          email: 'artist1@example.com',
+          image: 'image.jpg',
+          featured: false,
+          styles: [],
+          biography: 'Test biography with at least 10 characters',
+          specialization: 'Painting',
+          location: 'New York',
+          exhibitions: [],
+          statement: 'Test statement with at least 10 characters',
           createdAt: new Date(),
           updatedAt: new Date()
         }
@@ -136,7 +204,21 @@ describe('ArtistsController', () => {
       const data = await response.json()
 
       expect(response.status).toBe(200)
-      expect(data.artists).toEqual([{ id: '1', name: 'Artist 1' }])
+      expect(data.artists).toEqual([
+        {
+          id: '1',
+          name: 'Artist 1',
+          email: 'artist1@example.com',
+          image: 'image.jpg',
+          featured: false,
+          styles: [],
+          biography: 'Test biography with at least 10 characters',
+          specialization: 'Painting',
+          location: 'New York',
+          exhibitions: [],
+          statement: 'Test statement with at least 10 characters'
+        }
+      ])
       expect(data.total).toBe(1)
       expect(mockArtistsService.getPaged).toHaveBeenCalledWith(
         { page: 1, limit: 3 },
@@ -173,9 +255,17 @@ describe('ArtistsController', () => {
         {
           id: '1',
           name: 'Artist 1',
+          email: 'test@example.com',
+          image: 'image.jpg',
+          featured: false,
+          styles: [],
+          biography: 'Test biography with at least 10 characters',
+          specialization: 'Painting',
+          location: 'New York',
+          exhibitions: [],
+          statement: 'Test statement with at least 10 characters',
           createdAt: new Date(),
-          updatedAt: new Date(),
-          email: 'test@example.com'
+          updatedAt: new Date()
         }
       ]
       mockArtistsService.getPaged.mockResolvedValue({
@@ -193,6 +283,7 @@ describe('ArtistsController', () => {
       expect(data.artists[0]).not.toHaveProperty('createdAt')
       expect(data.artists[0]).not.toHaveProperty('updatedAt')
       expect(data.artists[0]).toHaveProperty('email')
+      expect(data.artists[0].email).toBe('test@example.com')
     })
   })
 })

@@ -52,7 +52,9 @@ describe('UsersRepository', () => {
   describe('getUserById', () => {
     it('should return user without password', async () => {
       const mockUser = { id: 'user1', email: 'test@example.com' }
-      mockDbInfo.query.users.findFirst.mockResolvedValue(mockUser)
+      ;(mockDbInfo.query.users.findFirst as jest.Mock).mockResolvedValue(
+        mockUser
+      )
 
       const result = await repository.getUserById('user1')
       expect(result).toEqual(mockUser)
@@ -65,7 +67,7 @@ describe('UsersRepository', () => {
     })
 
     it('should return null if not found', async () => {
-      mockDbInfo.query.users.findFirst.mockResolvedValue(null)
+      ;(mockDbInfo.query.users.findFirst as jest.Mock).mockResolvedValue(null)
       const result = await repository.getUserById('user1')
       expect(result).toBeNull()
     })
@@ -78,7 +80,9 @@ describe('UsersRepository', () => {
         email: 'test@example.com',
         password: 'hash'
       }
-      mockDbInfo.query.users.findFirst.mockResolvedValue(mockUser)
+      ;(mockDbInfo.query.users.findFirst as jest.Mock).mockResolvedValue(
+        mockUser
+      )
 
       const result = await repository.getUserByEmail('test@example.com')
       expect(result).toEqual(mockUser)
@@ -88,12 +92,20 @@ describe('UsersRepository', () => {
   describe('create', () => {
     it('should create user and return safe user object', async () => {
       const newUser = {
+        name: 'New User',
         email: 'new@example.com',
-        password: 'password',
-        firstName: 'New',
-        lastName: 'User'
+        password: 'password'
       }
-      const createdUser = { id: 'u1', ...newUser, createdAt: new Date() }
+      const createdUser = {
+        id: 'u1',
+        ...newUser,
+        avatar: null,
+        role: 'Client',
+        status: 'Pending',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null
+      }
 
       const mockInsert = createChainableMock()
       mockInsert.returning.mockResolvedValue([createdUser])

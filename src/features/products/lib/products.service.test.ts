@@ -63,7 +63,19 @@ describe('ProductsService', () => {
   describe('getAll', () => {
     it('should return all products with caching', async () => {
       const mockProducts = {
-        products: [{ id: '1', title: 'Product 1' }],
+        products: [
+          {
+            id: '1',
+            title: 'Product 1',
+            description: 'Description',
+            price: 100,
+            stock: 10,
+            sales: 0,
+            productType: 'physical',
+            category: 'art',
+            featured: false
+          }
+        ],
         total: 1
       }
       mockRepository.getAll.mockResolvedValue(mockProducts)
@@ -88,7 +100,19 @@ describe('ProductsService', () => {
   describe('getPaged', () => {
     it('should return paged products with caching', async () => {
       const mockProducts = {
-        products: [{ id: '1', title: 'Product 1' }],
+        products: [
+          {
+            id: '1',
+            title: 'Product 1',
+            description: 'Description',
+            price: 100,
+            stock: 10,
+            sales: 0,
+            productType: 'physical',
+            category: 'art',
+            featured: false
+          }
+        ],
         total: 1
       }
       mockRepository.getPaged.mockResolvedValue(mockProducts)
@@ -126,7 +150,17 @@ describe('ProductsService', () => {
 
   describe('getById', () => {
     it('should return product by id with caching', async () => {
-      const mockProduct = { id: '1', title: 'Product 1' }
+      const mockProduct = {
+        id: '1',
+        title: 'Product 1',
+        description: 'Description',
+        price: 100,
+        stock: 10,
+        sales: 0,
+        productType: 'physical',
+        category: 'art',
+        featured: false
+      }
       mockRepository.getById.mockResolvedValue(mockProduct)
 
       const result = await service.getById('1')
@@ -156,7 +190,19 @@ describe('ProductsService', () => {
 
   describe('getFeaturedProducts', () => {
     it('should return featured products with caching', async () => {
-      const mockProducts = [{ id: '1', title: 'Product 1', featured: true }]
+      const mockProducts = [
+        {
+          id: '1',
+          title: 'Product 1',
+          featured: true,
+          description: 'Description',
+          price: 100,
+          stock: 10,
+          sales: 0,
+          productType: 'physical',
+          category: 'art'
+        }
+      ]
       mockRepository.getFeaturedProducts.mockResolvedValue(mockProducts)
 
       const result = await service.getFeaturedProducts()
@@ -188,7 +234,18 @@ describe('ProductsService', () => {
   describe('getByArtistId', () => {
     it('should return products by artist id with caching', async () => {
       const mockProducts = [
-        { id: '1', title: 'Product 1', artistId: 'artist1' }
+        {
+          id: '1',
+          title: 'Product 1',
+          artistId: 'artist1',
+          description: 'Description',
+          price: 100,
+          stock: 10,
+          sales: 0,
+          productType: 'physical',
+          category: 'art',
+          featured: false
+        }
       ]
       mockRepository.getByArtistId.mockResolvedValue(mockProducts)
 
@@ -216,8 +273,10 @@ describe('ProductsService', () => {
         price: 100,
         description: 'Description',
         stock: 10,
+        sales: 0,
         productType: 'physical',
-        category: 'painting'
+        category: 'painting',
+        featured: false
       }
       const mockProduct = { id: '1', ...productData }
       mockRepository.create.mockResolvedValue(mockProduct)
@@ -238,8 +297,10 @@ describe('ProductsService', () => {
           price: 100,
           description: 'Description',
           stock: 10,
+          sales: 0,
           productType: 'physical',
-          category: 'painting'
+          category: 'painting',
+          featured: false
         })
       ).rejects.toThrow('Database error')
     })
@@ -287,7 +348,19 @@ describe('ProductsService', () => {
 
   describe('findRelated', () => {
     it('should find related products', async () => {
-      const mockProducts = [{ id: '2', title: 'Related Product' }]
+      const mockProducts = [
+        {
+          id: '2',
+          title: 'Related Product',
+          description: 'Description',
+          price: 100,
+          stock: 10,
+          sales: 0,
+          productType: 'physical',
+          category: 'painting',
+          featured: false
+        }
+      ]
       mockRepository.findRelated.mockResolvedValue(mockProducts)
 
       const result = await service.findRelated('1', 'painting', 'artist1')

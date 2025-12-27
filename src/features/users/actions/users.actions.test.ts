@@ -52,12 +52,16 @@ describe('Users Actions', () => {
   describe('createUserUnstableCache', () => {
     it('should call Users.create', async () => {
       const mockUser = {
+        id: 'u1',
         name: 'Test User',
         email: 'test@example.com',
         avatar: null,
         password: 'hashedpassword',
         role: 'user',
-        status: 'active'
+        status: 'active',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null
       }
       const mockResult = {
         id: 'u1',
@@ -66,9 +70,9 @@ describe('Users Actions', () => {
         avatar: mockUser.avatar,
         role: mockUser.role,
         status: mockUser.status,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null
+        createdAt: mockUser.createdAt,
+        updatedAt: mockUser.updatedAt,
+        deletedAt: mockUser.deletedAt
       }
       mockUsersService.create.mockResolvedValue(mockResult)
 

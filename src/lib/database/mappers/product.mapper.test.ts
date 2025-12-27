@@ -58,7 +58,9 @@ describe('Product Mapper', () => {
       expect(result.featureImage).toBe('image.jpg')
       expect(result.images).toEqual(['img1.jpg', 'img2.jpg'])
       expect(result.artistId).toBe('artist-1')
-      expect(result.deletedAt).toBeUndefined() // null converted to undefined
+      expect(
+        (result as typeof result & { deletedAt?: Date }).deletedAt
+      ).toBeUndefined() // null converted to undefined
     })
 
     it('should convert null optional fields to undefined', () => {
@@ -96,7 +98,9 @@ describe('Product Mapper', () => {
       expect(result.featureImage).toBeUndefined()
       expect(result.images).toBeUndefined()
       expect(result.artistId).toBeUndefined()
-      expect(result.deletedAt).toBeUndefined()
+      expect(
+        (result as typeof result & { deletedAt?: Date }).deletedAt
+      ).toBeUndefined()
     })
 
     it('should convert decimal price to number', () => {
@@ -187,6 +191,14 @@ describe('Product Mapper', () => {
         featured: false,
         productType: 'physical',
         category: 'painting',
+        featureImage: null,
+        images: null,
+        artistId: null,
+        yearCreated: null,
+        medium: null,
+        dimensions: null,
+        weight: null,
+        style: null,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
@@ -212,9 +224,12 @@ describe('Product Mapper', () => {
       const result = mapProductWithArtistToAppType(drizzleProduct)
 
       expect(result.id).toBe('product-1')
-      expect(result.artist).toBeDefined()
-      expect(result.artist?.id).toBe('artist-1')
-      expect(result.artist?.name).toBe('Test Artist')
+      const resultWithArtist = result as typeof result & {
+        artist?: { id: string; name: string }
+      }
+      expect(resultWithArtist.artist).toBeDefined()
+      expect(resultWithArtist.artist?.id).toBe('artist-1')
+      expect(resultWithArtist.artist?.name).toBe('Test Artist')
     })
 
     it('should map product with null artist to undefined', () => {
@@ -237,7 +252,8 @@ describe('Product Mapper', () => {
 
       const result = mapProductWithArtistToAppType(drizzleProduct)
 
-      expect(result.artist).toBeUndefined()
+      const resultWithArtist = result as typeof result & { artist?: unknown }
+      expect(resultWithArtist.artist).toBeUndefined()
     })
 
     it('should use mapProductToAppType and add artist', () => {
@@ -252,6 +268,14 @@ describe('Product Mapper', () => {
         featured: false,
         productType: 'physical',
         category: 'sculpture',
+        featureImage: null,
+        images: null,
+        artistId: null,
+        yearCreated: null,
+        medium: null,
+        dimensions: null,
+        weight: null,
+        style: null,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
@@ -280,8 +304,11 @@ describe('Product Mapper', () => {
       expect(result.price).toBe(50) // Decimal converted
       expect(result.stock).toBe(5)
       // Verify artist is included
-      expect(result.artist).toBeDefined()
-      expect(result.artist?.id).toBe('artist-2')
+      const resultWithArtist = result as typeof result & {
+        artist?: { id: string }
+      }
+      expect(resultWithArtist.artist).toBeDefined()
+      expect(resultWithArtist.artist?.id).toBe('artist-2')
     })
   })
 
@@ -392,9 +419,15 @@ describe('Product Mapper', () => {
       const result = mapProductsWithArtistToAppType(drizzleProducts)
 
       expect(result).toHaveLength(2)
-      expect(result[0]?.artist).toBeDefined()
-      expect(result[0]?.artist?.name).toBe('Artist 1')
-      expect(result[1]?.artist).toBeUndefined()
+      const result0WithArtist = result[0] as (typeof result)[0] & {
+        artist?: { name: string }
+      }
+      const result1WithArtist = result[1] as (typeof result)[1] & {
+        artist?: unknown
+      }
+      expect(result0WithArtist.artist).toBeDefined()
+      expect(result0WithArtist.artist?.name).toBe('Artist 1')
+      expect(result1WithArtist.artist).toBeUndefined()
     })
 
     it('should return empty array for empty input', () => {

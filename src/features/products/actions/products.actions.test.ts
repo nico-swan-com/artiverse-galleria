@@ -27,7 +27,16 @@ describe('Products Actions', () => {
 
   describe('createProduct', () => {
     it('should create product and revalidate', async () => {
-      const input = { title: 'P1' }
+      const input = {
+        title: 'P1',
+        description: 'Description',
+        price: 100,
+        stock: 10,
+        sales: 0,
+        productType: 'physical',
+        category: 'art',
+        featured: false
+      }
       const output = { id: '1', ...input }
 
       // Spy on the prototype method
