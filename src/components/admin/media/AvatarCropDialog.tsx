@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import Cropper, { Area, Point } from 'react-easy-crop'
 import {
   Dialog,

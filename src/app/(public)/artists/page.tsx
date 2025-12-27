@@ -2,7 +2,6 @@ import ArtistsList from '@/components/public/artists/ArtistList'
 import { Artist } from '@/lib/artists'
 import ArtistsService from '@/lib/artists/artists.service'
 
-// Force dynamic rendering to prevent prerendering issues
 export const dynamic = 'force-dynamic'
 
 type SearchParams = Promise<{ [key: string]: string | undefined }>

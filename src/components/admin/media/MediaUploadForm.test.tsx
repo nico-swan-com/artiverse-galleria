@@ -3,7 +3,6 @@ import React from 'react'
 import { render, fireEvent, waitFor, screen, act } from '@testing-library/react'
 import MediaUploadForm from './MediaUploadForm'
 
-// Add this at the very top of your test file, before any tests
 global.URL.createObjectURL = jest.fn(() => 'mock-url')
 
 jest.mock('browser-image-compression', () => jest.fn(async (file) => file))

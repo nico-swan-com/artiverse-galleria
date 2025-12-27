@@ -12,7 +12,6 @@ export async function deleteProductAction(
   formData: FormData
 ): Promise<FormState> {
   try {
-    // Authorization: Only Admin or ShopManager can delete products
     await requireAuth([UserRoles.Admin, UserRoles.ShopManager])
 
     const ProductIdSchema = z

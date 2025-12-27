@@ -101,7 +101,6 @@ export default function MediaAdminClient() {
     return matchesSearch && matchesTag
   })
 
-  // Collect all tags for filter dropdown
   const allTags = Array.from(new Set(mediaList.flatMap((m) => m.tags || [])))
 
   return (

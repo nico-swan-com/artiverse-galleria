@@ -61,7 +61,6 @@ async function createArtistAction(
 
   let image = getAvatarUrl(email, name)
 
-  // Handle avatar file upload if provided
   if (avatarFile instanceof File) {
     try {
       const mediaService = new MediaService()
@@ -108,14 +107,12 @@ async function createArtistAction(
   }
 
   try {
-    // Authorization: Only Admin or Editor can create artists
     await requireAuth([UserRoles.Admin, UserRoles.Editor])
 
     const values = ArtistCreateSchema.parse({
       ...state
     })
 
-    // Filter out avatarFile as it's not a database field
     const createData = { ...values }
     delete createData.avatarFile
 

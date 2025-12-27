@@ -146,7 +146,6 @@ export async function productFormAction(
   }
 
   try {
-    // Authorization: Admin, Editor, or ShopManager can create/edit products
     await requireAuth([
       UserRoles.Admin,
       UserRoles.Editor,

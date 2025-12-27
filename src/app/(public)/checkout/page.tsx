@@ -32,7 +32,6 @@ const Checkout = () => {
   const [success, setSuccess] = useState(false)
   const [orderId, setOrderId] = useState<string | null>(null)
 
-  // Form state - removed card fields since payment is handled by PayFast
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -47,7 +46,6 @@ const Checkout = () => {
   })
 
   useEffect(() => {
-    // If cart is empty and not after successful checkout, redirect to cart
     if (cart.length === 0 && !success) {
       router.push('/cart')
     }
@@ -59,7 +57,6 @@ const Checkout = () => {
     setSubtotal(total)
   }, [cart, router, success])
 
-  // Track checkout start
   useEffect(() => {
     if (cart.length > 0 && !success) {
       import('@/features/analytics/actions/analytics.actions').then(
@@ -68,7 +65,7 @@ const Checkout = () => {
         }
       )
     }
-  }, []) // Run once on mount
+  }, [])
 
   const handleChange = (
     event:
@@ -88,7 +85,6 @@ const Checkout = () => {
     setIsSubmitting(true)
 
     try {
-      // Build customer info from form data
       const customerInfo: CustomerInfo = {
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -101,26 +97,21 @@ const Checkout = () => {
         country: formData.country
       }
 
-      // Create order and initiate payment
       const result = await createOrderAndPay(customerInfo, cart, formData.notes)
 
       if (result.success && result.redirectUrl) {
         setOrderId(result.orderId || null)
 
-        // For mock mode, handle redirect internally
         if (result.redirectUrl.includes('mock=true')) {
-          // Confirm the mock payment to update status to 'paid'
           if (result.orderId && result.paymentId) {
             await confirmMockPayment(result.orderId, result.paymentId)
           }
-          // Show success after payment is confirmed
           setSuccess(true)
           clearCart()
           toast('Order placed successfully!', {
             description: `Order #${result.orderId} - Thank you for your purchase.`
           })
         } else {
-          // Real payment - redirect to PayFast
           toast('Redirecting to payment...', {
             description: 'You will be redirected to complete your payment.'
           })

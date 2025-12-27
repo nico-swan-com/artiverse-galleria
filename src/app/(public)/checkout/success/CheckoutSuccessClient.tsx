@@ -28,7 +28,6 @@ export default function CheckoutSuccessClient() {
         if (result.success && result.order) {
           setOrder(result.order)
 
-          // Track checkout complete
           import('@/features/analytics/actions/analytics.actions').then(
             ({ trackCheckoutComplete }) => {
               trackCheckoutComplete(result.order!.id).catch(console.error)

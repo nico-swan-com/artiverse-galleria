@@ -75,8 +75,6 @@ async function processImageBuffer(
     processed = true
   }
 
-  // Format-preserving compression with WebP conversion for large images
-  // WebP provides better compression than PNG/JPEG for most images
   const isLargeImage = imgBuffer.length > 500 * 1024 // 500KB threshold
 
   if (mimeType.includes('jpeg') || mimeType.includes('jpg')) {
@@ -103,11 +101,9 @@ async function processImageBuffer(
     processed = true
   }
 
-  // Watermarking (skip for system UI assets)
   if (watermark && !skipWatermark) {
     const imgMeta = await transformer.metadata()
     if (wmLogo) {
-      // Load watermark logo from public dir
       const logoPath = path.join(process.cwd(), 'public', wmLogo)
       try {
         const logoBuffer = await fs.readFile(logoPath)
@@ -119,7 +115,6 @@ async function processImageBuffer(
           })
           .png()
           .toBuffer()
-        // Composite watermark
         transformer = transformer.composite([
           {
             input: logoResized,
@@ -131,7 +126,6 @@ async function processImageBuffer(
         logger.warn('Failed to load watermark logo', err, { logoPath })
       }
     } else if (wmText) {
-      // Render text watermark as SVG with opacity
       const fontSize = imgMeta.width
         ? Math.round(imgMeta.width * wmScale * 0.5)
         : 24
@@ -155,8 +149,6 @@ async function processImageBuffer(
     if (processed) {
       processedBuffer = await transformer.toBuffer()
 
-      // Only use processed buffer if it's actually smaller (unless watermark was applied)
-      // Watermarked images should always use processed buffer regardless of size
       if (!watermarkApplied && processedBuffer.length > imgBuffer.length) {
         logger.info('Processed image larger than original, serving original', {
           originalSize: imgBuffer.length,
@@ -167,7 +159,6 @@ async function processImageBuffer(
       }
     }
   } catch (err) {
-    // Fallback to original if processing fails
     logger.warn('Image processing failed, serving original', err)
     processedBuffer = imgBuffer
     outputFormat = mimeType
@@ -204,7 +195,6 @@ export async function GET(req: NextRequest, context: unknown) {
     if (!media) {
       throw new NotFoundError('Media', id)
     }
-    // Only handle Buffer or plain buffer object
     let imageBuffer: Buffer
     if (media.data instanceof Buffer) {
       imageBuffer = media.data
@@ -242,8 +232,6 @@ export async function GET(req: NextRequest, context: unknown) {
       ? parseFloat(url.searchParams.get('wmScale')!)
       : IMAGE_CONFIG.DEFAULT_WATERMARK_SCALE
 
-    // Process image (no unstable_cache - binary data shouldn't be cached there)
-    // HTTP caching via ETag and Cache-Control headers is sufficient
     const processed = await processImageBuffer(imageBuffer, media.mimeType, {
       quality,
       width,
@@ -260,10 +248,8 @@ export async function GET(req: NextRequest, context: unknown) {
     const outputFormat = processed.outputFormat
     const watermarkApplied = processed.watermarkApplied
 
-    // ETag for CDN cache (hash of buffer content)
     const etag = `W/"${crypto.createHash('sha256').update(processedBuffer).digest('hex').substring(0, 16)}"`
 
-    // Check If-None-Match for conditional requests
     const ifNoneMatch = req.headers.get('if-none-match')
     if (ifNoneMatch === etag) {
       return new NextResponse(null, { status: 304 })
@@ -281,7 +267,6 @@ export async function GET(req: NextRequest, context: unknown) {
     )
     headers.set('ETag', etag)
 
-    // Log original/processed size and watermark flag
     logger.info('Media served', {
       mediaId: id,
       originalSize: media.fileSize,
@@ -293,7 +278,6 @@ export async function GET(req: NextRequest, context: unknown) {
       ).toFixed(1)
     })
 
-    // Fix: Convert Buffer to Uint8Array for NextResponse
     return new NextResponse(new Uint8Array(processedBuffer), {
       status: 200,
       headers

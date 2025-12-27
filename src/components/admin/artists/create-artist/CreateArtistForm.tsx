@@ -56,7 +56,6 @@ const CreateArtistForm = ({ onClose }: CreateArtistFormProps) => {
     }
   }, [state, isPending, onClose])
 
-  // Clear avatar error when avatarFile changes
   useEffect(() => {
     if (avatarFile) {
       setAvatarError(null)
@@ -64,10 +63,8 @@ const CreateArtistForm = ({ onClose }: CreateArtistFormProps) => {
   }, [avatarFile])
 
   const handleFormAction = (formData: FormData) => {
-    // Clear any previous errors
     setAvatarError(null)
 
-    // Validate file size before submission
     if (avatarFile && avatarFile.size > MAX_FILE_SIZE) {
       const sizeInMB = (MAX_FILE_SIZE / (1024 * 1024)).toFixed(1)
       const fileSizeInMB = (avatarFile.size / (1024 * 1024)).toFixed(1)

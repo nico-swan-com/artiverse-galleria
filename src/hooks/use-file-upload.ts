@@ -173,15 +173,12 @@ export const useFileUpload = (
       const newFilesArray = Array.from(newFiles)
       const errors: string[] = []
 
-      // Clear existing errors when new files are uploaded
       setState((prev) => ({ ...prev, errors: [] }))
 
-      // In single file mode, clear existing files first
       if (!multiple) {
         clearFiles()
       }
 
-      // Check if adding these files would exceed maxFiles (only in multiple mode)
       if (
         multiple &&
         maxFiles !== Infinity &&
@@ -195,7 +192,6 @@ export const useFileUpload = (
       const validFiles: FileWithPreview[] = []
 
       newFilesArray.forEach((file) => {
-        // Only check for duplicates if multiple files are allowed
         if (multiple) {
           const isDuplicate = state.files.some(
             (existingFile) =>
@@ -203,13 +199,11 @@ export const useFileUpload = (
               existingFile.file.size === file.size
           )
 
-          // Skip duplicate files silently
           if (isDuplicate) {
             return
           }
         }
 
-        // Check file size
         if (file.size > maxSize) {
           errors.push(
             multiple
@@ -254,7 +248,6 @@ export const useFileUpload = (
         }))
       }
 
-      // Reset input value after handling files
       if (inputRef.current) {
         inputRef.current.value = ''
       }
@@ -334,13 +327,11 @@ export const useFileUpload = (
       e.stopPropagation()
       setState((prev) => ({ ...prev, isDragging: false }))
 
-      // Don't process files if the input is disabled
       if (inputRef.current?.disabled) {
         return
       }
 
       if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-        // In single file mode, only use the first file
         if (!multiple) {
           const file = e.dataTransfer.files[0]
           addFiles([file])

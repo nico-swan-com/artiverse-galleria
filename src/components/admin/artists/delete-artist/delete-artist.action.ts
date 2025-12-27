@@ -12,7 +12,6 @@ async function deleteArtistAction(
   formData: FormData
 ): Promise<FormState> {
   try {
-    // Authorization: Only Admin can delete artists
     await requireAuth([UserRoles.Admin])
 
     const artistIdIdSchema = z

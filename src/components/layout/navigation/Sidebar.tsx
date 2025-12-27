@@ -48,7 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         'flex h-full flex-col border-r border-sidebar-border bg-sidebar transition-all duration-300 ease-in-out',
         isCollapsed ? 'w-16' : 'w-64',
         className,
-        !isMobile && 'relative' // Change to relative when not mobile
+        !isMobile && 'relative'
       )}
     >
       <div className='flex h-16 items-center justify-between border-b border-sidebar-border px-4'>

@@ -73,7 +73,6 @@ export default function ProductForm({
     }
   }, [artist, state])
 
-  // Custom form submit handler
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsPending(true)
@@ -82,11 +81,9 @@ export default function ProductForm({
     if (product.featureImage instanceof File) {
       formData.append('featureImage', product.featureImage)
     } else if (typeof product.featureImage === 'string') {
-      // If it's an existing string URL/ID, append it
       formData.append('featureImage', product.featureImage)
     }
 
-    // Separate new files and existing URLs
     const filesOrUrls = product.images || []
     const newFiles: File[] = filesOrUrls.filter(
       (img): img is File => img instanceof File
@@ -95,7 +92,6 @@ export default function ProductForm({
       (img): img is string => typeof img === 'string'
     )
     let uploadedUrls: string[] = []
-    // Upload new files if any
     if (newFiles.length > 0) {
       const uploadForm = new FormData()
       newFiles.forEach((file) => uploadForm.append('file', file))
@@ -117,7 +113,6 @@ export default function ProductForm({
         return
       }
     }
-    // Merge and normalize all image URLs
     const images = Array.from(new Set([...existingUrls, ...uploadedUrls]))
       .filter(Boolean)
       .map((url) => {
@@ -127,10 +122,8 @@ export default function ProductForm({
         return ''
       })
       .filter(Boolean)
-    // Set images in formData
     formData.delete('images')
     images.forEach((url) => formData.append('images', url))
-    // Call server action
     const result = await productFormAction(
       {
         ...state,
@@ -142,7 +135,6 @@ export default function ProductForm({
     setIsPending(false)
   }
 
-  // Add images from media picker
   const handleAddFromMedia = (ids: string[]) => {
     setProduct((prev) => ({
       ...prev,

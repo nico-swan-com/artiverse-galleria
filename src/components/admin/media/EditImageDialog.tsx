@@ -60,7 +60,6 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
   const [estimating, setEstimating] = useState(false)
   const imgRef = useRef<HTMLImageElement>(null)
 
-  // Set initial state when dialog opens
   useEffect(() => {
     if (!open) return
     if (file) {
@@ -87,7 +86,6 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
       )
       setTags((media as Media).tags || [])
       setPreviewUrl(`/api/media/${media.id}`)
-      // Fetch dimensions
       const img = new window.Image()
       img.src = `/api/media/${media.id}`
       img.onload = () => {
@@ -101,7 +99,6 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
     }
   }, [open, file, media])
 
-  // Estimate file size for uploads
   useEffect(() => {
     if (!file || !width || !height || !quality) {
       setEstimatedSize(null)
@@ -126,7 +123,6 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
     }
   }, [file, width, height, quality])
 
-  // Handle aspect ratio lock
   const handleWidthChange = (val: number) => {
     setWidth(val)
     if (lockAspect && originalDimensions) {
@@ -142,7 +138,6 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
     }
   }
 
-  // Tag input
   const handleTagAdd = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
       setTags([...tags, tagInput.trim()])
@@ -152,7 +147,6 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
   const handleTagRemove = (tag: string) =>
     setTags(tags.filter((t) => t !== tag))
 
-  // Save handler
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)

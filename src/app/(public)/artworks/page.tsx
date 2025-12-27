@@ -1,12 +1,8 @@
 import ProductsService from '@/lib/products/products.service'
 import ArtworksClient from './ArtworksClient'
 
-import { Product } from '@/types/products/product.schema'
-
-// Force dynamic rendering to prevent prerendering issues
 export const dynamic = 'force-dynamic'
 
-// Server Component
 export default async function ArtworksPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
@@ -14,9 +10,8 @@ export default async function ArtworksPage(props: {
 
   try {
     const page = Number(searchParams.page) || 1
-    const limit = 9 // 3x3 grid
+    const limit = 9
 
-    // Extract filters
     const filters = {
       searchQuery: (searchParams.searchQuery as string) || undefined,
       category: (searchParams.category as string) || undefined,

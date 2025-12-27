@@ -30,7 +30,6 @@ export default async function InvoicePage({ params }: InvoicePageProps) {
     notFound()
   }
 
-  // Security Verification: Allow access only if Admin OR Order Owner
   const isAdmin = session.user?.role === 'Admin'
   const isOwner = session.user?.id === order.customerId
 

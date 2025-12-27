@@ -36,5 +36,3 @@ export async function POST(req: NextRequest) {
     return handleApiError(e)
   }
 }
-
-// DELETE /api/media/:id is handled in [id]/route.ts

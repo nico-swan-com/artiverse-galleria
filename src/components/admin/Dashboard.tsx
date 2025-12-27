@@ -19,7 +19,6 @@ import { useSession } from 'next-auth/react'
 const Dashboard = () => {
   const { status } = useSession()
 
-  // Format revenue numbers
   const totalRevenue = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -34,7 +33,6 @@ const Dashboard = () => {
     maximumFractionDigits: 0
   }).format(9999)
 
-  // Format product data for chart
   const productChartData = [{ name: 'asdasdasdasdas', sales: 99999 }].map(
     (product) => ({
       name:

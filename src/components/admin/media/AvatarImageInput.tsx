@@ -43,7 +43,6 @@ export default function AvatarImageInput({
     setPreviewUrl(url || null)
   }, [url])
 
-  // Cropper state
   const [cropDialogOpen, setCropDialogOpen] = useState(false)
   const [imageToCrop, setImageToCrop] = useState<string | null>(null)
   const [originalFileName, setOriginalFileName] = useState<string>('')
@@ -53,7 +52,6 @@ export default function AvatarImageInput({
     setFileError(null) // Clear previous errors
 
     if (file) {
-      // Check file size
       if (file.size > maxFileSize) {
         const sizeInMB = (maxFileSize / (1024 * 1024)).toFixed(1)
         const fileSizeInMB = (file.size / (1024 * 1024)).toFixed(1)
@@ -63,19 +61,16 @@ export default function AvatarImageInput({
         return
       }
 
-      // Check file type
       if (!file.type.startsWith('image/')) {
         setFileError('Please select a valid image file')
         return
       }
 
-      // Open crop dialog with the selected image
       setOriginalFileName(file.name)
       setImageToCrop(URL.createObjectURL(file))
       setCropDialogOpen(true)
     }
 
-    // Reset input so the same file can be selected again
     if (inputRef.current) {
       inputRef.current.value = ''
     }
@@ -89,7 +84,6 @@ export default function AvatarImageInput({
       type: croppedFile.type,
       size: croppedFile.size
     })
-    // Clean up the original image URL
     if (imageToCrop) {
       URL.revokeObjectURL(imageToCrop)
     }

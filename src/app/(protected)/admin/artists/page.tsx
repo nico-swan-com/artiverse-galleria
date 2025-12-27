@@ -4,7 +4,6 @@ import ArtistsService from '@/lib/artists/artists.service'
 
 import { FindOptionsOrderValue } from '@/types/common/db.type'
 
-// Force dynamic rendering to prevent prerendering issues
 export const dynamic = 'force-dynamic'
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>

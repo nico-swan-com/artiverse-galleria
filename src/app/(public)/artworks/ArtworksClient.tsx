@@ -46,7 +46,6 @@ export default function ArtworksClient({
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  // Initialize state from URL params
   const [searchTerm, setSearchTerm] = useState(
     searchParams.get('searchQuery') || ''
   )
@@ -56,13 +55,11 @@ export default function ArtworksClient({
   const [selectedStyle, setSelectedStyle] = useState(
     searchParams.get('style') || ''
   )
-  // Price range default [0, 10000]
   const [priceRange, setPriceRange] = useState([
     Number(searchParams.get('minPrice')) || 0,
     Number(searchParams.get('maxPrice')) || 10000
   ])
 
-  // Debounce search term update
   useEffect(() => {
     const timer = setTimeout(() => {
       if (searchTerm !== (searchParams.get('searchQuery') || '')) {
@@ -72,11 +69,6 @@ export default function ArtworksClient({
     return () => clearTimeout(timer)
   }, [searchTerm])
 
-  // Debounce price update - checking implementation of slider
-  // Slider onValueChange updates state instantly, we need to debounce the URL update
-  // or only update URL on commit (onValueCommit) if Slider supports it.
-  // shadcn Slider passes value to onValueChange.
-  // Let's use useEffect for price range with debounce too.
   useEffect(() => {
     const timer = setTimeout(() => {
       const currentMin = Number(searchParams.get('minPrice')) || 0
@@ -103,7 +95,6 @@ export default function ArtworksClient({
         }
       }
 
-      // Always reset to page 1 when filters change
       if (Object.keys(params).some((key) => key !== 'page')) {
         newSearchParams.set('page', '1')
       }
@@ -129,7 +120,6 @@ export default function ArtworksClient({
     router.push(pathname)
   }
 
-  // Effect to sync state if URL changes externally (e.g. back button)
   useEffect(() => {
     setSearchTerm(searchParams.get('searchQuery') || '')
     setSelectedCategory(searchParams.get('category') || '')

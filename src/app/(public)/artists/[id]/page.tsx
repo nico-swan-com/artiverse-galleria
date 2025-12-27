@@ -6,7 +6,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import ArtistsService from '@/lib/artists/artists.service'
 
-// Force dynamic rendering to prevent prerendering issues
 export const dynamic = 'force-dynamic'
 
 export default async function ArtistDetailPage({
@@ -32,7 +31,6 @@ export default async function ArtistDetailPage({
       )
     }
 
-    // Query products directly by artist ID (optimized - avoids loading all products)
     const artistArtworks = await new ProductsService().getByArtistId(id)
 
     return (
