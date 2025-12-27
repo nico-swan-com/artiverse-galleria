@@ -1,6 +1,5 @@
 /* eslint-env node */
-const formatCommand = 'prettier . --check'
 
 export default {
-  '*': formatCommand
+  '*': (filenames) => `prettier --check ${filenames.join(' ')}`
 }
