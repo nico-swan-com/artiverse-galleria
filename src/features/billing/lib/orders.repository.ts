@@ -16,7 +16,7 @@ import {
   OrderEvent as DbOrderEvent,
   NewOrderEvent
 } from '@/lib/database/schema'
-import { eq, desc } from 'drizzle-orm'
+import { eq, desc, sql } from 'drizzle-orm'
 import { logger } from '@/lib/utilities/logger'
 
 export class OrdersRepository {
@@ -86,6 +86,38 @@ export class OrdersRepository {
    */
   async findByUserId(userId: string): Promise<DbOrder[]> {
     return db.select().from(orders).where(eq(orders.userId, userId))
+  }
+
+  /**
+   * Get paginated orders
+   */
+  async getPaged(
+    page: number,
+    limit: number,
+    status?: string
+  ): Promise<{ orders: DbOrder[]; total: number }> {
+    const offset = (page - 1) * limit
+
+    const whereClause = status ? eq(orders.status, status) : undefined
+
+    const [ordersResult, countResult] = await Promise.all([
+      db
+        .select()
+        .from(orders)
+        .where(whereClause)
+        .limit(limit)
+        .offset(offset)
+        .orderBy(desc(orders.createdAt)),
+      db
+        .select({ count: sql<number>`count(*)` })
+        .from(orders)
+        .where(whereClause)
+    ])
+
+    return {
+      orders: ordersResult,
+      total: Number(countResult[0]?.count || 0)
+    }
   }
 
   /**

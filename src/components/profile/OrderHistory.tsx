@@ -311,6 +311,15 @@ export default function OrderHistory() {
                     {status.icon}
                     {status.label}
                   </span>
+                  <Button variant='outline' size='sm' asChild className='h-8'>
+                    <a
+                      href={`/orders/${order.id}/invoice`}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    >
+                      Invoice
+                    </a>
+                  </Button>
                 </div>
               </div>
             )

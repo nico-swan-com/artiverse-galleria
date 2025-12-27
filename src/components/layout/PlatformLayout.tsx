@@ -9,7 +9,8 @@ import {
   Palette,
   Images,
   UserRound,
-  UsersRound
+  UsersRound,
+  ShoppingCart
 } from 'lucide-react'
 import { useState } from 'react'
 import { SessionProvider } from 'next-auth/react'
@@ -63,6 +64,12 @@ export default function PlatformLayout({
       title: 'Media',
       icon: <Images size={18} />,
       path: '/admin/media'
+    },
+    {
+      id: 'orders',
+      title: 'Orders',
+      icon: <ShoppingCart size={18} />,
+      path: '/admin/orders'
     },
     {
       id: 'profile',

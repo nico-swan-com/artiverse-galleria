@@ -186,3 +186,41 @@ export async function cancelOrder(orderId: string) {
     }
   }
 }
+
+/**
+ * Get paginated orders for admin dashboard
+ */
+export async function getAdminOrdersAction(
+  page: number = 1,
+  limit: number = 10,
+  status?: string
+) {
+  try {
+    // Check for admin role (optional: verify user role here if not handled by middleware)
+    const session = await auth()
+    if (session?.user?.role !== 'Admin') {
+      return {
+        success: false,
+        error: 'Unauthorized'
+      }
+    }
+
+    const { orders, total } = await billingService.getAdminOrders(
+      page,
+      limit,
+      status
+    )
+
+    return {
+      success: true,
+      orders,
+      total
+    }
+  } catch (error) {
+    logger.error('Failed to get admin orders', error as Error)
+    return {
+      success: false,
+      error: 'Failed to retrieve orders'
+    }
+  }
+}

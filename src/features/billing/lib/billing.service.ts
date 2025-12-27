@@ -145,6 +145,32 @@ export class BillingService {
   }
 
   /**
+   * Get paginated orders for admin
+   */
+  async getAdminOrders(
+    page: number,
+    limit: number,
+    status?: string
+  ): Promise<{ orders: Order[]; total: number }> {
+    const { orders, total } = await ordersRepository.getPaged(
+      page,
+      limit,
+      status
+    )
+
+    // Map DB orders to Order type
+    // Note: We don't fetch items for the list view to improve performance
+    const mappedOrders = orders.map((dbOrder) =>
+      this.mapDbOrderToOrder(dbOrder, [])
+    )
+
+    return {
+      orders: mappedOrders,
+      total
+    }
+  }
+
+  /**
    * Initiate payment for an order
    */
   async initiatePayment(

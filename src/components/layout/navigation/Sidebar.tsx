@@ -10,6 +10,7 @@ import { INavbarProps } from './NavbarProps.interface'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
 import { signOut, useSession } from 'next-auth/react'
+import Logo from '@/components/admin/users/create-user/logo/Logo'
 
 interface SidebarProps extends INavbarProps {
   className?: string
@@ -51,11 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       )}
     >
       <div className='flex h-16 items-center justify-between border-b border-sidebar-border px-4'>
-        {!isCollapsed && (
-          <div className='flex items-center space-x-2'>
-            <span className='text-lg font-semibold'>Artiverse</span>
-          </div>
-        )}
+        {!isCollapsed && <Logo />}
         <Button
           variant='ghost'
           size='icon'
