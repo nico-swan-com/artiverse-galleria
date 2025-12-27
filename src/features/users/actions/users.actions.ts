@@ -22,6 +22,18 @@ export const getUsersUnstableCache = unstable_cache(
   }
 )
 
+export const getUserByIdUnstableCache = unstable_cache(
+  async (id: string) => {
+    const result = await new Users().getById(id)
+    return result
+  },
+  ['user-by-id'],
+  {
+    tags: ['users'],
+    revalidate: 1
+  }
+)
+
 export const createUserUnstableCache = unstable_cache(
   async (user: User) => {
     const result = await new Users().create(user)

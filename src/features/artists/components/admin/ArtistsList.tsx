@@ -12,11 +12,12 @@ import {
 } from '@/components/ui/table'
 import { FindOptionsOrderValue } from '@/types/common/db.type'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ArrowDown, ArrowUp } from 'lucide-react'
+import { ArrowDown, ArrowUp, Edit } from 'lucide-react'
 import TablePagination from '@/components/common/ui/TablePagination'
 import DeleteArtistDialog from './delete-artist/DeleteArtistDialog'
-import EditArtistSheet from './edit-artist/EditArtistDialog'
 import { Artist, ArtistsSortBy } from '@/features/artists'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 interface ArtistsListProps {
   artists: Artist[]
@@ -154,7 +155,12 @@ const ArtistsList = ({
                       : ''}
                   </TableCell>
                   <TableCell className='text-end'>
-                    <EditArtistSheet artist={artist} />
+                    <Button variant='ghost' size='sm' asChild>
+                      <Link href={`/admin/artists/${artist.id}/edit`}>
+                        <Edit className='size-4' />
+                        <span className='sr-only'>Edit {artist.name}</span>
+                      </Link>
+                    </Button>
                     <DeleteArtistDialog artist={artist} />
                   </TableCell>
                 </TableRow>

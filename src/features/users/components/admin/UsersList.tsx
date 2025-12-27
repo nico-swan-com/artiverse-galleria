@@ -5,7 +5,6 @@ import React from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { format } from 'date-fns'
 import { Badge } from '@/components/ui/badge'
-import EditUserSheet from './edit-user/EditUserDialog'
 import DeleteUserSheet from './delete-user/DeleteUserDialog'
 import {
   Table,
@@ -17,12 +16,14 @@ import {
 } from '@/components/ui/table'
 import { FindOptionsOrderValue } from '@/types/common/db.type'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ArrowDown, ArrowUp } from 'lucide-react'
+import { ArrowDown, ArrowUp, Edit } from 'lucide-react'
 import TablePagination from '@/components/common/ui/TablePagination'
 import { User } from '@/types/users/user.schema'
 import { UsersSortBy } from '@/types/users/users-sort-by.type'
 import { getAvatarUrl } from '@/lib/utilities/get-avatar-url'
 import { UserRoles } from '@/types/users/user-roles.enum'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 interface UsersListProps {
   users: User[]
@@ -169,7 +170,12 @@ const UsersList = ({
                     {format(new Date(user.createdAt), 'MMM d, yyyy')}
                   </TableCell>
                   <TableCell className='text-end'>
-                    <EditUserSheet user={user} />
+                    <Button variant='ghost' size='sm' asChild>
+                      <Link href={`/admin/users/${user.id}/edit`}>
+                        <Edit className='size-4' />
+                        <span className='sr-only'>Edit {user.name}</span>
+                      </Link>
+                    </Button>
                     {currentUserRole === UserRoles.Admin && (
                       <DeleteUserSheet user={user} />
                     )}

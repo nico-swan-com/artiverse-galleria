@@ -10,7 +10,7 @@ import { INavbarProps } from './NavbarProps.interface'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
 import { signOut, useSession } from 'next-auth/react'
-import Logo from '@/features/users/components/admin/create-user/logo/Logo'
+import Logo from '@/components/common/Logo'
 
 interface SidebarProps extends INavbarProps {
   className?: string

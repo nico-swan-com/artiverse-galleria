@@ -16,10 +16,10 @@ import Link from 'next/link'
 import registerAction, {
   RegisterState
 } from '@/features/authentication/lib/register.action'
-import { PasswordInput } from '@/features/users/components/admin/create-user/PasswordInput'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { PasswordInput } from '@/features/users/components/admin/PasswordInput'
 
 const initialFormState: RegisterState = {
   success: false,

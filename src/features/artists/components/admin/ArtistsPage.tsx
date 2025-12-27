@@ -1,8 +1,10 @@
 import PageTransition from '@/components/common/utility/PageTransition'
 import { FindOptionsOrderValue } from '@/types/common/db.type'
 import ArtistsList from './ArtistsList'
-import CreateArtistSheet from './create-artist/CreateArtistDialog'
 import { Artist, ArtistsSortBy } from '@/features/artists'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Plus } from 'lucide-react'
 
 interface ArtistsPageProps {
   artists: Artist[]
@@ -26,7 +28,12 @@ const ArtistsPage = ({
       <div className='space-y-6'>
         <div className='flex items-center justify-between'>
           <h1 className='text-3xl font-bold tracking-tight'>Artists</h1>
-          <CreateArtistSheet />
+          <Link href='/admin/artists/new'>
+            <Button>
+              <Plus className='mr-2 h-4 w-4' />
+              Add Artist
+            </Button>
+          </Link>
         </div>
 
         <ArtistsList

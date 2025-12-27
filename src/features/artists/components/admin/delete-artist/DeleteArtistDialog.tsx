@@ -1,13 +1,13 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from '@/components/ui/sheet'
 
 import { Trash } from 'lucide-react'
 import { useState, Suspense } from 'react'
@@ -22,16 +22,16 @@ const DeleteArtistDialog = ({ artist }: DeleteArtistProps) => {
   const [isOpen, setOpen] = useState(false)
 
   return (
-    <Dialog open={isOpen} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <Sheet open={isOpen} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
         <Button size='icon' variant='ghost'>
           <Trash className='size-4 text-red-500' />
         </Button>
-      </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px]'>
-        <DialogHeader>
-          <DialogTitle>Remove artist</DialogTitle>
-          <DialogDescription>
+      </SheetTrigger>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Remove artist</SheetTitle>
+          <SheetDescription>
             <div className='rounded-md bg-red-100 p-4 text-sm text-red-500'>
               <p>
                 Warning: This action cannot be undone. The artist and all
@@ -41,8 +41,8 @@ const DeleteArtistDialog = ({ artist }: DeleteArtistProps) => {
                 <strong>Are you sure you want to remove this artist?</strong>
               </p>
             </div>
-          </DialogDescription>
-        </DialogHeader>
+          </SheetDescription>
+        </SheetHeader>
         <Suspense
           fallback={
             <div className='py-4 text-center text-sm text-muted-foreground'>
@@ -54,8 +54,8 @@ const DeleteArtistDialog = ({ artist }: DeleteArtistProps) => {
             <DeleteArtistForm artist={artist} onClose={() => setOpen(false)} />
           )}
         </Suspense>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   )
 }
 

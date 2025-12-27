@@ -164,30 +164,33 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='max-w-xl'>
+      <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>Edit Image Metadata & Resize</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSave} className='flex flex-col gap-6'>
-          <div className='flex flex-col gap-6 md:flex-row'>
-            <div className='flex flex-1 flex-col items-center gap-2'>
-              {previewUrl ? (
-                <Image
-                  ref={imgRef}
-                  src={previewUrl}
-                  alt={altText || fileName}
-                  width={width || 320}
-                  height={height || 180}
-                  className='h-48 w-full rounded bg-gray-100 object-contain'
-                />
-              ) : (
-                <div className='flex h-48 w-full items-center justify-center rounded bg-gray-100'>
-                  <ImageIcon className='size-12 text-gray-400' />
-                </div>
-              )}
+          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+            {/* Image Preview Section */}
+            <div className='flex flex-col gap-4'>
+              <div className='rounded-lg border border-gray-200 bg-gray-50 p-4'>
+                {previewUrl ? (
+                  <Image
+                    ref={imgRef}
+                    src={previewUrl}
+                    alt={altText || fileName}
+                    width={width || 320}
+                    height={height || 180}
+                    className='h-64 w-full rounded bg-white object-contain shadow-sm'
+                  />
+                ) : (
+                  <div className='flex h-64 w-full items-center justify-center rounded bg-white'>
+                    <ImageIcon className='size-12 text-gray-400' />
+                  </div>
+                )}
+              </div>
               {file && (
-                <div className='mt-2 text-xs text-muted-foreground'>
+                <div className='rounded-md bg-blue-50 px-3 py-2 text-sm text-blue-700'>
                   {estimating
                     ? 'Estimating size...'
                     : estimatedSize !== null
@@ -195,7 +198,7 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
                       : null}
                 </div>
               )}
-              <div className='mt-2 flex flex-wrap gap-2'>
+              <div className='flex flex-wrap gap-2'>
                 {tags.map((tag) => (
                   <Badge
                     key={tag}
@@ -205,7 +208,7 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
                     {tag}
                     <button
                       type='button'
-                      className='ml-1 text-xs'
+                      className='ml-1 text-xs hover:text-red-600'
                       onClick={() => handleTagRemove(tag)}
                       aria-label={`Remove tag ${tag}`}
                     >
@@ -215,27 +218,37 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
                 ))}
               </div>
             </div>
-            <div className='flex flex-1 flex-col gap-4'>
+
+            {/* Metadata Section */}
+            <div className='flex flex-col gap-4'>
               <div>
-                <Label htmlFor='fileName'>File name</Label>
+                <Label htmlFor='fileName' className='text-base font-semibold'>
+                  File name
+                </Label>
                 <Input
                   id='fileName'
                   value={fileName}
                   onChange={(e) => setFileName(e.target.value)}
+                  className='mt-2'
                   autoFocus
                 />
               </div>
               <div>
-                <Label htmlFor='altText'>Alt Text</Label>
+                <Label htmlFor='altText' className='text-base font-semibold'>
+                  Alt Text
+                </Label>
                 <Input
                   id='altText'
                   value={altText}
                   onChange={(e) => setAlt(e.target.value)}
+                  className='mt-2'
                 />
               </div>
               <div>
-                <Label htmlFor='tags'>Tags</Label>
-                <div className='flex gap-2'>
+                <Label htmlFor='tags' className='text-base font-semibold'>
+                  Tags
+                </Label>
+                <div className='mt-2 flex gap-2'>
                   <Input
                     id='tags'
                     value={tagInput}
@@ -258,72 +271,97 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
               </div>
             </div>
           </div>
-          <div className='mt-2 flex flex-col gap-4 border-t pt-4'>
-            <div className='flex items-center gap-4'>
-              <Label className='flex items-center gap-2'>
-                <input
-                  type='checkbox'
-                  checked={lockAspect}
-                  onChange={(e) => setLockAspect(e.target.checked)}
-                  className='size-4 rounded border-gray-300 accent-blue-600 focus:ring focus:ring-blue-200'
-                />
-                Lock aspect ratio
-              </Label>
-              <Label className='flex items-center gap-2'>
-                Quality
-                <Slider
-                  min={10}
-                  max={100}
-                  step={1}
-                  value={[quality]}
-                  onValueChange={([val]) => setQuality(val)}
-                  className='w-32'
-                />
-                <span className='w-8 text-right'>{quality}</span>
-              </Label>
-            </div>
-            {originalDimensions && (
-              <div className='flex items-center gap-4'>
-                <Label className='flex-1'>
-                  Width
-                  <Slider
-                    min={1}
-                    max={originalDimensions.width}
-                    value={[width || originalDimensions.width]}
-                    onValueChange={([val]) => handleWidthChange(val)}
-                    className='w-full'
+
+          {/* Image Adjustment Controls */}
+          <div className='rounded-lg border border-gray-200 bg-gray-50 p-4'>
+            <h3 className='mb-4 text-base font-semibold'>Image Adjustments</h3>
+            <div className='flex flex-col gap-4'>
+              <div className='flex items-center justify-between gap-4'>
+                <Label className='flex items-center gap-2'>
+                  <input
+                    type='checkbox'
+                    checked={lockAspect}
+                    onChange={(e) => setLockAspect(e.target.checked)}
+                    className='size-4 rounded border-gray-300 accent-blue-600 focus:ring focus:ring-blue-200'
                   />
-                  <Input
-                    type='number'
-                    min={1}
-                    max={originalDimensions.width}
-                    value={width || ''}
-                    onChange={(e) => handleWidthChange(Number(e.target.value))}
-                    className='ml-2 inline-block w-20'
-                  />
+                  Lock aspect ratio
                 </Label>
-                <Label className='flex-1'>
-                  Height
+                <Label className='flex items-center gap-3'>
+                  <span className='text-sm font-medium'>Quality</span>
                   <Slider
-                    min={1}
-                    max={originalDimensions.height}
-                    value={[height || originalDimensions.height]}
-                    onValueChange={([val]) => handleHeightChange(val)}
-                    className='w-full'
+                    min={10}
+                    max={100}
+                    step={1}
+                    value={[quality]}
+                    onValueChange={([val]) => setQuality(val)}
+                    className='w-32'
                   />
-                  <Input
-                    type='number'
-                    min={1}
-                    max={originalDimensions.height}
-                    value={height || ''}
-                    onChange={(e) => handleHeightChange(Number(e.target.value))}
-                    className='ml-2 inline-block w-20'
-                  />
+                  <span className='w-10 text-right font-semibold'>
+                    {quality}%
+                  </span>
                 </Label>
               </div>
-            )}
+              {originalDimensions && (
+                <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                  <div>
+                    <Label className='mb-2 block text-sm font-medium'>
+                      Width (px)
+                    </Label>
+                    <div className='space-y-2'>
+                      <Slider
+                        min={1}
+                        max={originalDimensions.width}
+                        value={[width || originalDimensions.width]}
+                        onValueChange={([val]) => handleWidthChange(val)}
+                        className='w-full'
+                      />
+                      <Input
+                        type='number'
+                        min={1}
+                        max={originalDimensions.width}
+                        value={width || ''}
+                        onChange={(e) =>
+                          handleWidthChange(Number(e.target.value))
+                        }
+                        className='w-full'
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className='mb-2 block text-sm font-medium'>
+                      Height (px)
+                    </Label>
+                    <div className='space-y-2'>
+                      <Slider
+                        min={1}
+                        max={originalDimensions.height}
+                        value={[height || originalDimensions.height]}
+                        onValueChange={([val]) => handleHeightChange(val)}
+                        className='w-full'
+                      />
+                      <Input
+                        type='number'
+                        min={1}
+                        max={originalDimensions.height}
+                        value={height || ''}
+                        onChange={(e) =>
+                          handleHeightChange(Number(e.target.value))
+                        }
+                        className='w-full'
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
+
           <DialogFooter>
+            <DialogClose asChild>
+              <Button type='button' variant='outline'>
+                Cancel
+              </Button>
+            </DialogClose>
             <Button
               type='submit'
               disabled={saving || loading}
@@ -331,11 +369,6 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
             >
               <Save className='size-4' /> Save & Apply
             </Button>
-            <DialogClose asChild>
-              <Button type='button' variant='outline'>
-                Cancel
-              </Button>
-            </DialogClose>
           </DialogFooter>
         </form>
       </DialogContent>

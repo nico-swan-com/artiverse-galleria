@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import AvatarImageInput from '@/features/media/components/admin/AvatarImageInput'
-import { PasswordInput } from '@/features/users/components/admin/create-user/PasswordInput'
 import { updateProfileAction } from '@/features/users/actions/profile.actions'
 import { getAvatarUrl } from '@/lib/utilities/get-avatar-url'
 import { User } from '@/types/users/user.schema'
@@ -23,6 +22,7 @@ import {
   CollapsibleTrigger
 } from '@/components/ui/collapsible'
 import { formInitialState } from '@/types/common/form-state.type'
+import { PasswordInput } from '@/features/users/components/admin/PasswordInput'
 
 interface UserProfileFormProps {
   user: User

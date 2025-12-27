@@ -20,6 +20,11 @@ export default class Users {
     return result
   }
 
+  async getById(id: string) {
+    const result = await this.repository.getUserById(id)
+    return result
+  }
+
   async create(user: NewUser) {
     const result = await this.repository.create(user)
     return result
