@@ -4,7 +4,7 @@ import { auth } from '@/features/authentication/lib/next-auth'
 import { ordersRepository } from '@/features/orders/lib/orders.repository'
 import { db } from '@/lib/database/drizzle'
 import { orders, orderItems, orderEvents } from '@/lib/database/schema'
-import { eq, desc } from 'drizzle-orm'
+import { eq, desc, inArray } from 'drizzle-orm'
 
 export interface OrderSummary {
   id: string
@@ -69,23 +69,33 @@ export async function getUserOrders(): Promise<{
       .where(eq(orders.userId, session.user.id))
       .orderBy(desc(orders.createdAt))
 
-    // Get item counts for each order
-    const orderSummaries: OrderSummary[] = await Promise.all(
-      userOrders.map(async (order) => {
-        const items = await db
-          .select()
-          .from(orderItems)
-          .where(eq(orderItems.orderId, order.id))
+    if (!userOrders.length) {
+      return { success: true, orders: [] }
+    }
 
-        return {
-          id: order.id,
-          total: parseFloat(order.total),
-          status: order.status,
-          itemCount: items.length,
-          createdAt: order.createdAt
-        }
+    const orderIds = userOrders.map((order) => order.id)
+
+    const items = await db
+      .select({
+        orderId: orderItems.orderId
       })
-    )
+      .from(orderItems)
+      .where(inArray(orderItems.orderId, orderIds))
+
+    // Calculate item counts for each order
+    const orderSummaries: OrderSummary[] = userOrders.map((order) => {
+      const orderItemCount = items.filter(
+        (item) => item.orderId === order.id
+      ).length
+
+      return {
+        id: order.id,
+        total: parseFloat(order.total),
+        status: order.status,
+        itemCount: orderItemCount,
+        createdAt: order.createdAt
+      }
+    })
 
     return { success: true, orders: orderSummaries }
   } catch (error) {

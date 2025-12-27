@@ -8,7 +8,7 @@ const __dirname = dirname(__filename)
 const compat = new FlatCompat({
   baseDirectory: __dirname,
   root: true,
-  plugins: ['@typescript-eslint', 'tailwindcss'],
+  plugins: ['@typescript-eslint' /* , 'tailwindcss' */],
   env: {
     browser: true,
     es6: true,
@@ -25,9 +25,9 @@ const compat = new FlatCompat({
         tsconfigRootDir: __dirname
       },
       extends: [
-        'next/core-web-vitals',
+        // 'next/core-web-vitals',
         'plugin:@typescript-eslint/recommended',
-        'plugin:tailwindcss/recommended',
+        // 'plugin:tailwindcss/recommended',
         'prettier'
       ]
     }
@@ -40,9 +40,10 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends(
-    'next/core-web-vitals',
-    'next/typescript',
-    'plugin:tailwindcss/recommended',
+    // 'next/core-web-vitals', // Disabled due to ESLint 9 compatibility issues
+    // 'next/typescript',
+    // 'plugin:tailwindcss/recommended',
+    'plugin:@typescript-eslint/recommended',
     'prettier'
   )
 ]

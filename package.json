@@ -11,7 +11,7 @@
     "build:server": "tsc --project tsconfig.standalone.json",
     "start:next": "next start",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "format": "prettier --write .",
     "prepare": "husky",
     "db:generate": "drizzle-kit generate",
