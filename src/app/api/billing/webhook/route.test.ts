@@ -1,4 +1,3 @@
-import { POST, GET } from './route'
 import { billingService } from '@/features/billing/lib/billing.service'
 import { NextRequest } from 'next/server'
 
@@ -30,6 +29,8 @@ describe('Billing Webhook API Route', () => {
 
   describe('GET /api/billing/webhook', () => {
     it('should return webhook status', async () => {
+      const { GET } = await import('./route')
+
       const response = await GET()
       const data = await response.json()
 
@@ -40,44 +41,59 @@ describe('Billing Webhook API Route', () => {
 
   describe('POST /api/billing/webhook', () => {
     it('should process webhook successfully', async () => {
-      const formData = new FormData()
-      formData.append('pf_payment_id', 'payment-123')
-      formData.append('m_payment_id', 'order-456')
-      formData.append('payment_status', 'COMPLETE')
-      formData.append('signature', 'test-signature')
+      const { POST } = await import('./route')
+
+      // Mock FormData parsing
+      const mockPayload = {
+        pf_payment_id: 'payment-123',
+        m_payment_id: 'order-456',
+        payment_status: 'COMPLETE',
+        signature: 'test-signature'
+      }
+
       ;(billingService.processWebhook as jest.Mock).mockResolvedValue(true)
 
-      const request = new NextRequest('http://localhost/api/billing/webhook', {
-        method: 'POST',
-        body: formData
+      // Create a mock FormData object
+      const mockFormData = new FormData()
+      Object.entries(mockPayload).forEach(([key, value]) => {
+        mockFormData.append(key, value)
       })
+
+      // Create a mock request with formData method
+      const request = {
+        formData: jest.fn().mockResolvedValue(mockFormData)
+      } as unknown as NextRequest
 
       const response = await POST(request)
 
       expect(response.status).toBe(200)
       expect(billingService.processWebhook).toHaveBeenCalledWith(
-        expect.objectContaining({
-          pf_payment_id: 'payment-123',
-          m_payment_id: 'order-456',
-          payment_status: 'COMPLETE',
-          signature: 'test-signature'
-        }),
+        expect.objectContaining(mockPayload),
         'test-signature'
       )
     })
 
     it('should handle webhook processing failure', async () => {
-      const formData = new FormData()
-      formData.append('pf_payment_id', 'payment-123')
-      formData.append('m_payment_id', 'order-456')
-      formData.append('payment_status', 'FAILED')
-      formData.append('signature', 'test-signature')
+      const { POST } = await import('./route')
+
+      const mockPayload = {
+        pf_payment_id: 'payment-123',
+        m_payment_id: 'order-456',
+        payment_status: 'FAILED',
+        signature: 'test-signature'
+      }
+
       ;(billingService.processWebhook as jest.Mock).mockResolvedValue(false)
 
-      const request = new NextRequest('http://localhost/api/billing/webhook', {
-        method: 'POST',
-        body: formData
+      // Create a mock FormData object
+      const mockFormData = new FormData()
+      Object.entries(mockPayload).forEach(([key, value]) => {
+        mockFormData.append(key, value)
       })
+
+      const request = {
+        formData: jest.fn().mockResolvedValue(mockFormData)
+      } as unknown as NextRequest
 
       const response = await POST(request)
       const text = await response.text()
@@ -87,16 +103,24 @@ describe('Billing Webhook API Route', () => {
     })
 
     it('should handle errors', async () => {
-      const formData = new FormData()
-      formData.append('pf_payment_id', 'payment-123')
+      const { POST } = await import('./route')
+
+      const mockPayload = {
+        pf_payment_id: 'payment-123'
+      }
 
       const error = new Error('Processing error')
       ;(billingService.processWebhook as jest.Mock).mockRejectedValue(error)
 
-      const request = new NextRequest('http://localhost/api/billing/webhook', {
-        method: 'POST',
-        body: formData
+      // Create a mock FormData object
+      const mockFormData = new FormData()
+      Object.entries(mockPayload).forEach(([key, value]) => {
+        mockFormData.append(key, value)
       })
+
+      const request = {
+        formData: jest.fn().mockResolvedValue(mockFormData)
+      } as unknown as NextRequest
 
       const response = await POST(request)
       const text = await response.text()

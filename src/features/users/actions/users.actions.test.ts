@@ -1,6 +1,6 @@
 import { getUsersUnstableCache, createUserUnstableCache } from './users.actions'
 import Users from '../lib/users.service'
-import type { MockUsersService } from '@/__tests__/utils/mock-types'
+import type { MockUsersService } from '@/__tests__/utils/mock-types.helper'
 
 // Mock dependencies
 jest.mock('@/lib/database/drizzle', () => ({

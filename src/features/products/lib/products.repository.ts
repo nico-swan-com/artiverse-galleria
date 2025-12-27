@@ -252,6 +252,7 @@ class ProductsRepository {
       const result = await db
         .select()
         .from(products)
+        .leftJoin(artists, eq(products.artistId, artists.id))
         .where(
           and(
             ne(products.id, artworkId),
@@ -260,13 +261,6 @@ class ProductsRepository {
         )
         .orderBy(sql`RANDOM()`)
         .limit(4)
-        // Note: Relation loading in query builder (.select().from()) requires .leftJoin manually OR use db.query...findMany
-        // For Random order, db.query API might not support sql`RANDOM()` easily in orderBy (it expects column).
-        // Actually it might support sql helpers.
-        // Let's stick to query builder for this complex query to be safe, but we need to fetch artist too?
-        // Old code: .leftJoinAndSelect('product.artist', 'artist')
-        // So yes.
-        .leftJoin(artists, eq(products.artistId, artists.id))
 
       // Result will be { products: ..., artists: ... } objects
       // We need to map it back to structure expected.

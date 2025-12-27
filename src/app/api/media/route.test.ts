@@ -1,13 +1,21 @@
-import { GET, POST } from './route'
-import { MediaService } from '@/features/media'
+/**
+ * @jest-environment node
+ */
 import { handleApiError } from '@/lib/utilities/api-error-handler'
 import { NextRequest, NextResponse } from 'next/server'
 
-// Mock dependencies
-jest.mock('@/features/media', () => ({
-  MediaService: jest.fn()
-}))
+// Create mock functions that can be reset between tests
+const mockGetAll = jest.fn()
+const mockUploadImage = jest.fn()
 
+// Mock dependencies - set up mock implementation at module level
+jest.mock('@/features/media', () => ({
+  MediaService: jest.fn().mockImplementation(() => ({
+    getAll: mockGetAll,
+    uploadImage: mockUploadImage
+  })),
+  MediaCreate: {}
+}))
 jest.mock('@/lib/utilities/api-error-handler', () => ({
   handleApiError: jest.fn(),
   ApiError: jest.fn().mockImplementation((status, message) => {
@@ -16,7 +24,6 @@ jest.mock('@/lib/utilities/api-error-handler', () => ({
     return error
   })
 }))
-
 jest.mock('@/lib/security', () => ({
   withRateLimit: jest.fn((_config, handler) => handler),
   RATE_LIMIT_CONFIG: {
@@ -26,21 +33,14 @@ jest.mock('@/lib/security', () => ({
 }))
 
 describe('Media API Route', () => {
-  let mockMediaService: jest.Mocked<MediaService>
-
   beforeEach(() => {
     jest.clearAllMocks()
-    mockMediaService = {
-      getAll: jest.fn(),
-      uploadImage: jest.fn()
-    } as unknown as jest.Mocked<MediaService>
-    ;(MediaService as jest.MockedClass<typeof MediaService>).mockImplementation(
-      () => mockMediaService
-    )
   })
 
   describe('GET /api/media', () => {
     it('should return all media', async () => {
+      const { GET } = await import('./route')
+
       const mockMedia = [
         {
           id: 'media-1',
@@ -49,19 +49,21 @@ describe('Media API Route', () => {
           fileSize: 1024
         }
       ]
-      mockMediaService.getAll.mockResolvedValue(mockMedia as never)
+      mockGetAll.mockResolvedValue(mockMedia)
 
       const response = await GET(new NextRequest('http://localhost/api/media'))
       const data = await response.json()
 
       expect(response.status).toBe(200)
       expect(data).toEqual(mockMedia)
-      expect(mockMediaService.getAll).toHaveBeenCalled()
+      expect(mockGetAll).toHaveBeenCalled()
     })
 
     it('should handle errors', async () => {
+      const { GET } = await import('./route')
+
       const error = new Error('Database error')
-      mockMediaService.getAll.mockRejectedValue(error)
+      mockGetAll.mockRejectedValue(error)
       const mockErrorResponse = new NextResponse(
         JSON.stringify({ error: 'Internal server error' }),
         { status: 500 }
@@ -77,9 +79,7 @@ describe('Media API Route', () => {
 
   describe('POST /api/media', () => {
     it('should upload a file', async () => {
-      const file = new File(['content'], 'test.jpg', { type: 'image/jpeg' })
-      const formData = new FormData()
-      formData.append('file', file)
+      const { POST } = await import('./route')
 
       const mockUploadedMedia = {
         id: 'media-1',
@@ -87,27 +87,35 @@ describe('Media API Route', () => {
         mimeType: 'image/jpeg',
         fileSize: 1024
       }
-      mockMediaService.uploadImage.mockResolvedValue(mockUploadedMedia as never)
+      mockUploadImage.mockResolvedValue(mockUploadedMedia)
 
-      const request = new NextRequest('http://localhost/api/media', {
-        method: 'POST',
-        body: formData
-      })
+      // Create a mock file - arrayBuffer should be available via polyfill
+      const mockFile = new File(['content'], 'test.jpg', { type: 'image/jpeg' })
+      const request = {
+        formData: jest.fn().mockResolvedValue({
+          get: jest.fn().mockImplementation((key: string) => {
+            if (key === 'file') return mockFile
+            return null
+          })
+        })
+      } as unknown as NextRequest
 
       const response = await POST(request)
       const data = await response.json()
 
       expect(response.status).toBe(200)
       expect(data).toEqual(mockUploadedMedia)
-      expect(mockMediaService.uploadImage).toHaveBeenCalled()
+      expect(mockUploadImage).toHaveBeenCalled()
     })
 
     it('should return error if no file uploaded', async () => {
-      const formData = new FormData()
-      const request = new NextRequest('http://localhost/api/media', {
-        method: 'POST',
-        body: formData
-      })
+      const { POST } = await import('./route')
+
+      const request = {
+        formData: jest.fn().mockResolvedValue({
+          get: jest.fn().mockReturnValue(null)
+        })
+      } as unknown as NextRequest
 
       const mockErrorResponse = new NextResponse(
         JSON.stringify({ error: 'No file uploaded' }),

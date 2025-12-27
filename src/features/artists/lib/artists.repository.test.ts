@@ -1,8 +1,8 @@
 import { ArtistsRepository } from './artists.repository'
 import { db } from '@/lib/database/drizzle'
 import * as Mappers from '@/lib/database/mappers/artist.mapper'
-import type { MockDatabase } from '@/__tests__/utils/mock-types'
-import { createChainableMock } from '@/__tests__/utils/mock-types'
+import type { MockDatabase } from '@/__tests__/utils/mock-types.helper'
+import { createChainableMock } from '@/__tests__/utils/mock-types.helper'
 
 // Mock dependencies
 jest.mock('@/lib/database/drizzle', () => ({

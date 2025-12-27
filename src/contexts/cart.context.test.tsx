@@ -9,10 +9,15 @@ jest.mock('sonner', () => ({
   toast: jest.fn()
 }))
 
-// Mock analytics actions
-jest.mock('@/features/analytics/actions/analytics.actions', () => ({
-  trackCartAdd: jest.fn()
-}))
+// Mock analytics actions - must be resolved immediately for dynamic imports
+const mockTrackCartAdd = jest.fn()
+jest.mock(
+  '@/features/analytics/actions/analytics.actions',
+  () => ({
+    trackCartAdd: mockTrackCartAdd
+  }),
+  { virtual: false }
+)
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -52,6 +57,7 @@ describe('Cart Context', () => {
   beforeEach(() => {
     localStorageMock.clear()
     jest.clearAllMocks()
+    mockTrackCartAdd.mockResolvedValue(undefined)
   })
 
   const wrapper = ({ children }: { children: React.ReactNode }) => (

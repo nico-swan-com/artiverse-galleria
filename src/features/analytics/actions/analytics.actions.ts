@@ -174,8 +174,7 @@ export async function getAnalyticsDashboard(): Promise<{
     const metrics = await analyticsService.getDashboardMetrics()
 
     return { success: true, metrics }
-  } catch (error) {
-    console.error('Error getting analytics dashboard:', error)
+  } catch (_error) {
     return { success: false, error: 'Failed to get analytics' }
   }
 }

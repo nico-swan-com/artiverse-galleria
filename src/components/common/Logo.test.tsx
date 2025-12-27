@@ -25,10 +25,10 @@ describe('Logo Component', () => {
   })
 
   it('should render SVG icon', () => {
-    render(<Logo />)
+    const { container } = render(<Logo />)
 
-    const svg = screen.getByRole('img', { hidden: true })
+    const svg = container.querySelector('svg')
     expect(svg).toBeInTheDocument()
-    expect(svg.tagName).toBe('svg')
+    expect(svg?.tagName.toLowerCase()).toBe('svg')
   })
 })
