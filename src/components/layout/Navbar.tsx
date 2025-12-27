@@ -10,14 +10,6 @@ import { ShoppingCart, Search, Menu, X, User, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Logo from '@/components/common/Logo'
 import { Button } from '../ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '../ui/dropdown-menu'
 import { signOut } from 'next-auth/react'
 
 const Navbar = () => {
