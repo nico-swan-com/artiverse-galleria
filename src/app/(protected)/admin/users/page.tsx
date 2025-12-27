@@ -1,15 +1,21 @@
-import UsersPage from '@/components/admin/users/UsersPage'
+import UsersPage from '@/features/users/components/admin/UsersPage'
 import {
   isValidUsersSortKey,
   UsersSortBy
 } from '@/types/users/users-sort-by.type'
-import { getUsersUnstableCache } from '@/lib/users/users.actions'
-import { FindOptionsOrderValue } from 'typeorm'
+import { getUsersUnstableCache } from '@/features/users/actions/users.actions'
+import { FindOptionsOrderValue } from '@/types/common/db.type'
+import { auth } from '@/features/authentication/lib/next-auth'
+import { UserRoles } from '@/types/users/user-roles.enum'
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
+export const dynamic = 'force-dynamic'
+
 const UsersServerPage = async (props: { searchParams: SearchParams }) => {
   const params = await props.searchParams
+  const session = await auth()
+  const currentUserRole = (session?.user?.role as UserRoles) || UserRoles.Client
 
   const sortBy = (
     typeof params.sortBy === 'string' && isValidUsersSortKey(params.sortBy)
@@ -36,6 +42,7 @@ const UsersServerPage = async (props: { searchParams: SearchParams }) => {
       total={total}
       sortBy={sortBy}
       order={order}
+      currentUserRole={currentUserRole}
     />
   )
 }

@@ -1,5 +1,5 @@
-import LoginForm from '@/components/authentication/LoginForm'
-import { auth } from '@/lib/authentication'
+import LoginForm from '@/features/authentication/components/LoginForm'
+import { auth } from '@/features/authentication/lib'
 import { redirect } from 'next/navigation'
 
 type Params = Promise<{ callbackUrl: string }>

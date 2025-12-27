@@ -1,5 +1,6 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import ArtworkCard from '@/components/public/artwork/ArtworkCard'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -22,46 +23,112 @@ import {
   SheetTrigger
 } from '@/components/ui/sheet'
 import { Product } from '@/types/products/product.schema'
+import TablePagination from '@/components/common/ui/TablePagination'
 
 type ArtworksClientProps = {
   artworks: Product[]
   categories: string[]
   styles: string[]
+  total: number
+  totalPages: number
+  currentPage: number
 }
 
 export default function ArtworksClient({
   artworks,
   categories,
-  styles
+  styles,
+  total,
+  totalPages,
+  currentPage
 }: ArtworksClientProps) {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('')
-  const [selectedStyle, setSelectedStyle] = useState('')
-  const [priceRange, setPriceRange] = useState([0, 10000])
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
-  const filteredArtworks = useMemo(() => {
-    return artworks.filter((artwork) => {
-      const matchesSearch = artwork.title
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-      const matchesCategory = selectedCategory
-        ? artwork.category === selectedCategory
-        : true
-      const matchesStyle = selectedStyle
-        ? artwork.style === selectedStyle
-        : true
-      const matchesPrice =
-        artwork.price >= priceRange[0] && artwork.price <= priceRange[1]
-      return matchesSearch && matchesCategory && matchesStyle && matchesPrice
-    })
-  }, [artworks, searchTerm, selectedCategory, selectedStyle, priceRange])
+  const [searchTerm, setSearchTerm] = useState(
+    searchParams.get('searchQuery') || ''
+  )
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get('category') || ''
+  )
+  const [selectedStyle, setSelectedStyle] = useState(
+    searchParams.get('style') || ''
+  )
+  const [priceRange, setPriceRange] = useState([
+    Number(searchParams.get('minPrice')) || 0,
+    Number(searchParams.get('maxPrice')) || 10000
+  ])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm !== (searchParams.get('searchQuery') || '')) {
+        updateFilter('searchQuery', searchTerm)
+      }
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [searchTerm])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const currentMin = Number(searchParams.get('minPrice')) || 0
+      const currentMax = Number(searchParams.get('maxPrice')) || 10000
+      if (priceRange[0] !== currentMin || priceRange[1] !== currentMax) {
+        updateFilters({
+          minPrice: priceRange[0].toString(),
+          maxPrice: priceRange[1].toString()
+        })
+      }
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [priceRange])
+
+  const createQueryString = useCallback(
+    (params: Record<string, string | null>) => {
+      const newSearchParams = new URLSearchParams(searchParams.toString())
+
+      for (const [key, value] of Object.entries(params)) {
+        if (value === null || value === '') {
+          newSearchParams.delete(key)
+        } else {
+          newSearchParams.set(key, value)
+        }
+      }
+
+      if (Object.keys(params).some((key) => key !== 'page')) {
+        newSearchParams.set('page', '1')
+      }
+
+      return newSearchParams.toString()
+    },
+    [searchParams]
+  )
+
+  const updateFilter = (key: string, value: string | null) => {
+    router.push(`${pathname}?${createQueryString({ [key]: value })}`)
+  }
+
+  const updateFilters = (params: Record<string, string | null>) => {
+    router.push(`${pathname}?${createQueryString(params)}`)
+  }
 
   const clearFilters = () => {
     setSearchTerm('')
     setSelectedCategory('')
     setSelectedStyle('')
     setPriceRange([0, 10000])
+    router.push(pathname)
   }
+
+  useEffect(() => {
+    setSearchTerm(searchParams.get('searchQuery') || '')
+    setSelectedCategory(searchParams.get('category') || '')
+    setSelectedStyle(searchParams.get('style') || '')
+    setPriceRange([
+      Number(searchParams.get('minPrice')) || 0,
+      Number(searchParams.get('maxPrice')) || 10000
+    ])
+  }, [searchParams])
 
   return (
     <div className='mx-auto max-w-7xl'>
@@ -69,8 +136,7 @@ export default function ArtworksClient({
         <div>
           <h1 className='text-3xl font-bold text-gray-900'>Explore Artworks</h1>
           <p className='mt-2 text-gray-600'>
-            {filteredArtworks.length}{' '}
-            {filteredArtworks.length === 1 ? 'artwork' : 'artworks'} available
+            {total} {total === 1 ? 'artwork' : 'artworks'} available
           </p>
         </div>
 
@@ -104,13 +170,16 @@ export default function ArtworksClient({
                   <Label htmlFor='category'>Category</Label>
                   <Select
                     value={selectedCategory}
-                    onValueChange={setSelectedCategory}
+                    onValueChange={(val) => {
+                      setSelectedCategory(val)
+                      updateFilter('category', val === 'all' ? '' : val)
+                    }}
                   >
                     <SelectTrigger id='category'>
                       <SelectValue placeholder='All Categories' />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value=''>All Categories</SelectItem>
+                      <SelectItem value='all'>All Categories</SelectItem>
                       {categories.map((category) => (
                         <SelectItem key={category} value={category}>
                           {category}
@@ -124,13 +193,16 @@ export default function ArtworksClient({
                   <Label htmlFor='style'>Style</Label>
                   <Select
                     value={selectedStyle}
-                    onValueChange={setSelectedStyle}
+                    onValueChange={(val) => {
+                      setSelectedStyle(val)
+                      updateFilter('style', val === 'all' ? '' : val)
+                    }}
                   >
                     <SelectTrigger id='style'>
                       <SelectValue placeholder='All Styles' />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value=''>All Styles</SelectItem>
+                      <SelectItem value='all'>All Styles</SelectItem>
                       {styles.map((style) => (
                         <SelectItem key={style} value={style}>
                           {style}
@@ -169,9 +241,9 @@ export default function ArtworksClient({
         </div>
       </div>
 
-      {filteredArtworks.length > 0 ? (
+      {artworks.length > 0 ? (
         <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-          {filteredArtworks.map((artwork) => (
+          {artworks.map((artwork) => (
             <ArtworkCard key={artwork.id} artwork={artwork} />
           ))}
         </div>
@@ -183,6 +255,17 @@ export default function ArtworksClient({
           <Button variant='outline' onClick={clearFilters}>
             Clear Filters
           </Button>
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className='mt-8 flex justify-center'>
+          <TablePagination
+            page={currentPage}
+            pages={totalPages}
+            limitPages={5}
+            searchParamsUrl={new URLSearchParams(searchParams.toString())}
+          />
         </div>
       )}
     </div>

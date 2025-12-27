@@ -10,6 +10,7 @@ import { INavbarProps } from './NavbarProps.interface'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
 import { signOut, useSession } from 'next-auth/react'
+import Logo from '@/components/common/Logo'
 
 interface SidebarProps extends INavbarProps {
   className?: string
@@ -25,7 +26,17 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const pathname = usePathname()
   const isMobile = useIsMobile()
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
+  const [hasMounted, setHasMounted] = React.useState(false)
+
+  // Track when the component has mounted on the client
+  React.useEffect(() => {
+    setHasMounted(true)
+  }, [])
+
+  // Show loading state until mounted and session is available
+  // This prevents showing "?" fallback during SSR-to-CSR hydration
+  const isSessionLoading = !hasMounted || status === 'loading'
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed)
@@ -37,31 +48,11 @@ const Sidebar: React.FC<SidebarProps> = ({
         'flex h-full flex-col border-r border-sidebar-border bg-sidebar transition-all duration-300 ease-in-out',
         isCollapsed ? 'w-16' : 'w-64',
         className,
-        !isMobile && 'relative' // Change to relative when not mobile
+        !isMobile && 'relative'
       )}
     >
       <div className='flex h-16 items-center justify-between border-b border-sidebar-border px-4'>
-        {!isCollapsed && (
-          <div className='flex items-center space-x-2'>
-            <div className='flex size-8 items-center justify-center rounded-md bg-primary'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='currentColor'
-                strokeWidth='2'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                className='size-5 text-white'
-              >
-                <circle cx='12' cy='12' r='10' />
-                <path d='M8 12h8' />
-                <path d='M12 8v8' />
-              </svg>
-            </div>
-            <span className='text-lg font-semibold'>Commerce</span>
-          </div>
-        )}
+        {!isCollapsed && <Logo />}
         <Button
           variant='ghost'
           size='icon'
@@ -72,7 +63,71 @@ const Sidebar: React.FC<SidebarProps> = ({
         </Button>
       </div>
       <div className='flex-1 overflow-y-auto py-4'>
-        <ul className='space-y-1 px-2'>
+        <div className='border-b border-sidebar-border px-4 pb-4'>
+          <div
+            className={cn(
+              'flex items-center',
+              isCollapsed ? 'justify-center' : 'gap-3'
+            )}
+          >
+            {isSessionLoading ? (
+              // Loading skeleton while session hydrates
+              <div className={cn('flex items-center', !isCollapsed && 'gap-3')}>
+                <div className='size-14 animate-pulse rounded bg-muted' />
+                {!isCollapsed && (
+                  <div className='flex-1 space-y-2'>
+                    <div className='h-4 w-24 animate-pulse rounded bg-muted' />
+                    <div className='h-3 w-32 animate-pulse rounded bg-muted' />
+                  </div>
+                )}
+              </div>
+            ) : !isCollapsed ? (
+              <>
+                <Link
+                  href='/profile'
+                  className='flex cursor-pointer items-center gap-3 transition-opacity hover:opacity-80'
+                >
+                  <Avatar className='size-14'>
+                    <AvatarImage
+                      className='size-14 rounded'
+                      src={session?.user?.image || ''}
+                    />
+                    <AvatarFallback className='flex size-14 items-center justify-center rounded bg-muted text-sm'>
+                      {session?.user?.name?.charAt(0) || '?'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className='text-sm font-medium'>{session?.user?.name}</p>
+                    <p className='text-xs text-muted-foreground'>
+                      {session?.user?.email}
+                    </p>
+                  </div>
+                </Link>
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    signOut()
+                  }}
+                  variant='ghost'
+                  size='icon'
+                  className='ml-auto text-muted-foreground hover:text-foreground'
+                >
+                  <LogOut size={18} />
+                </Button>
+              </>
+            ) : (
+              <Button
+                onClick={() => signOut()}
+                variant='ghost'
+                size='icon'
+                className='text-muted-foreground hover:text-foreground'
+              >
+                <LogOut size={18} />
+              </Button>
+            )}
+          </div>
+        </div>
+        <ul className='space-y-1 px-2 pt-4'>
           {menuItems.map((item) => (
             <li key={item.path}>
               <Link
@@ -93,43 +148,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             </li>
           ))}
         </ul>
-      </div>
-
-      <div className='border-t border-sidebar-border p-4'>
-        <div className='flex items-center gap-3'>
-          <Avatar className='size-14'>
-            <AvatarImage className='rounded' src={session?.user?.image || ''} />
-            <AvatarFallback>{session?.user?.name}</AvatarFallback>
-          </Avatar>
-          {!isCollapsed && (
-            <div className='flex flex-1 items-center justify-between'>
-              <div>
-                <p className='text-sm font-medium'>{session?.user?.name}</p>
-                <p className='text-xs text-muted-foreground'>
-                  {session?.user?.email}
-                </p>
-              </div>
-              <Button
-                onClick={() => signOut()}
-                variant='ghost'
-                size='icon'
-                className='text-muted-foreground hover:text-foreground'
-              >
-                <LogOut size={18} />
-              </Button>
-            </div>
-          )}
-          {isCollapsed && (
-            <Button
-              onClick={() => signOut()}
-              variant='ghost'
-              size='icon'
-              className='text-muted-foreground hover:text-foreground'
-            >
-              <LogOut size={18} />
-            </Button>
-          )}
-        </div>
       </div>
     </div>
   )

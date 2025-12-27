@@ -18,6 +18,11 @@ import {
 import { toast } from 'sonner'
 import { ChevronLeft, CreditCard, Check } from 'lucide-react'
 import Image from 'next/image'
+import {
+  createOrderAndPay,
+  confirmMockPayment
+} from '@/features/billing/actions'
+import { CustomerInfo } from '@/features/billing/types'
 
 const Checkout = () => {
   const { cart, clearCart } = useCart()
@@ -26,7 +31,6 @@ const Checkout = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
 
-  // Form state
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -36,16 +40,11 @@ const Checkout = () => {
     city: '',
     state: '',
     zip: '',
-    country: 'United States',
-    cardNumber: '',
-    cardName: '',
-    expiry: '',
-    cvv: '',
+    country: 'South Africa',
     notes: ''
   })
 
   useEffect(() => {
-    // If cart is empty and not after successful checkout, redirect to cart
     if (cart.length === 0 && !success) {
       router.push('/cart')
     }
@@ -56,6 +55,16 @@ const Checkout = () => {
     )
     setSubtotal(total)
   }, [cart, router, success])
+
+  useEffect(() => {
+    if (cart.length > 0 && !success) {
+      import('@/features/analytics/actions/analytics.actions').then(
+        ({ trackCheckoutStart }) => {
+          trackCheckoutStart().catch(console.error)
+        }
+      )
+    }
+  }, [])
 
   const handleChange = (
     event:
@@ -70,21 +79,55 @@ const Checkout = () => {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (event: React.FocusEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setIsSubmitting(true)
 
-    // Simulating API call
-    setTimeout(() => {
-      setIsSubmitting(false)
-      setSuccess(true)
-      clearCart()
+    try {
+      const customerInfo: CustomerInfo = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone || undefined,
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        zip: formData.zip,
+        country: formData.country
+      }
 
-      // Display success message
-      toast('Order placed successfully!', {
-        description: 'Thank you for your purchase.'
+      const result = await createOrderAndPay(customerInfo, cart, formData.notes)
+
+      if (result.success && result.redirectUrl) {
+        if (result.redirectUrl.includes('mock=true')) {
+          if (result.orderId && result.paymentId) {
+            await confirmMockPayment(result.orderId, result.paymentId)
+          }
+          setSuccess(true)
+          clearCart()
+          toast('Order placed successfully!', {
+            description: `Order #${result.orderId} - Thank you for your purchase.`
+          })
+        } else {
+          toast('Redirecting to payment...', {
+            description: 'You will be redirected to complete your payment.'
+          })
+          router.push(result.redirectUrl)
+        }
+      } else {
+        toast.error('Order failed', {
+          description:
+            result.error || 'An error occurred while processing your order.'
+        })
+      }
+    } catch (error) {
+      console.error('Checkout error:', error)
+      toast.error('Checkout failed', {
+        description: 'An unexpected error occurred. Please try again.'
       })
-    }, 2000)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (success) {
@@ -235,6 +278,9 @@ const Checkout = () => {
                           <SelectValue placeholder='Select Country' />
                         </SelectTrigger>
                         <SelectContent>
+                          <SelectItem value='South Africa'>
+                            South Africa
+                          </SelectItem>
                           <SelectItem value='United States'>
                             United States
                           </SelectItem>
@@ -252,56 +298,23 @@ const Checkout = () => {
                 </div>
               </div>
 
-              {/* Payment Information */}
+              {/* Payment Method */}
               <div className='rounded-lg bg-white p-6 shadow-sm'>
                 <h2 className='mb-4 text-lg font-medium text-gray-900'>
-                  Payment Information
+                  Payment Method
                 </h2>
-                <div className='space-y-4'>
-                  <div className='space-y-2'>
-                    <Label htmlFor='cardNumber'>Card Number</Label>
-                    <Input
-                      id='cardNumber'
-                      name='cardNumber'
-                      placeholder='**** **** **** ****'
-                      value={formData.cardNumber}
-                      onChange={handleChange}
-                      required
-                    />
+                <div className='flex items-center gap-4 rounded-lg border border-green-200 bg-green-50 p-4'>
+                  <div className='flex size-10 items-center justify-center rounded-full bg-green-100'>
+                    <CreditCard className='size-5 text-green-600' />
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='cardName'>Name on Card</Label>
-                    <Input
-                      id='cardName'
-                      name='cardName'
-                      value={formData.cardName}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                  <div className='grid grid-cols-2 gap-4'>
-                    <div className='space-y-2'>
-                      <Label htmlFor='expiry'>Expiry Date</Label>
-                      <Input
-                        id='expiry'
-                        name='expiry'
-                        placeholder='MM/YY'
-                        value={formData.expiry}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
-                    <div className='space-y-2'>
-                      <Label htmlFor='cvv'>CVV</Label>
-                      <Input
-                        id='cvv'
-                        name='cvv'
-                        placeholder='***'
-                        value={formData.cvv}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
+                  <div>
+                    <p className='font-medium text-gray-900'>
+                      PayFast Secure Payment
+                    </p>
+                    <p className='text-sm text-gray-600'>
+                      You will be redirected to PayFast to complete your payment
+                      securely.
+                    </p>
                   </div>
                 </div>
               </div>

@@ -1,14 +1,15 @@
-import ProductsPage from '@/components/admin/products/ProductsPage'
+import ProductsPage from '@/features/products/components/admin/ProductsPage'
 import { Product } from '@/types/products/product.schema'
 import {
   isValidProductsSortKey,
   ProductsSortBy
 } from '@/types/products/products-sort-by.type'
-import ProductsService from '@/lib/products/products.service'
-import { instanceToPlain } from 'class-transformer'
-import { FindOptionsOrderValue } from 'typeorm'
+import ProductsService from '@/features/products/lib/products.service'
+import { FindOptionsOrderValue } from '@/types/common/db.type'
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+
+export const dynamic = 'force-dynamic'
 
 const ProductsServerPage = async (props: { searchParams: SearchParams }) => {
   const params = await props.searchParams
@@ -26,7 +27,7 @@ const ProductsServerPage = async (props: { searchParams: SearchParams }) => {
     const service = new ProductsService()
     const { products } = await service.getAll(sortBy, order)
 
-    return <ProductsPage products={instanceToPlain(products) as Product[]} />
+    return <ProductsPage products={products as Product[]} />
   } catch (error) {
     console.error('Failed to fetch products:', error)
     return (

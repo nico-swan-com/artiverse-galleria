@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useActionState } from 'react'
+import { useActionState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'

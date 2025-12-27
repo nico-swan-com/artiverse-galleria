@@ -1,47 +1,49 @@
-import ProductsService from '@/lib/products/products.service'
+import ProductsService from '@/features/products/lib/products.service'
 import ArtworksClient from './ArtworksClient'
-import { instanceToPlain } from 'class-transformer'
-import { Product } from '@/types/products/product.schema'
 
-// Force dynamic rendering to prevent prerendering issues
 export const dynamic = 'force-dynamic'
 
-// Server Component
-export default async function ArtworksPage() {
+export default async function ArtworksPage(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const searchParams = await props.searchParams
+
   try {
-    // Fetch all products (artworks)
-    const { products } = await new ProductsService().getAll('createdAt', 'DESC')
+    const page = Number(searchParams.page) || 1
+    const limit = 9
 
-    // Enrich with artist data
-    const artworks = products.map((artwork: Product) => artwork)
+    const filters = {
+      searchQuery: (searchParams.searchQuery as string) || undefined,
+      category: (searchParams.category as string) || undefined,
+      style: (searchParams.style as string) || undefined,
+      minPrice: searchParams.minPrice
+        ? Number(searchParams.minPrice)
+        : undefined,
+      maxPrice: searchParams.maxPrice
+        ? Number(searchParams.maxPrice)
+        : undefined
+    }
 
-    // Convert to plain objects for client component
-    const plainArtworks = (instanceToPlain(artworks) as unknown[]).map(
-      (a) => a as Product
-    )
+    const productService = new ProductsService()
 
-    // Get unique categories and styles for filters, filter out undefined
-    const categories = [
-      ...new Set(
-        plainArtworks
-          .map((a: Product) => a.category as string)
-          .filter((c: string): c is string => typeof c === 'string' && !!c)
-      )
-    ]
-    const styles = [
-      ...new Set(
-        plainArtworks
-          .map((a: Product) => a.style as string)
-          .filter((s: string): s is string => typeof s === 'string' && !!s)
-      )
-    ]
+    // Fetch data in parallel
+    const [productsData, categories, styles] = await Promise.all([
+      productService.getPaged({ page, limit }, 'createdAt', 'DESC', filters),
+      productService.getCategories(),
+      productService.getStyles()
+    ])
+
+    const totalPages = Math.ceil(productsData.total / limit)
 
     // Pass to a client component for filtering/searching
     return (
       <ArtworksClient
-        artworks={plainArtworks}
+        artworks={productsData.products}
         categories={categories}
         styles={styles}
+        total={productsData.total}
+        totalPages={totalPages}
+        currentPage={page}
       />
     )
   } catch (error) {

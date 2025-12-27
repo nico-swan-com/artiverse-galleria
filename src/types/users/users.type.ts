@@ -1,3 +1,3 @@
 import { User } from './user.schema'
 
-export type Users = { users: User[]; total: number }
+export type UsersResult = { users: User[]; total: number }

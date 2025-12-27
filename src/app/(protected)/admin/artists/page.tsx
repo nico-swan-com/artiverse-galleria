@@ -1,10 +1,13 @@
-import ArtistsPageClient from '@/components/admin/artists/ArtistsPageClient'
-import { Artist, ArtistsSortBy, isValidArtistsSortKey } from '@/lib/artists'
-import ArtistsService from '@/lib/artists/artists.service'
-import { instanceToPlain } from 'class-transformer'
-import { FindOptionsOrderValue } from 'typeorm'
+import ArtistsPageClient from '@/features/artists/components/admin/ArtistsPageClient'
+import {
+  Artist,
+  ArtistsSortBy,
+  isValidArtistsSortKey
+} from '@/features/artists'
+import ArtistsService from '@/features/artists/lib/artists.service'
 
-// Force dynamic rendering to prevent prerendering issues
+import { FindOptionsOrderValue } from '@/types/common/db.type'
+
 export const dynamic = 'force-dynamic'
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
@@ -30,11 +33,9 @@ const ArtistServerPage = async (props: { searchParams: SearchParams }) => {
       order
     )
 
-    console.log(artists)
-
     return (
       <ArtistsPageClient
-        artists={instanceToPlain(artists) as Artist[]}
+        artists={artists as Artist[]}
         page={page}
         limit={limit}
         total={total}

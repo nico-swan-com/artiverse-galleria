@@ -1,12 +1,11 @@
-import ProductsService from '@/lib/products/products.service'
+import ProductsService from '@/features/products/lib/products.service'
 import ArtistArtworksClient from './ArtistArtworksClient'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, Mail, ExternalLink, MapPin } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import ArtistsService from '@/lib/artists/artists.service'
+import ArtistsService from '@/features/artists/lib/artists.service'
 
-// Force dynamic rendering to prevent prerendering issues
 export const dynamic = 'force-dynamic'
 
 export default async function ArtistDetailPage({
@@ -32,11 +31,7 @@ export default async function ArtistDetailPage({
       )
     }
 
-    // Fetch all products and filter by artistId
-    const { products } = await new ProductsService().getAll('createdAt', 'DESC')
-    const artistArtworks = products.filter(
-      (a) => a.artistId && a.artistId === id
-    )
+    const artistArtworks = await new ProductsService().getByArtistId(id)
 
     return (
       <div className='min-h-screen bg-white px-4 py-12 sm:px-6 lg:px-8'>

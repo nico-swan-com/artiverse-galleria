@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Artist } from '../../artists/model/artist.entity'
+import { type Artist } from '../schema'
 
 export const artists: Artist[] = [
   {
     id: 'c9de4b7f-5765-460a-9528-e86a12784777',
     name: 'Sophia Chen',
-    image:
-      'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3024&q=80',
+    image: '/api/media/01c7bbb5-ad6d-4413-9f84-d4281d93be58',
     featured: true,
     styles: ['Abstract', 'Contemporary', 'Mixed Media'],
     biography:
@@ -24,15 +22,12 @@ export const artists: Artist[] = [
       'My work investigates the intersection between constructed urban environments and the natural world. I seek to create harmony between seemingly opposing elements through layered compositions that invite viewers to find their own connections and interpretations.',
     createdAt: new Date(),
     updatedAt: new Date(),
-    toPlain: function (): Record<string, any> {
-      throw new Error('Function not implemented.')
-    }
+    deletedAt: null
   },
   {
     id: 'd073bf5c-4369-40b3-b47f-ff500d079e97',
     name: 'Marcus Rivera',
-    image:
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80',
+    image: '/api/media/7e6fa39c-938e-493c-b1e3-80cfdd123491',
     featured: true,
     styles: ['Photography', 'Minimalist', 'Architectural'],
     biography:
@@ -50,15 +45,12 @@ export const artists: Artist[] = [
       'I aim to reveal the hidden beauty in architectural structures through my lens. By focusing on minimalist compositions, I strip away distractions and highlight the essential elements of design - line, shape, light, and shadow.',
     createdAt: new Date(),
     updatedAt: new Date(),
-    toPlain: function (): Record<string, any> {
-      throw new Error('Function not implemented.')
-    }
+    deletedAt: null
   },
   {
     id: 'c5a30a5f-cd8e-4715-8a3f-762a32e6e6ff',
     name: 'Amara Johnson',
-    image:
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80',
+    image: '/api/media/fdc003d8-b3bb-4d8c-ae0d-bbb01bf490ac',
     featured: false,
     styles: ['Sculpture', 'Mixed Media', 'Modern'],
     biography:
@@ -75,15 +67,12 @@ export const artists: Artist[] = [
       'Through my work, I explore the dialogue between traditional craftsmanship and contemporary aesthetics, seeking to bridge the gap between functional design and artistic expression.',
     createdAt: new Date(),
     updatedAt: new Date(),
-    toPlain: function (): Record<string, any> {
-      throw new Error('Function not implemented.')
-    }
+    deletedAt: null
   },
   {
     id: 'bce3d76c-f26b-4dd2-8c46-84f19ee8fcb2',
     name: 'Hiroshi Tanaka',
-    image:
-      'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80',
+    image: '/api/media/394e1656-e089-4fd5-b488-af1933fb9650',
     featured: true,
     styles: ['Digital', 'Traditional', 'Landscape'],
     biography:
@@ -100,15 +89,12 @@ export const artists: Artist[] = [
       'My work explores the intersection of traditional Japanese artistry and modern digital techniques, creating a bridge between our cultural heritage and technological future.',
     createdAt: new Date(),
     updatedAt: new Date(),
-    toPlain: function (): Record<string, any> {
-      throw new Error('Function not implemented.')
-    }
+    deletedAt: null
   },
   {
     id: '66321c80-625b-47bb-a194-2aee8b80978d',
     name: 'Elena Petrov',
-    image:
-      'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80',
+    image: '/api/media/b32a9d7f-e43e-460a-a3fb-e40c7b6af3b6',
     featured: false,
     styles: ['Portraiture', 'Oil Painting', 'Figurative'],
     biography:
@@ -125,15 +111,12 @@ export const artists: Artist[] = [
       'Through portraiture, I seek to reveal the hidden depths of human emotion and experience, using color and light to illuminate the complex psychology of my subjects.',
     createdAt: new Date(),
     updatedAt: new Date(),
-    toPlain: function (): Record<string, any> {
-      throw new Error('Function not implemented.')
-    }
+    deletedAt: null
   },
   {
     id: '615641d0-1aea-4eb8-8730-2c82b7b1f29d',
     name: 'James Wilson',
-    image:
-      'https://images.unsplash.com/photo-1504257432389-52343af06ae3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80',
+    image: '/api/media/fc8939d4-15ff-4ca4-a77c-99e9d5ce758f',
     featured: false,
     styles: ['Installation', 'Eco-Art', 'Conceptual'],
     biography:
@@ -150,9 +133,7 @@ export const artists: Artist[] = [
       'My installations aim to provoke dialogue about our relationship with consumption and waste, transforming discarded materials into powerful statements about environmental responsibility.',
     createdAt: new Date(),
     updatedAt: new Date(),
-    toPlain: function (): Record<string, any> {
-      throw new Error('Function not implemented.')
-    }
+    deletedAt: null
   }
 ]
 

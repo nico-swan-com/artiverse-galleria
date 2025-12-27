@@ -1,10 +1,11 @@
-import ProductsService from '@/lib/products/products.service'
+import ProductsService from '@/features/products/lib/products.service'
 import ArtworkDetailClient from './ArtworkDetailClient'
 import { notFound } from 'next/navigation'
-import { instanceToPlain } from 'class-transformer'
+
 import { Product } from '@/types/products/product.schema'
 
-// Force dynamic rendering to prevent prerendering issues
+import { trackArtworkView } from '@/features/analytics/actions/analytics.actions'
+
 export const dynamic = 'force-dynamic'
 
 export default async function ArtworkDetailPage({
@@ -18,10 +19,10 @@ export default async function ArtworkDetailPage({
     const product = await new ProductsService().getById(id)
     if (!product) return notFound()
 
-    // Enrich with artist, ensuring createdAt/updatedAt are always present
-    const artwork = instanceToPlain(product) as Product
+    trackArtworkView(id, product.title).catch(console.error)
 
-    // Fetch all products to find related artworks
+    const artwork = product as Product
+
     const relatedArtworks = await new ProductsService().findRelated(
       artwork.id,
       artwork.category,

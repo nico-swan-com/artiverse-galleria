@@ -1,7 +1,7 @@
 'use client'
 
 import ArtistCard from '@/components/public/artists/ArtistCard'
-import { Artist } from '@/lib/artists/model'
+import { Artist } from '@/features/artists/types'
 import { startTransition, useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'

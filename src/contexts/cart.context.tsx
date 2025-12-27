@@ -8,13 +8,11 @@ interface ChildrenProps {
   children: React.ReactNode
 }
 
-// Define cart item type
 export type CartItem = {
   artwork: Product
   quantity: number
 }
 
-// Define context type
 type CartContextType = {
   cart: CartItem[]
   addToCart: (artwork: Product, quantity?: number) => void
@@ -26,7 +24,6 @@ type CartContextType = {
   isInCart: (artworkId: string) => boolean
 }
 
-// Create context with default values
 const CartContext = createContext<CartContextType>({
   cart: [],
   addToCart: () => {},
@@ -38,12 +35,9 @@ const CartContext = createContext<CartContextType>({
   isInCart: () => false
 })
 
-// Custom hook to use cart context
 export const useCart = () => useContext(CartContext)
 
-// Provider component
 export const CartProvider = ({ children }: ChildrenProps) => {
-  // Try to get initial cart from localStorage
   const [cart, setCart] = useState<CartItem[]>(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -54,15 +48,13 @@ export const CartProvider = ({ children }: ChildrenProps) => {
         return []
       }
     }
-    return [] // Return empty array on server-side rendering
+    return []
   })
 
-  // Get total number of items
   const getItemCount = () => {
     return cart.reduce((total, item) => total + item.quantity, 0)
   }
 
-  // Update localStorage when cart changes
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -73,7 +65,6 @@ export const CartProvider = ({ children }: ChildrenProps) => {
     }
   }, [cart])
 
-  // Add item to cart
   const addToCart = (artwork: Product, quantity = 1) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find(
@@ -81,14 +72,12 @@ export const CartProvider = ({ children }: ChildrenProps) => {
       )
 
       if (existingItem) {
-        // Update quantity if item already exists
         return prevCart.map((item) =>
           item.artwork.id === artwork.id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         )
       } else {
-        // Add new item
         return [...prevCart, { artwork, quantity }]
       }
     })
@@ -96,21 +85,24 @@ export const CartProvider = ({ children }: ChildrenProps) => {
     toast('Added to cart', {
       description: `${artwork.title} has been added to your cart.`
     })
+
+    import('@/features/analytics/actions/analytics.actions').then(
+      ({ trackCartAdd }) => {
+        trackCartAdd(artwork.id, artwork.title).catch(console.error)
+      }
+    )
   }
 
-  // Check if item is in cart
   const isInCart = (artworkId: string) => {
     return cart.some((item) => item.artwork.id === artworkId)
   }
 
-  // Remove item from cart
   const removeFromCart = (artworkId: string) => {
     setCart((prevCart) =>
       prevCart.filter((item) => item.artwork.id !== artworkId)
     )
   }
 
-  // Update item quantity
   const updateQuantity = (artworkId: string, quantity: number) => {
     if (quantity < 1) return
 
@@ -121,12 +113,10 @@ export const CartProvider = ({ children }: ChildrenProps) => {
     )
   }
 
-  // Clear cart
   const clearCart = () => {
     setCart([])
   }
 
-  // Get cart total price
   const getCartTotal = () => {
     return cart.reduce(
       (total, item) => total + item.artwork.price * item.quantity,
@@ -134,7 +124,6 @@ export const CartProvider = ({ children }: ChildrenProps) => {
     )
   }
 
-  // Context provider value
   const value = {
     cart,
     addToCart,

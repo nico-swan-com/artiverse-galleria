@@ -1,0 +1,470 @@
+openapi: 3.0.3
+info:
+  title: Artiverse Galleria API
+  description: REST API for the Artiverse Galleria art marketplace
+  version: 1.0.0
+  contact:
+    name: Artiverse Galleria
+servers:
+  - url: /api
+    description: Local API
+
+tags:
+  - name: Auth
+    description: Authentication endpoints (NextAuth.js)
+  - name: Media
+    description: Media file management and image processing
+  - name: Artists
+    description: Artist management
+  - name: Admin
+    description: Admin-only endpoints
+  - name: Billing
+    description: PayFast payment webhooks
+
+paths:
+  /media:
+    get:
+      tags: [Media]
+      summary: List all media
+      operationId: listMedia
+      responses:
+        '200':
+          description: Array of media objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MediaMeta'
+
+    post:
+      tags: [Media]
+      summary: Upload single image
+      operationId: uploadMedia
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required: [file]
+      responses:
+        '200':
+          description: Uploaded media
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaMeta'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /media/list:
+    get:
+      tags: [Media]
+      summary: List all media (alternative)
+      operationId: listMediaAlt
+      responses:
+        '200':
+          description: Media list with success wrapper
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  media:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MediaMeta'
+
+  /media/upload:
+    post:
+      tags: [Media]
+      summary: Batch upload multiple files
+      operationId: batchUpload
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+              required: [file]
+      responses:
+        '200':
+          description: Uploaded files
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  files:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        url:
+                          type: string
+
+  /media/{id}:
+    get:
+      tags: [Media]
+      summary: Get image with optional processing
+      operationId: getMedia
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: quality
+          in: query
+          schema:
+            type: integer
+            default: 80
+            minimum: 1
+            maximum: 100
+        - name: width
+          in: query
+          schema:
+            type: integer
+        - name: height
+          in: query
+          schema:
+            type: integer
+        - name: watermark
+          in: query
+          schema:
+            type: string
+            enum: ['0', '1']
+        - name: wmText
+          in: query
+          schema:
+            type: string
+        - name: wmLogo
+          in: query
+          schema:
+            type: string
+        - name: wmPos
+          in: query
+          schema:
+            type: string
+            enum:
+              [
+                north,
+                south,
+                east,
+                west,
+                northeast,
+                northwest,
+                southeast,
+                southwest,
+                center
+              ]
+        - name: wmOpacity
+          in: query
+          schema:
+            type: number
+            minimum: 0
+            maximum: 1
+        - name: wmScale
+          in: query
+          schema:
+            type: number
+            minimum: 0
+            maximum: 1
+        - name: skipWatermark
+          in: query
+          schema:
+            type: string
+            enum: ['1']
+        - name: t
+          in: query
+          description: Cache-busting timestamp
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Image binary
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        '304':
+          description: Not Modified
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags: [Media]
+      summary: Delete media
+      operationId: deleteMedia
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      tags: [Media]
+      summary: Update media metadata
+      operationId: updateMedia
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fileName:
+                  type: string
+                alt:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+              required: [fileName]
+      responses:
+        '200':
+          description: Updated media
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaMeta'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /artists:
+    get:
+      tags: [Artists]
+      summary: Get all artists (public)
+      operationId: getArtists
+      responses:
+        '200':
+          description: Artists list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Artist'
+
+  /artists/all:
+    get:
+      tags: [Artists]
+      summary: Get all artists (alternative)
+      operationId: getArtistsAll
+      responses:
+        '200':
+          description: Artists list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Artist'
+
+  /admin/users:
+    get:
+      tags: [Admin]
+      summary: Get all users
+      operationId: getUsers
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Users list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /billing/webhook:
+    get:
+      tags: [Billing]
+      summary: Webhook health check
+      operationId: webhookHealth
+      responses:
+        '200':
+          description: Webhook status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Webhook endpoint active
+
+    post:
+      tags: [Billing]
+      summary: PayFast ITN webhook
+      operationId: payfastWebhook
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                pf_payment_id:
+                  type: string
+                m_payment_id:
+                  type: string
+                payment_status:
+                  type: string
+                  enum: [COMPLETE, FAILED, PENDING]
+                signature:
+                  type: string
+      responses:
+        '200':
+          description: Webhook processed
+        '400':
+          description: Processing failed
+
+components:
+  schemas:
+    MediaMeta:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fileName:
+          type: string
+        mimeType:
+          type: string
+        fileSize:
+          type: integer
+        alt:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Artist:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        bio:
+          type: string
+        profileImage:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [Admin, User]
+        createdAt:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        statusCode:
+          type: integer
+
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: next-auth.session-token
+      description: NextAuth.js session cookie
