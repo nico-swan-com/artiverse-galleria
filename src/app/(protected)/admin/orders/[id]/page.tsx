@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import { Suspense } from 'react'
 import { Metadata } from 'next'
 import { getOrder } from '@/features/billing/actions/billing.actions'
 import OrderDetails from '@/features/orders/components/admin/OrderDetails'

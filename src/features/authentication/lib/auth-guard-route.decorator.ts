@@ -6,8 +6,8 @@ export function AuthGuard() {
   return function <
     T extends (req: NextRequest, ...args: unknown[]) => Promise<Response>
   >(
-    target: unknown,
-    propertyKey: string,
+    _target: unknown,
+    _propertyKey: string,
     descriptor: TypedPropertyDescriptor<T>
   ) {
     const originalMethod = descriptor.value!

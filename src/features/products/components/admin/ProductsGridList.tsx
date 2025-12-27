@@ -1,5 +1,4 @@
 'use client'
-import React from 'react'
 import ProductItem from '@/features/products/components/admin/ProductItem'
 import { Product } from '@/types/products/product.schema'
 

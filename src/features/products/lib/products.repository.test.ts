@@ -1,7 +1,10 @@
 import { ProductsRepository } from './products.repository'
 import { db } from '@/lib/database/drizzle'
-import { logger } from '@/lib/utilities/logger'
 import * as Mappers from '@/lib/database/mappers/product.mapper'
+import type {
+  ProductCreate,
+  ProductUpdate
+} from '@/types/products/product.schema'
 
 // Mock dependencies
 jest.mock('@/lib/database/drizzle', () => ({
@@ -47,14 +50,16 @@ const createChainableMock = () => {
   return mock
 }
 
+type MockDatabase = typeof db
+
 describe('ProductsRepository', () => {
   let repository: ProductsRepository
-  let mockDbInfo: any
+  let mockDbInfo: MockDatabase
 
   beforeEach(() => {
     jest.clearAllMocks()
     repository = new ProductsRepository()
-    mockDbInfo = db as any
+    mockDbInfo = db
   })
 
   describe('getAll', () => {
@@ -115,7 +120,7 @@ describe('ProductsRepository', () => {
       ;(db.insert as jest.Mock).mockReturnValue(mockInsert)
       ;(Mappers.mapProductToAppType as jest.Mock).mockReturnValue(mapped)
 
-      const result = await repository.create(input as any)
+      const result = await repository.create(input as ProductCreate)
 
       expect(result).toEqual(mapped)
       expect(db.insert).toHaveBeenCalled()
@@ -129,7 +134,7 @@ describe('ProductsRepository', () => {
       const mockUpdate = createChainableMock()
       ;(db.update as jest.Mock).mockReturnValue(mockUpdate)
 
-      await repository.update(updateData as any)
+      await repository.update(updateData as ProductUpdate)
 
       expect(db.update).toHaveBeenCalled()
     })

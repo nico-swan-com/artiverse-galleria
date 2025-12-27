@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Media } from '@/features/media/types/media.schema'
 import MediaUploadForm from '@/features/media/components/admin/MediaUploadForm'
 import MediaGridItem from '@/features/media/components/admin/MediaGridItem'

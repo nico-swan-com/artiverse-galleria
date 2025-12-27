@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Order } from '@/features/billing/types/billing.types'
 import { format } from 'date-fns'
 import { Separator } from '@/components/ui/separator'
@@ -12,17 +12,13 @@ interface InvoiceProps {
 }
 
 const Invoice = ({ order }: InvoiceProps) => {
-  const [isPrinting, setIsPrinting] = useState(false)
-
   useEffect(() => {
     // Add print styles dynamically or rely on global CSS @media print
   }, [])
 
   const handlePrint = () => {
-    setIsPrinting(true)
     setTimeout(() => {
       window.print()
-      setIsPrinting(false)
     }, 100)
   }
 

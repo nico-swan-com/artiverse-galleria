@@ -1,7 +1,7 @@
 import { GET } from './route'
 import { ArtistsController } from '@/features/artists/actions/artists.controller'
 import { handleApiError } from '@/lib/utilities/api-error-handler'
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 // Mock dependencies
 jest.mock('@/features/artists/actions/artists.controller', () => ({
@@ -27,7 +27,7 @@ describe('Artists All API Route', () => {
 
   describe('GET /api/artists/all', () => {
     it('should return all artists', async () => {
-      const mockResponse = new Response(
+      const mockResponse = new NextResponse(
         JSON.stringify({ artists: [], total: 0 }),
         { status: 200 }
       )
@@ -43,7 +43,7 @@ describe('Artists All API Route', () => {
     it('should handle errors', async () => {
       const error = new Error('Database error')
       mockController.getAllArtistsPublic.mockRejectedValue(error)
-      const mockErrorResponse = new Response(
+      const mockErrorResponse = new NextResponse(
         JSON.stringify({ error: 'Internal server error' }),
         { status: 500 }
       )

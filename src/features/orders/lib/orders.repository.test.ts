@@ -115,7 +115,10 @@ describe('OrdersRepository', () => {
         .mockReturnValueOnce(mockInsertItems) // 2. insert items
         .mockReturnValueOnce(mockInsertEvent) // 3. log event
 
-      const result = await repository.create(orderData as any, items as any)
+      const result = await repository.create(
+        orderData as Parameters<typeof repository.create>[0],
+        items as Parameters<typeof repository.create>[1]
+      )
 
       expect(result).toEqual(mockOrder)
       expect(db.insert).toHaveBeenCalledTimes(3)

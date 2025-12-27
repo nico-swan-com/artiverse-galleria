@@ -82,7 +82,7 @@ class UsersRepository {
         })
         .returning()
 
-      const { password, ...safeUser } = created
+      const { password: _password, ...safeUser } = created
       return safeUser
     } catch (error) {
       logger.error('Error creating user', error)

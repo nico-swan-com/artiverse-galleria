@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "NODE_OPTIONS='--inspect' next dev --turbopack",
-    "build": "prettier --write . && NODE_ENV=production next build --webpack",
+    "build": "NODE_ENV=production next build --webpack",
     "cbuild": "prettier --check . && NODE_ENV=production next build --webpack",
     "build:static": "BUILD_TYPE=static npm run build",
     "build:standalone": "BUILD_TYPE=standalone npm run build && npm run build:server",

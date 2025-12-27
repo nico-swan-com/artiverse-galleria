@@ -255,7 +255,7 @@ export class PayFastProvider extends PaymentProvider {
    */
   private generateSignature(data: Record<string, unknown>): string {
     // Remove signature from data if present
-    const { signature, ...dataWithoutSig } = data
+    const { signature: _signature, ...dataWithoutSig } = data
 
     // Build parameter string
     const params = Object.entries(dataWithoutSig)
@@ -279,6 +279,7 @@ export class PayFastProvider extends PaymentProvider {
     }
 
     // Real MD5 hash would be generated here
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const crypto = require('crypto')
     return crypto.createHash('md5').update(stringToHash).digest('hex')
   }

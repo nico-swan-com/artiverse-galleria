@@ -58,7 +58,6 @@ const envSchema = z.object({
  * Validated environment configuration
  * Throws error if validation fails at startup
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const skipValidation =
   !!process.env.SKIP_ENV_VALIDATION ||
   process.env.npm_lifecycle_event === 'lint'

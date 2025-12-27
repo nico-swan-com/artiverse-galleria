@@ -9,8 +9,7 @@ import {
   CarouselContent,
   CarouselItem,
   CarouselPrevious,
-  CarouselNext,
-  type CarouselApi
+  CarouselNext
 } from '@/components/ui/carousel'
 import { Product } from '@/types/products/product.schema'
 

@@ -5,7 +5,7 @@
  * Used by API route handlers.
  */
 
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { MediaService } from '../lib/media.service'
 import { logger } from '@/lib/utilities/logger'
 import { MediaNotFoundError } from '../lib/media.errors'

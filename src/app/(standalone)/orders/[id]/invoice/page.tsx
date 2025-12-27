@@ -1,4 +1,3 @@
-import React from 'react'
 import { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 import { auth } from '@/features/authentication/lib/next-auth'

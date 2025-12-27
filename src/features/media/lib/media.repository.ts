@@ -60,7 +60,7 @@ export class MediaRepository {
 
   async deleteById(id: string): Promise<boolean> {
     try {
-      const result = await db.delete(media).where(eq(media.id, id))
+      await db.delete(media).where(eq(media.id, id))
       // Drizzle result with pg-node logic for delete often returns rowCount in result object if configured or just check query
       // result is likely CommandResult { rowCount: number ... }
       // but returning() is not used so it depends on driver result.

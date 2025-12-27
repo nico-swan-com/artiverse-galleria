@@ -47,7 +47,7 @@ The application follows a **feature-based architecture** where code is organized
 
 ### Directory Structure
 
-```
+```text
 src/
 ├── features/              # Feature modules
 │   ├── authentication/   # Authentication feature

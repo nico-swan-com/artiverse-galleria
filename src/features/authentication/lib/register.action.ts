@@ -1,6 +1,5 @@
 'use server'
 
-import { z } from 'zod'
 import { UserRoles } from '@/types/users/user-roles.enum'
 import { UserStatus } from '@/types/users/user-status.enum'
 import { PasswordSchema, UserCreateSchema } from '@/types/users/user.schema'
@@ -8,7 +7,6 @@ import { getAvatarUrl } from '@/lib/utilities'
 import { UsersRepository } from '@/features/users/lib/users.repository'
 import bcrypt from 'bcryptjs'
 import { NewUser } from '@/lib/database/schema'
-import { signIn } from '@/features/authentication/lib'
 
 export type RegisterFieldErrors = {
   name?: string[]
@@ -25,7 +23,7 @@ export type RegisterState = {
 }
 
 async function registerAction(
-  prevState: RegisterState | undefined,
+  _prevState: RegisterState | undefined,
   formData: FormData
 ): Promise<RegisterState> {
   const name = formData.get('name')?.toString() || ''

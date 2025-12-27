@@ -1,6 +1,4 @@
-import { unstable_cache } from 'next/cache'
 import crypto from 'crypto'
-import { CACHE_CONFIG } from '@/shared/constants'
 
 /**
  * Image processing cache key parameters
@@ -50,28 +48,12 @@ export function generateImageCacheKey(params: ImageCacheParams): string {
  * @returns Cached image buffer or null if not found
  */
 export async function getCachedProcessedImage(
-  cacheKey: string
+  _cacheKey: string
 ): Promise<Buffer | null> {
-  try {
-    const getCached = unstable_cache(
-      async (key: string): Promise<Buffer | null> => {
-        // This will be populated by setCachedProcessedImage
-        return null
-      },
-      [cacheKey],
-      {
-        tags: [CACHE_CONFIG.TAGS.MEDIA, `processed-${cacheKey}`],
-        revalidate: CACHE_CONFIG.LONG_CACHE_DURATION
-      }
-    )
-
-    // Note: unstable_cache doesn't directly support get/set operations
-    // We'll use a different approach with filesystem or in-memory cache
-    // For now, return null and implement filesystem cache
-    return null
-  } catch {
-    return null
-  }
+  // Note: unstable_cache doesn't directly support get/set operations
+  // We'll use a different approach with filesystem or in-memory cache
+  // For now, return null and implement filesystem cache
+  return null
 }
 
 /**
@@ -80,8 +62,8 @@ export async function getCachedProcessedImage(
  * @param imageBuffer - Processed image buffer to cache
  */
 export async function setCachedProcessedImage(
-  cacheKey: string,
-  imageBuffer: Buffer
+  _cacheKey: string,
+  _imageBuffer: Buffer
 ): Promise<void> {
   // Filesystem caching would be implemented here
   // For now, we rely on HTTP cache headers and ETags

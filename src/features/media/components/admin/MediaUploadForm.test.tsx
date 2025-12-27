@@ -1,5 +1,4 @@
 import '@testing-library/jest-dom'
-import React from 'react'
 import { render, fireEvent, waitFor, screen, act } from '@testing-library/react'
 import MediaUploadForm from './MediaUploadForm'
 

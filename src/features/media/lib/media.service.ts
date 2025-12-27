@@ -1,7 +1,6 @@
 import { MediaRepository } from './media.repository'
-import { MediaCreate, MediaUpdate } from '../types/media.schema'
+import { MediaCreate } from '../types/media.schema'
 import { Media, NewMedia } from '@/lib/database/schema'
-import { FILE_CONFIG } from '@/shared/constants'
 import { MediaValidator } from './media-validator'
 import { MediaHasher } from './media-hasher'
 import { logger } from '@/lib/utilities/logger'

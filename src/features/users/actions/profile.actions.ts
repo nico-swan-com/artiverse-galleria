@@ -22,7 +22,7 @@ const profileSchema = z.object({
 })
 
 export async function updateProfileAction(
-  prevState: FormState,
+  _prevState: FormState,
   formData: FormData
 ): Promise<FormState> {
   // 1. Authenticate User

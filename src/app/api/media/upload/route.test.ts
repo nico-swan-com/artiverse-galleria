@@ -1,6 +1,6 @@
 import { POST } from './route'
 import { MediaService } from '@/features/media/lib/media.service'
-import { handleApiError, ApiError } from '@/lib/utilities/api-error-handler'
+import { handleApiError } from '@/lib/utilities/api-error-handler'
 import { NextRequest } from 'next/server'
 
 // Mock dependencies
@@ -18,7 +18,7 @@ jest.mock('@/lib/utilities/api-error-handler', () => ({
 }))
 
 jest.mock('@/lib/security', () => ({
-  withRateLimit: jest.fn((config, handler) => handler),
+  withRateLimit: jest.fn((_config, handler) => handler),
   RATE_LIMIT_CONFIG: {
     MEDIA_UPLOAD: { limit: 10, window: 60000 }
   }

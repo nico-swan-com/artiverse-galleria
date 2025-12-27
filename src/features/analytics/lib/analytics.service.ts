@@ -54,7 +54,6 @@ class AnalyticsService {
   async getDashboardMetrics(dateRange?: DateRange): Promise<DashboardMetrics> {
     const now = new Date()
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-    const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000)
 
     const start = dateRange?.start || thirtyDaysAgo
     const end = dateRange?.end || now

@@ -119,7 +119,6 @@ const MediaPickerModal: React.FC<MediaPickerModalProps> = ({
                 aria-pressed={selected.includes(item.id)}
                 role='button'
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={`/api/media/${item.id}`}
                   alt={item.fileName}

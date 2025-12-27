@@ -1,6 +1,6 @@
 import { GET, DELETE, PATCH } from './route'
 import { MediaService } from '@/features/media/lib/media.service'
-import { handleApiError, ApiError } from '@/lib/utilities/api-error-handler'
+import { handleApiError } from '@/lib/utilities/api-error-handler'
 import { NextRequest } from 'next/server'
 
 // Mock dependencies

@@ -21,7 +21,7 @@ export type LoginState = {
 }
 
 async function submitLogin(
-  prevState: LoginState,
+  _prevState: LoginState,
   formData: FormData
 ): Promise<LoginState> {
   const email = formData.get('username')?.toString() || ''

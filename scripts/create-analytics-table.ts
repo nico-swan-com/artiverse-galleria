@@ -78,9 +78,10 @@ async function main() {
         ON DELETE no action ON UPDATE no action;
         `)
       console.log('Constraint added.')
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Code 42710 usually means duplicate object (constraint exists)
-      if (err.code === '42710' || err.message.includes('already exists')) {
+      const error = err as { code?: string; message?: string }
+      if (error.code === '42710' || error.message?.includes('already exists')) {
         console.log(
           'Constraint analytics_events_user_id_users_id_fk already exists, skipping.'
         )

@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
 import { renderHook, act } from '@testing-library/react'
-import { CartProvider, useCart, CartItem } from './cart.context'
+import { CartProvider, useCart } from './cart.context'
 import { Product } from '@/types/products/product.schema'
 import React from 'react'
 

@@ -16,7 +16,7 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { toast } from 'sonner'
-import { ChevronLeft, CreditCard, Check, Loader2 } from 'lucide-react'
+import { ChevronLeft, CreditCard, Check } from 'lucide-react'
 import Image from 'next/image'
 import {
   createOrderAndPay,
@@ -30,7 +30,6 @@ const Checkout = () => {
   const [subtotal, setSubtotal] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
-  const [orderId, setOrderId] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -100,8 +99,6 @@ const Checkout = () => {
       const result = await createOrderAndPay(customerInfo, cart, formData.notes)
 
       if (result.success && result.redirectUrl) {
-        setOrderId(result.orderId || null)
-
         if (result.redirectUrl.includes('mock=true')) {
           if (result.orderId && result.paymentId) {
             await confirmMockPayment(result.orderId, result.paymentId)

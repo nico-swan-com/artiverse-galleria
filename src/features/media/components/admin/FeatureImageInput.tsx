@@ -2,7 +2,7 @@
 
 import { AlertCircleIcon, ImageUpIcon, XIcon } from 'lucide-react'
 import { useFileUpload } from '@/hooks/use-file-upload'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 
 type FeatureImageInputProps = {
   /**
@@ -52,8 +52,7 @@ export default function FeatureImageInput({
       onChangeAction(null)
     }
     // Only run when files or initialImage changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [files, initialImage])
+  }, [files, initialImage, onChangeAction])
 
   // Remove image handler
   const handleRemove = () => {
@@ -88,7 +87,6 @@ export default function FeatureImageInput({
           />
           {previewUrl ? (
             <div className='absolute inset-0'>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={previewUrl}
                 alt={files[0]?.file?.name || 'Uploaded image'}

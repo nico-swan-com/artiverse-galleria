@@ -1,6 +1,5 @@
 'use client'
 
-import React from 'react'
 import { Order } from '@/features/orders/types/order.types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'

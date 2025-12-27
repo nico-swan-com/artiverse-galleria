@@ -32,18 +32,28 @@ export async function GET() {
       `
     )
 
+    const resultRow = result.rows[0] as { timestamp?: string } | undefined
+    const statsRow = stats.rows[0] as
+      | {
+          user_count?: string | number
+          product_count?: string | number
+          artist_count?: string | number
+          media_count?: string | number
+        }
+      | undefined
+
     const healthData = {
       status: 'healthy',
       database: {
         connected: true,
         responseTime: `${responseTime}ms`,
-        timestamp: result[0]?.timestamp || new Date().toISOString()
+        timestamp: resultRow?.timestamp || new Date().toISOString()
       },
       stats: {
-        users: Number(stats[0]?.user_count || 0),
-        products: Number(stats[0]?.product_count || 0),
-        artists: Number(stats[0]?.artist_count || 0),
-        media: Number(stats[0]?.media_count || 0)
+        users: Number(statsRow?.user_count || 0),
+        products: Number(statsRow?.product_count || 0),
+        artists: Number(statsRow?.artist_count || 0),
+        media: Number(statsRow?.media_count || 0)
       }
     }
 

@@ -1,7 +1,7 @@
 import { GET, POST } from './route'
 import { MediaService } from '@/features/media'
-import { handleApiError, ApiError } from '@/lib/utilities/api-error-handler'
-import { NextRequest } from 'next/server'
+import { handleApiError } from '@/lib/utilities/api-error-handler'
+import { NextRequest, NextResponse } from 'next/server'
 
 // Mock dependencies
 jest.mock('@/features/media', () => ({
@@ -18,7 +18,7 @@ jest.mock('@/lib/utilities/api-error-handler', () => ({
 }))
 
 jest.mock('@/lib/security', () => ({
-  withRateLimit: jest.fn((config, handler) => handler),
+  withRateLimit: jest.fn((_config, handler) => handler),
   RATE_LIMIT_CONFIG: {
     API: { limit: 100, window: 60000 },
     MEDIA_UPLOAD: { limit: 10, window: 60000 }
@@ -51,7 +51,7 @@ describe('Media API Route', () => {
       ]
       mockMediaService.getAll.mockResolvedValue(mockMedia as never)
 
-      const response = await GET()
+      const response = await GET(new NextRequest('http://localhost/api/media'))
       const data = await response.json()
 
       expect(response.status).toBe(200)
@@ -62,13 +62,14 @@ describe('Media API Route', () => {
     it('should handle errors', async () => {
       const error = new Error('Database error')
       mockMediaService.getAll.mockRejectedValue(error)
-      const mockErrorResponse = new Response(
+      const mockErrorResponse = new NextResponse(
         JSON.stringify({ error: 'Internal server error' }),
         { status: 500 }
       )
       ;(handleApiError as jest.Mock).mockReturnValue(mockErrorResponse)
 
-      const response = await GET()
+      const response = await GET(new NextRequest('http://localhost/api/media'))
+      expect(response).toBe(mockErrorResponse)
 
       expect(handleApiError).toHaveBeenCalledWith(error)
     })
@@ -108,13 +109,13 @@ describe('Media API Route', () => {
         body: formData
       })
 
-      const mockErrorResponse = new Response(
+      const mockErrorResponse = new NextResponse(
         JSON.stringify({ error: 'No file uploaded' }),
         { status: 400 }
       )
       ;(handleApiError as jest.Mock).mockReturnValue(mockErrorResponse)
 
-      const response = await POST(request)
+      await POST(request)
 
       expect(handleApiError).toHaveBeenCalled()
     })

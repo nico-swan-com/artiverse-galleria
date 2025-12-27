@@ -1,6 +1,6 @@
 import { UsersRepository } from './users.repository'
 import { db } from '@/lib/database/drizzle'
-import { logger } from '@/lib/utilities/logger'
+import type { NewUser, User } from '@/lib/database/schema'
 
 // Mock dependencies
 jest.mock('@/lib/database/drizzle', () => ({
@@ -37,14 +37,16 @@ const createChainableMock = () => {
   return mock
 }
 
+type MockDatabase = typeof db
+
 describe('UsersRepository', () => {
   let repository: UsersRepository
-  let mockDbInfo: any
+  let mockDbInfo: MockDatabase
 
   beforeEach(() => {
     jest.clearAllMocks()
     repository = new UsersRepository()
-    mockDbInfo = db as any
+    mockDbInfo = db
   })
 
   describe('getUserById', () => {
@@ -97,10 +99,10 @@ describe('UsersRepository', () => {
       mockInsert.returning.mockResolvedValue([createdUser])
       ;(db.insert as jest.Mock).mockReturnValue(mockInsert)
 
-      const result = await repository.create(newUser as any)
+      const result = await repository.create(newUser as NewUser)
 
       expect(result.email).toBe('new@example.com')
-      expect((result as any).password).toBeUndefined()
+      expect((result as User).password).toBeUndefined()
       expect(db.insert).toHaveBeenCalled()
     })
   })

@@ -13,7 +13,7 @@ import {
   VideoIcon,
   XIcon
 } from 'lucide-react'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 
 import {
   FileMetadata,
@@ -107,7 +107,6 @@ const getFilePreview = (file: {
       : ''
 
   const renderImage = (src: string) => (
-    // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
       alt={fileName}
@@ -202,8 +201,7 @@ export default function MultipleImageInput({
             : ''
       })
     onChangeAction(imageFiles)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [files])
+  }, [files, onChangeAction])
 
   return (
     <div className='flex flex-col gap-2'>

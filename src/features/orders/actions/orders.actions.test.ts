@@ -1,4 +1,4 @@
-import { getUserOrders, getUserOrder, getUserActivity } from './orders.actions'
+import { getUserOrders, getUserOrder } from './orders.actions'
 import { auth } from '@/features/authentication/lib/next-auth'
 import { db } from '@/lib/database/drizzle'
 

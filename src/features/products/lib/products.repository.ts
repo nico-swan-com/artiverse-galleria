@@ -206,7 +206,6 @@ class ProductsRepository {
       const { id, ...updateData } = product
 
       // Prepare update object, filtering undefined
-      type UpdateFields = Partial<Omit<ProductUpdate, 'id'>>
       const definedUpdates: Record<string, unknown> = {}
       for (const key in updateData) {
         const val = updateData[key as keyof typeof updateData]

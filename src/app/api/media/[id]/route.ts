@@ -6,7 +6,7 @@ import fs from 'fs/promises'
 import crypto from 'crypto'
 import { handleApiError, ApiError } from '@/lib/utilities/api-error-handler'
 import { escapeHtml } from '@/lib/utilities/html-escape'
-import { IMAGE_CONFIG, CACHE_CONFIG } from '@/lib/constants/app.constants'
+import { IMAGE_CONFIG } from '@/lib/constants/app.constants'
 import {
   NotFoundError,
   ValidationError
@@ -290,7 +290,7 @@ export async function GET(req: NextRequest, context: unknown) {
 /**
  * DELETE /api/media/[id] - Deletes media from the database by media ID.
  */
-export async function DELETE(req: NextRequest, context: unknown) {
+export async function DELETE(_req: NextRequest, context: unknown) {
   try {
     const { params } = (context || {}) as { params: Promise<{ id: string }> }
     const { id } = await params

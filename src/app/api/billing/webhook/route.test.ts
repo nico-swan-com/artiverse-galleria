@@ -17,7 +17,7 @@ jest.mock('@/lib/utilities/logger', () => ({
 }))
 
 jest.mock('@/lib/security', () => ({
-  withRateLimit: jest.fn((config, handler) => handler),
+  withRateLimit: jest.fn((_config, handler) => handler),
   RATE_LIMIT_CONFIG: {
     WEBHOOK: { limit: 200, window: 60000 }
   }

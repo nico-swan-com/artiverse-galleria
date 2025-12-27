@@ -2,7 +2,6 @@ import submitLogin, { LoginState } from './auth.actions'
 import { signIn } from '@/features/authentication/lib'
 import { CredentialsSignin } from 'next-auth'
 import { checkRateLimit, RATE_LIMIT_CONFIG } from '@/lib/security'
-import { z } from 'zod'
 
 // Mock dependencies
 jest.mock('@/features/authentication/lib', () => ({

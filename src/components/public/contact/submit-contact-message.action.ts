@@ -23,7 +23,7 @@ export type ContactFormState = {
 }
 
 async function submitContactMessage(
-  prevState: ContactFormState,
+  _prevState: ContactFormState,
   formData: FormData
 ): Promise<ContactFormState> {
   const name = formData.get('name')?.toString() || ''

@@ -1,5 +1,9 @@
 import { createProduct, updateProduct, deleteProduct } from './products.actions'
 import ProductsService from '../lib/products.service'
+import type {
+  ProductCreate,
+  ProductUpdate
+} from '@/types/products/product.schema'
 
 // Mock dependencies of the Service to ensure safe instantiation
 jest.mock('../lib/products.repository')
@@ -10,7 +14,7 @@ jest.mock('@/lib/database/drizzle', () => ({
 jest.mock('next/cache', () => ({
   revalidatePath: jest.fn(),
   revalidateTag: jest.fn(),
-  unstable_cache: (fn: any) => fn
+  unstable_cache: (fn: () => unknown) => fn
 }))
 jest.mock('@/lib/utilities/logger', () => ({
   logger: { error: jest.fn() }
@@ -29,9 +33,9 @@ describe('Products Actions', () => {
       // Spy on the prototype method
       const createSpy = jest
         .spyOn(ProductsService.prototype, 'create')
-        .mockResolvedValue(output as any)
+        .mockResolvedValue(output)
 
-      const result = await createProduct(input as any)
+      const result = await createProduct(input as ProductCreate)
 
       expect(result.success).toBe(true)
       expect(result.data).toEqual(output)
@@ -39,11 +43,11 @@ describe('Products Actions', () => {
     })
 
     it('should handle errors', async () => {
-      const createSpy = jest
+      jest
         .spyOn(ProductsService.prototype, 'create')
         .mockRejectedValue(new Error('Fail'))
 
-      const result = await createProduct({} as any)
+      const result = await createProduct({} as ProductCreate)
       expect(result.success).toBe(false)
     })
   })
@@ -55,7 +59,7 @@ describe('Products Actions', () => {
         .spyOn(ProductsService.prototype, 'update')
         .mockResolvedValue(undefined)
 
-      const result = await updateProduct(input as any)
+      const result = await updateProduct(input as ProductUpdate)
 
       expect(result.success).toBe(true)
       expect(updateSpy).toHaveBeenCalledWith(input)

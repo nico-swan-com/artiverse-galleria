@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { ProductDelete } from '@/types/products/product.schema'
 import { Trash } from 'lucide-react'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import ConfirmDialog from './ConfirmDialog'
 import DeleteProductForm from './ProductDeleteForm'
 

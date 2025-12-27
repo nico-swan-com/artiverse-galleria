@@ -8,7 +8,7 @@ import { UserRoles } from '@/types/users/user-roles.enum'
 import { FormState } from '@/types/common/form-state.type'
 
 async function deleteUserAction(
-  prevState: FormState | undefined,
+  _prevState: FormState | undefined,
   formData: FormData
 ): Promise<FormState> {
   try {

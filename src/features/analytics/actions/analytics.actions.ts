@@ -8,7 +8,7 @@
 
 import { auth } from '@/features/authentication/lib/next-auth'
 import { analyticsService } from '../lib'
-import { EventType, DashboardMetrics } from '../types'
+import { DashboardMetrics } from '../types'
 import { cookies } from 'next/headers'
 
 /**

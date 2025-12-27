@@ -1,6 +1,5 @@
 import { ArtistsRepository } from './artists.repository'
 import { db } from '@/lib/database/drizzle'
-import { logger } from '@/lib/utilities/logger'
 import * as Mappers from '@/lib/database/mappers/artist.mapper'
 import type { MockDatabase } from '@/__tests__/utils/mock-types'
 import { createChainableMock } from '@/__tests__/utils/mock-types'
@@ -83,7 +82,18 @@ describe('ArtistsRepository', () => {
 
   describe('create', () => {
     it('should create and return mapped artist', async () => {
-      const input = { name: 'New Artist', bio: 'Bio' }
+      const input = {
+        name: 'New Artist',
+        email: 'artist@example.com',
+        image: 'image.jpg',
+        featured: false,
+        styles: [],
+        biography: 'Biography text',
+        specialization: 'Painting',
+        location: 'New York',
+        exhibitions: [],
+        statement: 'Artist statement'
+      }
       const inserted = { id: 'new', ...input }
       const mapped = { id: 'new', ...input }
 

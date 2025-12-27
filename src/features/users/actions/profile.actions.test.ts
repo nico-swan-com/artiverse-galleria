@@ -1,8 +1,6 @@
 import { updateProfileAction } from './profile.actions'
 import { auth } from '@/features/authentication/lib/next-auth'
 import { db } from '@/lib/database/drizzle'
-import { MediaService } from '@/features/media/lib/media.service'
-import bcryptjs from 'bcryptjs'
 
 // Mock dependencies
 jest.mock('@/features/authentication/lib/next-auth', () => ({
@@ -30,10 +28,6 @@ jest.mock('next/cache', () => ({
 describe('Profile Actions', () => {
   const mockAuth = auth as jest.MockedFunction<typeof auth>
   const mockDbUpdate = db.update as jest.Mock
-  const mockMediaService = MediaService as jest.MockedClass<typeof MediaService>
-  const mockBcryptHash = bcryptjs.hash as jest.MockedFunction<
-    typeof bcryptjs.hash
-  >
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -46,7 +40,7 @@ describe('Profile Actions', () => {
     }
 
     it('should return error if user is not authenticated', async () => {
-      mockAuth.mockResolvedValue(null)
+      mockAuth.mockResolvedValue(null as never)
 
       const formData = new FormData()
       formData.append('name', 'Test User')

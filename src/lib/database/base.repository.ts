@@ -2,7 +2,6 @@ import { db } from './drizzle'
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import type * as schema from './schema'
 import { logger } from '../utilities/logger'
-import type { SQL } from 'drizzle-orm'
 
 type Database = NodePgDatabase<typeof schema>
 

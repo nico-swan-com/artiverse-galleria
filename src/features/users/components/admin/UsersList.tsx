@@ -1,7 +1,5 @@
 'use client'
 
-import React from 'react'
-
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { format } from 'date-fns'
 import { Badge } from '@/components/ui/badge'

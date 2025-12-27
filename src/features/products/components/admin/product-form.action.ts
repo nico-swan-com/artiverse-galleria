@@ -58,7 +58,7 @@ export type ProductFormState = {
 }
 
 export async function productFormAction(
-  prevState: ProductFormState,
+  _prevState: ProductFormState,
   formData: FormData
 ): Promise<ProductFormState> {
   const id = formData.get('id')?.toString() || ''

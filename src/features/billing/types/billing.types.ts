@@ -4,7 +4,6 @@
  * Type definitions for orders, payments, and billing operations.
  */
 
-import { Product } from '@/features/products/types/product.schema'
 import {
   Order,
   OrderItem,

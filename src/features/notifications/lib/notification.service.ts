@@ -7,11 +7,7 @@
 import { sendMail } from '@/lib/mailer/sendMail'
 import { logger } from '@/lib/utilities/logger'
 import { Order } from '@/features/billing/types'
-import {
-  OrderNotificationData,
-  orderToNotificationData,
-  NotificationResult
-} from '../types'
+import { orderToNotificationData, NotificationResult } from '../types'
 import {
   generateOrderConfirmationEmail,
   generateOrderConfirmationText,

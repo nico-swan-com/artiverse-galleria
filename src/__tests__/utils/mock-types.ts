@@ -5,12 +5,6 @@
  * These types replace `any` usage in test files.
  */
 
-import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
-import type * as schema from '@/lib/database/schema'
-import type Users from '@/features/users/lib/users.service'
-
-type Database = NodePgDatabase<typeof schema>
-
 /**
  * Mock type for Drizzle database query object
  */

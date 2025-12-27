@@ -1,6 +1,5 @@
 'use client'
 
-import React from 'react'
 import { format } from 'date-fns'
 import {
   Table,
@@ -10,7 +9,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -26,14 +25,7 @@ interface OrdersListProps {
   status?: string
 }
 
-const OrdersList = ({
-  orders,
-  total,
-  page,
-  limit,
-  status
-}: OrdersListProps) => {
-  const router = useRouter()
+const OrdersList = ({ orders, total, page, limit }: OrdersListProps) => {
   const searchParams = useSearchParams()
   const paramsURL = new URLSearchParams(Array.from(searchParams.entries()))
 
