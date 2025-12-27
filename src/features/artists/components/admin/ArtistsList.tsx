@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/table'
 import { FindOptionsOrderValue } from '@/types/common/db.type'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ArrowDown, ArrowUp, Edit } from 'lucide-react'
+import { ArrowDown, ArrowUp, Pencil } from 'lucide-react'
 import TablePagination from '@/components/common/ui/TablePagination'
 import DeleteArtistDialog from './delete-artist/DeleteArtistDialog'
 import { Artist, ArtistsSortBy } from '@/features/artists'
@@ -157,7 +157,7 @@ const ArtistsList = ({
                   <TableCell className='text-end'>
                     <Button variant='ghost' size='sm' asChild>
                       <Link href={`/admin/artists/${artist.id}/edit`}>
-                        <Edit className='size-4' />
+                        <Pencil className='size-4' />
                         <span className='sr-only'>Edit {artist.name}</span>
                       </Link>
                     </Button>

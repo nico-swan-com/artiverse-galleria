@@ -3,6 +3,7 @@
 import { sendMail } from '@/lib/mailer/sendMail'
 import { MessageSchema } from './message.schema'
 import { z } from 'zod'
+import { checkRateLimit, RATE_LIMIT_CONFIG } from '@/lib/security'
 
 export type ContactFormErrors = {
   name?: string[]
@@ -41,6 +42,8 @@ async function submitContactMessage(
   }
 
   try {
+    // Check rate limit
+    await checkRateLimit(RATE_LIMIT_CONFIG.CONTACT_FORM)
     const values = MessageSchema.parse(state)
 
     const emailOptions = {
@@ -73,6 +76,17 @@ async function submitContactMessage(
         errors: fieldErrors
       }
     } else if (error instanceof Error) {
+      // Handle rate limit errors
+      if ((error as Error & { code?: string }).code === 'RATE_LIMIT_EXCEEDED') {
+        return {
+          ...state,
+          success: false,
+          message: error.message,
+          errors: {
+            content: [error.message]
+          }
+        }
+      }
       return {
         ...state,
         success: false,

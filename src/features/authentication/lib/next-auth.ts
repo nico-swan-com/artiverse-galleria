@@ -25,24 +25,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           const user = await users.getUserByEmail(email)
 
-          if (!user) {
+          // Always perform password comparison to prevent timing attacks
+          // Use a dummy hash if user doesn't exist to maintain constant-time comparison
+          const passwordHash =
+            user?.password ||
+            '$2a$10$dummy.hash.for.timing.attack.protection.xyz'
+          const passwordMatch = await bcrypt.compare(password, passwordHash)
+
+          // Only throw error after password comparison to prevent timing attacks
+          if (!user || !passwordMatch) {
             throw new CredentialsSignin('Invalid credentials')
           }
 
-          // Manually validate password since Drizzle object doesn't have methods
-          const passwordMatch = await bcrypt.compare(password, user.password)
           const image = user.avatar || getAvatarUrl(user.email, user.name)
 
-          if (passwordMatch) {
-            return {
-              email: user.email,
-              id: user.id.toString(),
-              image,
-              name: user.name,
-              role: user.role
-            }
-          } else {
-            throw new CredentialsSignin('Invalid credentials')
+          return {
+            email: user.email,
+            id: user.id.toString(),
+            image,
+            name: user.name,
+            role: user.role
           }
         } catch (error) {
           if (error instanceof CredentialsSignin) {

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useCart } from '@/contexts/cart.context'
-import { ShoppingCart, Heart } from 'lucide-react'
+import { ShoppingCart } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatPrice } from '@/lib/database/data/artworks'
 import { Product } from '@/types/products/product.schema'
@@ -62,19 +62,13 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({ artwork, className }) => {
 
           {/* Overlay with actions */}
           <div className='absolute inset-0 bg-black/0 opacity-0 transition-all duration-400 ease-swift-out group-hover:bg-black/30 group-hover:opacity-100'>
-            <div className='absolute bottom-4 right-4 flex space-x-2'>
+            <div className='absolute bottom-4 right-4'>
               <button
                 className='flex size-10 translate-y-2 items-center justify-center rounded-full bg-white text-black opacity-0 shadow-lg transition-all duration-400 ease-swift-out group-hover:translate-y-0 group-hover:opacity-100'
                 onClick={handleAddToCart}
                 aria-label='Add to cart'
               >
                 <ShoppingCart size={18} />
-              </button>
-              <button
-                className='flex size-10 translate-y-2 items-center justify-center rounded-full bg-white text-black opacity-0 shadow-lg transition-all delay-75 duration-400 ease-swift-out group-hover:translate-y-0 group-hover:opacity-100'
-                aria-label='Add to wishlist'
-              >
-                <Heart size={18} />
               </button>
             </div>
           </div>

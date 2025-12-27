@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { LoginSchema } from '../components/login.schema'
 import { signIn } from '@/features/authentication/lib'
 import { CredentialsSignin } from 'next-auth'
+import { checkRateLimit, RATE_LIMIT_CONFIG } from '@/lib/security'
 
 export type LoginFieldErrors = {
   email?: string[]
@@ -35,6 +36,9 @@ async function submitLogin(
   }
 
   try {
+    // Check rate limit for authentication attempts
+    await checkRateLimit(RATE_LIMIT_CONFIG.AUTH)
+
     const credentials = LoginSchema.parse({
       email: formData.get('username'),
       password: formData.get('password')
@@ -69,6 +73,22 @@ async function submitLogin(
         message: 'Invalid credentials',
         errors: {
           credentials: ['Invalid email or password']
+        },
+        password: ''
+      }
+    }
+
+    // Handle rate limit errors
+    if (
+      error instanceof Error &&
+      (error as Error & { code?: string }).code === 'RATE_LIMIT_EXCEEDED'
+    ) {
+      return {
+        ...state,
+        success: false,
+        message: error.message,
+        errors: {
+          credentials: [error.message]
         },
         password: ''
       }

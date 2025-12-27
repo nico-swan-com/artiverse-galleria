@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils'
 import Logo from '@/components/common/Logo'
 import { Button } from '../ui/button'
 import { signOut } from 'next-auth/react'
+import { UI_CONSTANTS } from '@/shared/constants/app-constants'
 
 const Navbar = () => {
   const { data: session } = useSession()
@@ -29,7 +30,7 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY
-      setIsScrolled(scrollPosition > 20)
+      setIsScrolled(scrollPosition > UI_CONSTANTS.NAVBAR_SCROLL_THRESHOLD)
     }
 
     window.addEventListener('scroll', handleScroll)

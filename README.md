@@ -24,7 +24,6 @@ This project is a modern e-commerce art gallery website built with Next.js 16, e
 - [x] Detailed descriptions and inspiration
 - [x] Pricing and availability status (stock management)
 - [x] "Add to cart" functionality
-- [ ] "Add to wishlist" functionality (UI exists but no backend persistence)
 - [ ] Zoomable images (basic image display implemented)
 - [ ] Shipping and delivery information (placeholder text only)
 
@@ -46,7 +45,6 @@ This project is a modern e-commerce art gallery website built with Next.js 16, e
 - [x] Optimized image loading with lazy loading and blur effects
 - [x] About us page
 - [x] Contact us page with form submission
-- [ ] Blog/news section (commented out in admin navigation)
 
 ### Content Management System (CMS)
 
@@ -55,7 +53,6 @@ This project is a modern e-commerce art gallery website built with Next.js 16, e
 - [x] Media management with upload, edit, and delete capabilities
 - [x] User management system
 - [x] Process orders and manage inventory
-- [ ] Update website content and blog posts (not yet implemented)
 - [x] QR code generation and management
 
 ### SEO Optimization
@@ -72,7 +69,7 @@ This project is a modern e-commerce art gallery website built with Next.js 16, e
 - [x] Secure customer data storage with bcrypt password hashing
 - [x] Protection against web vulnerabilities (basic auth guards)
 - [x] NextAuth.js integration for authentication
-- [ ] Rate limiting (not implemented)
+- [x] Rate limiting (implemented with in-memory storage)
 - [x] Input validation and sanitization (Zod schemas)
 
 ### Additional Features
@@ -116,9 +113,7 @@ This project is a modern e-commerce art gallery website built with Next.js 16, e
 
 ### 🚧 Partially Implemented
 
-- Wishlist functionality (UI exists, no persistence)
 - Image zoom and advanced viewing
-- Blog/news section
 - Advanced search and filtering
 
 ### ❌ Not Yet Implemented
@@ -126,7 +121,7 @@ This project is a modern e-commerce art gallery website built with Next.js 16, e
 - Real payment gateway integration (Stripe/PayPal)
 - Order tracking and shipping notifications integration
 - Full-scale Sitemap generation
-- Rate limiting and security hardening
+- Redis-based rate limiting for production scaling (currently in-memory)
 
 ## Installation
 
@@ -208,13 +203,12 @@ Nico Swan e-mail: [hi@nicoswan.com](mailto://hi@nicoswan.com)
 ### Priority 1 (Critical for E-commerce)
 
 1. Enhance order status tracking integration
-2. Complete wishlist persistence
+2. Integrate real payment gateway (currently mock implementation)
 
 ### Priority 2 (User Experience)
 
 1. Implement image zoom and advanced viewing
 2. Add advanced search and filtering (Elasticsearch or similar)
-3. Complete blog/news section
 
 ### Priority 3 (Business Features)
 
@@ -223,6 +217,7 @@ Nico Swan e-mail: [hi@nicoswan.com](mailto://hi@nicoswan.com)
 
 ### Priority 4 (Technical Improvements)
 
-1. Implement rate limiting and WAF
+1. Migrate rate limiting to Redis for production scaling
 2. Optimize edge caching for artworks
 3. Automated Sitemap generation
+4. Enhanced security headers (CSP, additional protections)

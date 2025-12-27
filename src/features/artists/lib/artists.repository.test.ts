@@ -2,6 +2,8 @@ import { ArtistsRepository } from './artists.repository'
 import { db } from '@/lib/database/drizzle'
 import { logger } from '@/lib/utilities/logger'
 import * as Mappers from '@/lib/database/mappers/artist.mapper'
+import type { MockDatabase } from '@/__tests__/utils/mock-types'
+import { createChainableMock } from '@/__tests__/utils/mock-types'
 
 // Mock dependencies
 jest.mock('@/lib/database/drizzle', () => ({
@@ -30,27 +32,14 @@ jest.mock('@/lib/database/mappers/artist.mapper', () => ({
   mapArtistToAppType: jest.fn()
 }))
 
-const createChainableMock = () => {
-  const mock = {
-    from: jest.fn().mockReturnThis(),
-    values: jest.fn().mockReturnThis(),
-    set: jest.fn().mockReturnThis(),
-    where: jest.fn().mockReturnThis(),
-    returning: jest.fn().mockReturnThis(),
-    orderBy: jest.fn().mockReturnThis(),
-    limit: jest.fn().mockReturnThis()
-  }
-  return mock
-}
-
 describe('ArtistsRepository', () => {
   let repository: ArtistsRepository
-  let mockDbInfo: any
+  let mockDbInfo: MockDatabase
 
   beforeEach(() => {
     jest.clearAllMocks()
     repository = new ArtistsRepository()
-    mockDbInfo = db as any
+    mockDbInfo = db as unknown as MockDatabase
   })
 
   describe('getAll', () => {
@@ -103,7 +92,7 @@ describe('ArtistsRepository', () => {
       ;(db.insert as jest.Mock).mockReturnValue(mockInsert)
       ;(Mappers.mapArtistToAppType as jest.Mock).mockReturnValue(mapped)
 
-      const result = await repository.create(input as any)
+      const result = await repository.create(input)
 
       expect(result).toEqual(mapped)
     })
@@ -116,7 +105,7 @@ describe('ArtistsRepository', () => {
       const mockUpdate = createChainableMock()
       ;(db.update as jest.Mock).mockReturnValue(mockUpdate)
 
-      await repository.update(updateData as any)
+      await repository.update(updateData)
 
       expect(db.update).toHaveBeenCalled()
     })

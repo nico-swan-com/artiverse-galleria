@@ -5,7 +5,7 @@ import ArtistsService from '../lib/artists.service'
 import { validateSearchQuery } from '@/lib/utilities/search-query.util'
 
 export class ArtistsController {
-  async getAllArtistsPublic(request: NextRequest): Promise<Response> {
+  async getAllArtistsPublic(request: NextRequest): Promise<NextResponse> {
     const artistsService = new ArtistsService()
     const searchParams = request.nextUrl.searchParams
     const sortBy = (searchParams.get('sortBy') || 'name') as ArtistsSortBy
@@ -23,7 +23,7 @@ export class ArtistsController {
     })
   }
 
-  async getArtistsPublic(request: NextRequest): Promise<Response> {
+  async getArtistsPublic(request: NextRequest): Promise<NextResponse> {
     const artistsService = new ArtistsService()
     const searchParams = request.nextUrl.searchParams
     const sortBy = (searchParams.get('sortBy') || 'name') as ArtistsSortBy

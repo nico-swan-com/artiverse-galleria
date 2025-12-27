@@ -4,14 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { useCart } from '@/contexts/cart.context'
-import {
-  ChevronLeft,
-  Heart,
-  HeartOff,
-  Share2,
-  ShoppingCart,
-  ZoomIn
-} from 'lucide-react'
+import { ChevronLeft, Share2, ShoppingCart, ZoomIn } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -39,7 +32,6 @@ export default function ArtworkDetailClient({
     imageUrls[0] ||
       (typeof artwork.featureImage === 'string' ? artwork.featureImage : null)
   )
-  const [isFavorite, setIsFavorite] = useState(false)
   const [currentUrl, setCurrentUrl] = useState('')
 
   useEffect(() => {
@@ -80,13 +72,6 @@ export default function ArtworkDetailClient({
     })
     toast('Added to cart', {
       description: `${artwork.title} has been added to your cart.`
-    })
-  }
-
-  const toggleFavorite = () => {
-    setIsFavorite((prev) => !prev)
-    toast(isFavorite ? 'Removed from wishlist' : 'Added to wishlist', {
-      description: `${artwork.title} has been ${isFavorite ? 'removed from' : 'added to'} your wishlist.`
     })
   }
 
@@ -203,33 +188,14 @@ export default function ArtworkDetailClient({
             </p>
 
             <div className='space-y-4'>
-              <div className='grid grid-cols-2 gap-4'>
-                <Button
-                  onClick={handleAddToCart}
-                  disabled={!artwork.stock || artwork.stock < 1}
-                  className='w-full'
-                >
-                  <ShoppingCart className='mr-2 size-4' />
-                  Add to Cart
-                </Button>
-                <Button
-                  variant={isFavorite ? 'destructive' : 'outline'}
-                  onClick={toggleFavorite}
-                  className='w-full'
-                >
-                  {isFavorite ? (
-                    <>
-                      <HeartOff className='mr-2 size-4' />
-                      Remove from Wishlist
-                    </>
-                  ) : (
-                    <>
-                      <Heart className='mr-2 size-4' />
-                      Add to Wishlist
-                    </>
-                  )}
-                </Button>
-              </div>
+              <Button
+                onClick={handleAddToCart}
+                disabled={!artwork.stock || artwork.stock < 1}
+                className='w-full'
+              >
+                <ShoppingCart className='mr-2 size-4' />
+                Add to Cart
+              </Button>
               <Button variant='ghost' onClick={shareArtwork} className='w-full'>
                 <Share2 className='mr-2 size-4' />
                 Share Artwork

@@ -1,5 +1,6 @@
 import { getUsersUnstableCache, createUserUnstableCache } from './users.actions'
 import Users from '../lib/users.service'
+import type { MockUsersService } from '@/__tests__/utils/mock-types'
 
 // Mock dependencies
 jest.mock('@/lib/database/drizzle', () => ({
@@ -7,20 +8,23 @@ jest.mock('@/lib/database/drizzle', () => ({
 }))
 
 jest.mock('next/cache', () => ({
-  unstable_cache: (fn: any) => fn
+  unstable_cache: (fn: unknown) => fn
 }))
 
 jest.mock('../lib/users.service')
 
 describe('Users Actions', () => {
-  let mockUsersService: any
+  let mockUsersService: MockUsersService
 
   beforeEach(() => {
     jest.clearAllMocks()
     // Setup mock instance
     mockUsersService = {
       getUsers: jest.fn(),
-      create: jest.fn()
+      getById: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn()
     }
     ;(Users as unknown as jest.Mock).mockImplementation(() => mockUsersService)
   })
@@ -51,7 +55,7 @@ describe('Users Actions', () => {
       const mockResult = { id: 'u1', ...mockUser }
       mockUsersService.create.mockResolvedValue(mockResult)
 
-      const result = await createUserUnstableCache(mockUser as any)
+      const result = await createUserUnstableCache(mockUser)
 
       expect(result).toEqual(mockResult)
       expect(mockUsersService.create).toHaveBeenCalledWith(mockUser)

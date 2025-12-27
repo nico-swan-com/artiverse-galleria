@@ -34,7 +34,25 @@ const compat = new FlatCompat({
   ],
 
   rules: {
-    'tailwindcss/classnames-order': 'off'
+    'tailwindcss/classnames-order': 'off',
+    '@typescript-eslint/no-explicit-any': 'warn',
+    'no-magic-numbers': [
+      'warn',
+      {
+        ignore: [0, 1, -1, 2],
+        ignoreArrayIndexes: true,
+        ignoreDefaultValues: true,
+        detectObjects: false
+      }
+    ],
+    'max-lines-per-function': [
+      'warn',
+      {
+        max: 200,
+        skipBlankLines: true,
+        skipComments: true
+      }
+    ]
   }
 })
 

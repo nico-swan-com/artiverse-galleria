@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/table'
 import { FindOptionsOrderValue } from '@/types/common/db.type'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ArrowDown, ArrowUp, Edit } from 'lucide-react'
+import { ArrowDown, ArrowUp, Pencil } from 'lucide-react'
 import TablePagination from '@/components/common/ui/TablePagination'
 import { User } from '@/types/users/user.schema'
 import { UsersSortBy } from '@/types/users/users-sort-by.type'
@@ -172,7 +172,7 @@ const UsersList = ({
                   <TableCell className='text-end'>
                     <Button variant='ghost' size='sm' asChild>
                       <Link href={`/admin/users/${user.id}/edit`}>
-                        <Edit className='size-4' />
+                        <Pencil className='size-4' />
                         <span className='sr-only'>Edit {user.name}</span>
                       </Link>
                     </Button>
