@@ -1,7 +1,7 @@
 import { MediaService } from './media.service'
 import { MediaRepository } from './media.repository'
-import { MediaCreate } from './model/media.schema'
-import { type Media, type NewMedia } from '../database/schema'
+import { MediaCreate } from '../types/media.schema'
+import { type Media } from '@/lib/database/schema'
 
 jest.mock('@/features/products/actions/products.controller', () => ({}))
 jest.mock('@/features/products', () => ({}))
@@ -23,7 +23,7 @@ describe('MediaService.uploadImage', () => {
 
   it('calculates SHA-256 hash and saves media', async () => {
     mockRepo.findByContentHash.mockResolvedValue(null)
-    mockRepo.createAndSave.mockImplementation(async (media) => media)
+    mockRepo.createAndSave.mockImplementation(async (media) => media as Media)
     const fileData = Buffer.from('test file')
     const file: MediaCreate = {
       fileName: 'test.png',
@@ -65,8 +65,8 @@ describe('MediaService.uploadImage', () => {
   })
 
   it('throws on invalid file data', async () => {
-    await expect(service.uploadImage({} as unknown as Media)).rejects.toThrow(
-      'Invalid media file data'
-    )
+    await expect(
+      service.uploadImage({} as unknown as MediaCreate)
+    ).rejects.toThrow('Invalid media file data')
   })
 })
