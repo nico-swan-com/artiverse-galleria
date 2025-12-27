@@ -4,7 +4,7 @@
 
 ## Project Description
 
-This project is a modern e-commerce art gallery website built with Next.js 15, enabling artists to showcase their portfolios and sell artwork online. The platform provides a seamless experience for art collectors, enthusiasts, and interior designers, featuring detailed artwork information, artist portfolios, and integrated QR code functionality for easy access to product pages.
+This project is a modern e-commerce art gallery website built with Next.js 16, enabling artists to showcase their portfolios and sell artwork online. The platform provides a seamless experience for art collectors, enthusiasts, and interior designers, featuring detailed artwork information, artist portfolios, and integrated QR code functionality for easy access to product pages.
 
 ## Key Features
 
@@ -32,11 +32,11 @@ This project is a modern e-commerce art gallery website built with Next.js 15, e
 
 - [x] Secure shopping cart with localStorage persistence
 - [x] Checkout process with form validation
-- [ ] Multiple payment gateway integration (currently simulated)
-- [ ] Order tracking and shipping notifications (not implemented)
-- [ ] Secure customer account management (basic auth exists)
-- [ ] Invoice generation (not implemented)
-- [ ] Order management system (not implemented)
+- [x] PayFast Integration (Mock Implementation with ITN support)
+- [x] Order tracking and notifications (Basic implementation)
+- [x] Secure customer account management (NextAuth.js)
+- [x] Invoice generation
+- [x] Order management system (Admin Dashboard)
 
 ### Website Design and UX
 
@@ -54,8 +54,8 @@ This project is a modern e-commerce art gallery website built with Next.js 15, e
 - [x] Manage artist profiles and artwork listings
 - [x] Media management with upload, edit, and delete capabilities
 - [x] User management system
-- [ ] Process orders and manage inventory (basic product management exists)
-- [ ] Update website content and blog posts (not implemented)
+- [x] Process orders and manage inventory
+- [ ] Update website content and blog posts (not yet implemented)
 - [x] QR code generation and management
 
 ### SEO Optimization
@@ -73,26 +73,27 @@ This project is a modern e-commerce art gallery website built with Next.js 15, e
 - [x] Protection against web vulnerabilities (basic auth guards)
 - [x] NextAuth.js integration for authentication
 - [ ] Rate limiting (not implemented)
-- [ ] Input validation and sanitization (partially implemented)
+- [x] Input validation and sanitization (Zod schemas)
 
 ### Additional Features
 
 - [x] QR code generation for artwork pages
-- [x] Email functionality with nodemailer (configured but simulated in dev)
+- [x] Email functionality with nodemailer (configured)
 - [x] Docker containerization and Kubernetes deployment
 - [x] CI/CD pipeline with GitHub Actions
-- [x] Database migrations and seeding with TypeORM
+- [x] Database migrations and seeding with Drizzle ORM
 - [x] Comprehensive testing setup with Jest
+- [x] Analytics and Dashboard reporting
 
 ## Technical Specifications
 
-- **Frontend Framework:** Next.js 15 (App Router)
+- **Frontend Framework:** Next.js 16 (App Router)
 - **Programming Language:** TypeScript
-- **Database:** PostgreSQL with TypeORM
+- **Database:** PostgreSQL with Drizzle ORM
 - **Authentication:** NextAuth.js v5
 - **Styling:** Tailwind CSS with shadcn/ui components
-- **State Management:** React Context API
-- **Image Processing:** Sharp.js for optimization and watermarking
+- **State Management:** React Context API / TanStack Query
+- **Image Processing:** Sharp.js for optimization
 - **Hosting:** Container-based Kubernetes deployment
 - **CI/CD:** GitHub Actions with Docker Hub integration
 
@@ -103,35 +104,29 @@ This project is a modern e-commerce art gallery website built with Next.js 15, e
 - Core website structure and navigation
 - Artist and artwork management system
 - Shopping cart functionality
-- Basic checkout process
-- Admin dashboard and CMS
+- Checkout process with PayFast Mock integration
+- Admin dashboard and CMS (Artists, Products, Users, Medias, Analytics)
 - Media management system
 - User authentication and authorization
-- Database schema and migrations
-- Responsive design and UI components
+- Database schema and migrations (Drizzle)
 - QR code generation
 - Email system configuration
-- Deployment infrastructure
+- Invoice generation
+- Basic Order Management
 
 ### 🚧 Partially Implemented
 
 - Wishlist functionality (UI exists, no persistence)
 - Image zoom and advanced viewing
-- Payment processing (simulated only)
-- Order management system
 - Blog/news section
 - Advanced search and filtering
 
 ### ❌ Not Yet Implemented
 
-- Real payment gateway integration
-- Order tracking and shipping
-- Invoice generation
-- Customer account management
-- Blog content management
-- Advanced SEO features
+- Real payment gateway integration (Stripe/PayPal)
+- Order tracking and shipping notifications integration
+- Full-scale Sitemap generation
 - Rate limiting and security hardening
-- Analytics and reporting
 
 ## Installation
 
@@ -156,20 +151,20 @@ cp .env.example .env.local
 # Edit .env.local with your database and SMTP settings
 
 # Run database migrations
-npm run migration:run
+npm run db:push
 
 # Seed the database
-npm run migration:seed
+npm run db:seed
 
 # Start development server
 npm run dev
 ```
 
-### Production Deployment
+### Production Build
 
 ```bash
 # Build for production
-npm run build:standalone
+npm run build
 
 # Start production server
 npm start
@@ -189,7 +184,7 @@ npm start
 1. **Dashboard:** Access `/admin` for comprehensive management
 2. **Content Management:** Manage artists, artworks, and media through the CMS
 3. **User Management:** Handle user accounts and permissions
-4. **Media Library:** Upload and organize images and documents
+4. **Analytics:** View performance metrics and order history
 
 ## Contributing
 
@@ -205,37 +200,29 @@ Nico Swan e-mail: [hi@nicoswan.com](mailto://hi@nicoswan.com)
 
 ## Success Metrics
 
-- [x] Website traffic and engagement (page views, bounce rate, time on site)
-- [ ] Conversion rate (sales) - requires payment integration
-- [ ] Customer satisfaction (reviews, feedback) - not implemented
-- [x] QR code scan analytics - basic tracking implemented
+- [x] Website traffic and engagement (Analytics Dashboard)
+- [x] Order monitoring (Admin Orders view)
 
 ## Next Steps
 
 ### Priority 1 (Critical for E-commerce)
 
-1. Integrate real payment gateway (Stripe/PayPal)
-2. Implement order management system
-3. Add customer account management
-4. Complete wishlist functionality
+1. Enhance order status tracking integration
+2. Complete wishlist persistence
 
 ### Priority 2 (User Experience)
 
 1. Implement image zoom and advanced viewing
-2. Add advanced search and filtering
+2. Add advanced search and filtering (Elasticsearch or similar)
 3. Complete blog/news section
-4. Add customer reviews and ratings
 
 ### Priority 3 (Business Features)
 
-1. Implement analytics and reporting
-2. Add inventory management
-3. Complete shipping and order tracking
-4. Add invoice generation
+1. Add inventory management with low-stock alerts
+2. Complete shipping and order tracking integration
 
 ### Priority 4 (Technical Improvements)
 
-1. Add comprehensive testing
-2. Implement rate limiting
-3. Add advanced security features
-4. Optimize performance and caching
+1. Implement rate limiting and WAF
+2. Optimize edge caching for artworks
+3. Automated Sitemap generation
