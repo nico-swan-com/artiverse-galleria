@@ -39,7 +39,12 @@ const sharedExperimental = {
 const defaultConfig: NextConfig = {
   distDir: '_next',
   images: {
-    remotePatterns: sharedRemotePatterns
+    remotePatterns: sharedRemotePatterns,
+    localPatterns: [
+      {
+        pathname: '/api/media/**'
+      }
+    ]
   },
   experimental: {
     ...sharedExperimental,
@@ -79,7 +84,12 @@ const customServerConfig: NextConfig = {
    */
   output: 'standalone',
   images: {
-    remotePatterns: sharedRemotePatterns
+    remotePatterns: sharedRemotePatterns,
+    localPatterns: [
+      {
+        pathname: '/api/media/**'
+      }
+    ]
   },
   experimental: {
     ...sharedExperimental,
@@ -103,7 +113,12 @@ const staticConfig: NextConfig = {
    */
   images: {
     unoptimized: true,
-    remotePatterns: sharedRemotePatterns
+    remotePatterns: sharedRemotePatterns,
+    localPatterns: [
+      {
+        pathname: '/api/media/**'
+      }
+    ]
   },
   experimental: {
     ...sharedExperimental,

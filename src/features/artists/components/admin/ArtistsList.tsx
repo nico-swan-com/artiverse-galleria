@@ -15,7 +15,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowDown, ArrowUp } from 'lucide-react'
 import TablePagination from '@/components/common/ui/TablePagination'
 import DeleteArtistDialog from './delete-artist/DeleteArtistDialog'
-import EditArtistDialog from './edit-artist/EditArtistDialog'
+import EditArtistSheet from './edit-artist/EditArtistDialog'
 import { Artist, ArtistsSortBy } from '@/features/artists'
 
 interface ArtistsListProps {
@@ -154,7 +154,7 @@ const ArtistsList = ({
                       : ''}
                   </TableCell>
                   <TableCell className='text-end'>
-                    <EditArtistDialog artist={artist} />
+                    <EditArtistSheet artist={artist} />
                     <DeleteArtistDialog artist={artist} />
                   </TableCell>
                 </TableRow>

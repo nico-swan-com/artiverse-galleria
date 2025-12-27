@@ -2,39 +2,39 @@
 
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from '@/components/ui/sheet'
 import { UserPlus } from 'lucide-react'
 import { useState, Suspense } from 'react'
 import CreateArtistForm from './CreateArtistForm'
 
-const CreateArtistDialog = () => {
+const CreateArtistSheet = () => {
   const [isOpen, setOpen] = useState(false)
 
   return (
-    <Dialog open={isOpen} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <Sheet open={isOpen} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
         <Button>
           <UserPlus className='mr-2 size-4' />
           Add artist
         </Button>
-      </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px]'>
-        <DialogHeader>
-          <DialogTitle>Add new artist</DialogTitle>
-          <DialogDescription></DialogDescription>
-        </DialogHeader>
+      </SheetTrigger>
+      <SheetContent className='overflow-y-auto'>
+        <SheetHeader>
+          <SheetTitle>Add new artist</SheetTitle>
+          <SheetDescription>Add a new artist to the platform</SheetDescription>
+        </SheetHeader>
         <Suspense>
           <CreateArtistForm onClose={() => setOpen(false)} />
         </Suspense>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   )
 }
 
-export default CreateArtistDialog
+export default CreateArtistSheet

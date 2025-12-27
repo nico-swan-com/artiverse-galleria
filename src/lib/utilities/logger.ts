@@ -24,8 +24,7 @@ class Logger {
       ...(context && { context })
     }
 
-    // In production, you might want to send to a logging service
-    // For now, we use console with structured output
+    // INFO: In production, might want to send to a logging service
     switch (level) {
       case LogLevel.DEBUG:
         console.debug(JSON.stringify(logEntry))

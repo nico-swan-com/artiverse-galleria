@@ -1,13 +1,13 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from '@/components/ui/sheet'
 import { Pencil } from 'lucide-react'
 import { useState, Suspense } from 'react'
 import EditArtistForm from './EditArtistForm'
@@ -18,21 +18,21 @@ type EditArtistProps = {
   artist: Artist | null
 }
 
-const EditArtistDialog = ({ artist }: EditArtistProps) => {
+const EditArtistSheet = ({ artist }: EditArtistProps) => {
   const [isOpen, setOpen] = useState(false)
 
   return (
-    <Dialog open={isOpen} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <Sheet open={isOpen} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
         <Button size='icon' variant='ghost'>
           <Pencil className='size-4' />
         </Button>
-      </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px]'>
-        <DialogHeader>
-          <DialogTitle>Update artist</DialogTitle>
-          <DialogDescription></DialogDescription>
-        </DialogHeader>
+      </SheetTrigger>
+      <SheetContent className='overflow-y-auto'>
+        <SheetHeader>
+          <SheetTitle>Update artist</SheetTitle>
+          <SheetDescription>Update artist details</SheetDescription>
+        </SheetHeader>
         <Suspense
           fallback={<Skeleton className='h-[20px] w-full rounded-full' />}
         >
@@ -40,9 +40,9 @@ const EditArtistDialog = ({ artist }: EditArtistProps) => {
             <EditArtistForm artist={artist} onClose={() => setOpen(false)} />
           )}
         </Suspense>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   )
 }
 
-export default EditArtistDialog
+export default EditArtistSheet

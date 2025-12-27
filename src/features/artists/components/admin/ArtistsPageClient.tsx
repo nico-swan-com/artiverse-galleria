@@ -3,7 +3,7 @@
 import PageTransition from '@/components/common/utility/PageTransition'
 import { FindOptionsOrderValue } from '@/types/common/db.type'
 import ArtistsList from './ArtistsList'
-import CreateArtistDialog from './create-artist/CreateArtistDialog'
+import CreateArtistSheet from './create-artist/CreateArtistDialog'
 import { Artist, ArtistsSortBy } from '@/features/artists'
 
 interface ArtistsPageClientProps {
@@ -28,7 +28,7 @@ const ArtistsPageClient = ({
       <div className='space-y-6'>
         <div className='flex items-center justify-between'>
           <h1 className='text-3xl font-bold tracking-tight'>Artists</h1>
-          <CreateArtistDialog />
+          <CreateArtistSheet />
         </div>
 
         <ArtistsList

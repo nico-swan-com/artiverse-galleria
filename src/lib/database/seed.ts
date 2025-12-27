@@ -1,10 +1,23 @@
 import 'dotenv/config'
 import { db } from './drizzle'
-import { users, artists, products, media } from './schema'
+import {
+  users,
+  artists,
+  products,
+  media,
+  orders,
+  orderItems,
+  analyticsEvents
+} from './schema'
 import { getUsers } from './data/users'
 import { artists as artistsData } from './data/artists'
 import { artworks as productsData } from './data/artworks'
 import { mediaFiles as mediaData } from './data/media'
+import {
+  orders as ordersData,
+  orderItems as orderItemsData
+} from './data/orders'
+import { analyticsEvents as analyticsData } from './data/analytics'
 import { Table } from 'drizzle-orm'
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import type * as schema from './schema'
@@ -22,6 +35,9 @@ async function seed() {
 
     // 1. Clean up existing data in reverse order of dependency
     logger.info('Cleaning database')
+    await resetTable(db, analyticsEvents)
+    await resetTable(db, orderItems)
+    await resetTable(db, orders)
     await resetTable(db, products)
     await resetTable(db, artists)
     await resetTable(db, media)
@@ -74,6 +90,21 @@ async function seed() {
     logger.info('Products seeded', {
       count: productsDataWithStringPrice.length
     })
+
+    // 6. Seed Orders
+    logger.info('Seeding orders')
+    await db.insert(orders).values(ordersData)
+    logger.info('Orders seeded', { count: ordersData.length })
+
+    // 7. Seed Order Items
+    logger.info('Seeding order items')
+    await db.insert(orderItems).values(orderItemsData)
+    logger.info('Order items seeded', { count: orderItemsData.length })
+
+    // 8. Seed Analytics
+    logger.info('Seeding analytics')
+    await db.insert(analyticsEvents).values(analyticsData)
+    logger.info('Analytics seeded', { count: analyticsData.length })
 
     logger.info('Seeding completed successfully')
   } catch (error) {
