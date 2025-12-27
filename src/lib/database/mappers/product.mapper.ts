@@ -1,5 +1,5 @@
 import { products, artists } from '../schema'
-import { Product } from '../../../types/products/product.schema'
+import { Product } from '@/features/products/types/product.schema'
 import type { InferSelectModel } from 'drizzle-orm'
 
 /**

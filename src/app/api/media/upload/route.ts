@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { MediaService } from '@/lib/media/media.service'
+import { MediaService } from '@/features/media/lib/media.service'
 import { handleApiError, ApiError } from '@/lib/utilities/api-error-handler'
 
 export const runtime = 'nodejs'

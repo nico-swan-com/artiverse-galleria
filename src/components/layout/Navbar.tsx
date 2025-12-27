@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ShoppingCart, Search, Menu, X, User, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import Logo from '../admin/users/create-user/logo/Logo'
+import Logo from '@/features/users/components/admin/create-user/logo/Logo'
 import { Button } from '../ui/button'
 import {
   DropdownMenu,

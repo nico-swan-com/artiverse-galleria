@@ -1,7 +1,7 @@
 'use server'
 
-import ProductForm from '@/components/admin/products/ProductForm'
-import ProductsService from '@/lib/products/products.service'
+import ProductForm from '@/features/products/components/admin/ProductForm'
+import ProductsService from '@/features/products/lib/products.service'
 
 type Params = Promise<{ id: string }>
 

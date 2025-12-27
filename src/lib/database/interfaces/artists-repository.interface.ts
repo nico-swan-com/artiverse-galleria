@@ -5,8 +5,8 @@ import {
   Artists,
   ArtistsSortBy,
   ArtistUpdate
-} from '../../artists/model'
-import { Artist } from '../../artists/model/artist.schema'
+} from '@/features/artists/types'
+import { Artist } from '@/features/artists/types/artist.schema'
 
 /**
  * Artists repository interface

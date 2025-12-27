@@ -1,10 +1,10 @@
-import ProductsService from '@/lib/products/products.service'
+import ProductsService from '@/features/products/lib/products.service'
 import ArtistArtworksClient from './ArtistArtworksClient'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, Mail, ExternalLink, MapPin } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import ArtistsService from '@/lib/artists/artists.service'
+import ArtistsService from '@/features/artists/lib/artists.service'
 
 export const dynamic = 'force-dynamic'
 

@@ -8,7 +8,7 @@
 
 import { PaymentProvider } from './payment-provider.interface'
 import { PayFastProvider } from './payfast.provider'
-import { ordersRepository } from './orders.repository'
+import { ordersRepository } from '@/features/orders/lib/orders.repository'
 import {
   Order,
   OrderItem,

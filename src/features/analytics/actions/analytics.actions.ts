@@ -6,7 +6,7 @@
  * Server actions for tracking events and getting analytics data.
  */
 
-import { auth } from '@/lib/authentication/next-auth'
+import { auth } from '@/features/authentication/lib/next-auth'
 import { analyticsService } from '../lib'
 import { EventType, DashboardMetrics } from '../types'
 import { cookies } from 'next/headers'

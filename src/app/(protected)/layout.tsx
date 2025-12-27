@@ -1,4 +1,4 @@
-import { auth } from '@/lib/authentication/next-auth'
+import { auth } from '@/features/authentication/lib/next-auth'
 import { redirect } from 'next/navigation'
 import { UserRoles } from '@/types/users/user-roles.enum'
 import PlatformLayout from '@/components/layout/PlatformLayout'

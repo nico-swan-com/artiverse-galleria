@@ -1,9 +1,9 @@
 import React from 'react'
 import { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
-import { auth } from '@/lib/authentication/next-auth'
+import { auth } from '@/features/authentication/lib/next-auth'
 import { getOrder } from '@/features/billing/actions/billing.actions'
-import Invoice from '@/components/billing/Invoice'
+import Invoice from '@/features/billing/components/Invoice'
 
 export const metadata: Metadata = {
   title: 'Invoice | Artiverse Galleria',

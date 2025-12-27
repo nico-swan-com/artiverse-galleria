@@ -1,7 +1,7 @@
-import React, { Suspense } from 'react'
+import { Suspense } from 'react'
 import { Metadata } from 'next'
 import { getAdminOrdersAction } from '@/features/billing/actions/billing.actions'
-import OrdersList from '@/components/admin/orders/OrdersList'
+import OrdersList from '@/features/orders/components/admin/OrdersList'
 import { Order } from '@/features/billing/types/billing.types'
 
 export const metadata: Metadata = {

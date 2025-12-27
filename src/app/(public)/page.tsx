@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button'
 import ArtistCard from '@/components/public/artists/ArtistCard'
 import ArtworkCard from '@/components/public/artwork/ArtworkCard'
 import Hero from '@/components/public/sections/hero/Hero'
-import ProductsService from '@/lib/products/products.service'
-import ArtistsService from '@/lib/artists/artists.service'
+import ProductsService from '@/features/products/lib/products.service'
+import ArtistsService from '@/features/artists/lib/artists.service'
 
 export const metadata: Metadata = {
   title: 'Artiverse Galleria | Discover Unique Art from World Artists',

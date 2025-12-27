@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
 import { Product } from '@/types/products/product.schema'
-import ProductsService from '@/lib/products/products.service'
+import ProductsService from '@/features/products/lib/products.service'
 import HeroCarousel from './HeroCarousel'
 
 // Fisher-Yates shuffle algorithm

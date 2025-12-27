@@ -1,6 +1,10 @@
-import ArtistsPageClient from '@/components/admin/artists/ArtistsPageClient'
-import { Artist, ArtistsSortBy, isValidArtistsSortKey } from '@/lib/artists'
-import ArtistsService from '@/lib/artists/artists.service'
+import ArtistsPageClient from '@/features/artists/components/admin/ArtistsPageClient'
+import {
+  Artist,
+  ArtistsSortBy,
+  isValidArtistsSortKey
+} from '@/features/artists'
+import ArtistsService from '@/features/artists/lib/artists.service'
 
 import { FindOptionsOrderValue } from '@/types/common/db.type'
 

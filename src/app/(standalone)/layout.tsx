@@ -1,4 +1,4 @@
-import { auth } from '@/lib/authentication/next-auth'
+import { auth } from '@/features/authentication/lib/next-auth'
 import { redirect } from 'next/navigation'
 import React from 'react'
 

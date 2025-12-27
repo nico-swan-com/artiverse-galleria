@@ -15,7 +15,7 @@ import {
 import { Product } from '@/types/products/product.schema'
 import { logger } from '@/lib/utilities/logger'
 import { headers } from 'next/headers'
-import { auth } from '@/lib/authentication/next-auth'
+import { auth } from '@/features/authentication/lib/next-auth'
 
 /**
  * Convert cart items to order items

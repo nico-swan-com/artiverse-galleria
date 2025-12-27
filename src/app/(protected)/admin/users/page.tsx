@@ -1,11 +1,11 @@
-import UsersPage from '@/components/admin/users/UsersPage'
+import UsersPage from '@/features/users/components/admin/UsersPage'
 import {
   isValidUsersSortKey,
   UsersSortBy
 } from '@/types/users/users-sort-by.type'
-import { getUsersUnstableCache } from '@/lib/users/users.actions'
+import { getUsersUnstableCache } from '@/features/users/actions/users.actions'
 import { FindOptionsOrderValue } from '@/types/common/db.type'
-import { auth } from '@/lib/authentication/next-auth'
+import { auth } from '@/features/authentication/lib/next-auth'
 import { UserRoles } from '@/types/users/user-roles.enum'
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>

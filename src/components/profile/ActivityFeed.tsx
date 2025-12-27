@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from 'react'
 import {
   getUserActivity,
   ActivityEvent
-} from '@/features/billing/actions/user-orders.actions'
+} from '@/features/orders/actions/orders.actions'
 import {
   ShoppingBag,
   CreditCard,

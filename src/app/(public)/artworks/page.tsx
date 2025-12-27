@@ -1,4 +1,4 @@
-import ProductsService from '@/lib/products/products.service'
+import ProductsService from '@/features/products/lib/products.service'
 import ArtworksClient from './ArtworksClient'
 
 export const dynamic = 'force-dynamic'

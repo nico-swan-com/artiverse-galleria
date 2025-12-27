@@ -1,6 +1,6 @@
 import ArtistsList from '@/components/public/artists/ArtistList'
-import { Artist } from '@/lib/artists'
-import ArtistsService from '@/lib/artists/artists.service'
+import { Artist } from '@/features/artists'
+import ArtistsService from '@/features/artists/lib/artists.service'
 
 export const dynamic = 'force-dynamic'
 

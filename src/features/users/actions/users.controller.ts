@@ -2,7 +2,7 @@ import Users from '../lib/users.service'
 import { NextRequest, NextResponse } from 'next/server'
 import { FindOptionsOrderValue } from '@/types/common/db.type'
 
-import { AuthGuard } from '@/lib/authentication/auth-guard-route.decorator'
+import { AuthGuard } from '@/features/authentication/lib/auth-guard-route.decorator'
 import { UsersSortBy } from '@/types/users/users-sort-by.type'
 import { PAGINATION } from '@/shared/constants/pagination.constants'
 

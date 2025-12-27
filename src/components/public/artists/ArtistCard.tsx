@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
-import { Artist } from '@/lib/artists/model'
+import { Artist } from '@/features/artists/types'
 
 interface ArtistCardProps {
   artist: Artist

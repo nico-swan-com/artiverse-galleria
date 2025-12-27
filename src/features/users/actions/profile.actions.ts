@@ -1,13 +1,13 @@
 'use server'
 
-import { auth } from '@/lib/authentication/next-auth'
+import { auth } from '@/features/authentication/lib/next-auth'
 import { db } from '@/lib/database/drizzle'
 import { users } from '@/lib/database/schema'
 import { revalidatePath } from 'next/cache'
 import { FormState } from '@/types/common/form-state.type'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
-import { MediaService } from '@/lib/media/media.service'
+import { MediaService } from '@/features/media/lib/media.service'
 import bcryptjs from 'bcryptjs'
 
 const profileSchema = z.object({

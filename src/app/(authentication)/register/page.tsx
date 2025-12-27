@@ -1,5 +1,5 @@
-import RegisterForm from '@/components/authentication/RegisterForm'
-import { auth } from '@/lib/authentication/next-auth'
+import RegisterForm from '@/features/authentication/components/RegisterForm'
+import { auth } from '@/features/authentication/lib/next-auth'
 import { redirect } from 'next/navigation'
 import { Metadata } from 'next'
 

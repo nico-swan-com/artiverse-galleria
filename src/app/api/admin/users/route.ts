@@ -1,4 +1,4 @@
-import { UsersController } from '@/lib/users'
+import { UsersController } from '@/features/users'
 import { handleApiError } from '@/lib/utilities/api-error-handler'
 import { NextRequest } from 'next/server'
 

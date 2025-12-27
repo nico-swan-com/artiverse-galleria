@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { MediaService } from '@/lib/media/media.service'
+import { MediaService } from '@/features/media/lib/media.service'
 import sharp, { type Gravity } from 'sharp'
 import path from 'path'
 import fs from 'fs/promises'

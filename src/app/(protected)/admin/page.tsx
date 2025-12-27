@@ -1,5 +1,5 @@
 import AnalyticsDashboard from '@/components/admin/AnalyticsDashboard'
-import { auth } from '@/lib/authentication'
+import { auth } from '@/features/authentication/lib'
 import { redirect } from 'next/navigation'
 
 const AdminPage = async () => {

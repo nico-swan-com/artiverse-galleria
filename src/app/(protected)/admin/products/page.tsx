@@ -1,10 +1,10 @@
-import ProductsPage from '@/components/admin/products/ProductsPage'
+import ProductsPage from '@/features/products/components/admin/ProductsPage'
 import { Product } from '@/types/products/product.schema'
 import {
   isValidProductsSortKey,
   ProductsSortBy
 } from '@/types/products/products-sort-by.type'
-import ProductsService from '@/lib/products/products.service'
+import ProductsService from '@/features/products/lib/products.service'
 import { FindOptionsOrderValue } from '@/types/common/db.type'
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>

@@ -1,5 +1,5 @@
 import { artists } from '../schema'
-import { Artist } from '../../artists/model/artist.schema'
+import { Artist } from '@/features/artists/types/artist.schema'
 import type { InferSelectModel } from 'drizzle-orm'
 
 /**

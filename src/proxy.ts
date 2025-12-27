@@ -1,5 +1,5 @@
 import NextAuth from 'next-auth'
-import { authConfig } from '@/lib/authentication/auth.config'
+import { authConfig } from '@/features/authentication/lib/auth.config'
 
 const { auth } = NextAuth(authConfig)
 

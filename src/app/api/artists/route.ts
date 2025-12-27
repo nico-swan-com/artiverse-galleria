@@ -1,4 +1,4 @@
-import { ArtistsController } from '@/lib/artists/artists.controller'
+import { ArtistsController } from '@/features/artists/actions/artists.controller'
 import { handleApiError } from '@/lib/utilities/api-error-handler'
 import { NextRequest } from 'next/server'
 

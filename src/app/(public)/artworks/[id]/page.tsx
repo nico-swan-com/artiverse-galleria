@@ -1,4 +1,4 @@
-import ProductsService from '@/lib/products/products.service'
+import ProductsService from '@/features/products/lib/products.service'
 import ArtworkDetailClient from './ArtworkDetailClient'
 import { notFound } from 'next/navigation'
 

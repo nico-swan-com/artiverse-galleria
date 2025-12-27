@@ -15,7 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover'
-import { Artist } from '@/lib/artists/model/artist.schema'
+import { Artist } from '@/features/artists/types/artist.schema'
 
 interface ArtistSelectProps {
   artistId?: string

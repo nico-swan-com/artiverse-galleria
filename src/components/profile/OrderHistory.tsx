@@ -5,7 +5,7 @@ import Link from 'next/link'
 import {
   getUserOrders,
   OrderSummary
-} from '@/features/billing/actions/user-orders.actions'
+} from '@/features/orders/actions/orders.actions'
 import {
   Package,
   Clock,
