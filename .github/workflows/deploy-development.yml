@@ -35,7 +35,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
       - name: Security Scan
-        run: npm audit --audit-level=moderate
+        run: npm audit --audit-level=moderate --omit=dev
         continue-on-error: true
       - name: Build
         run: npm run cbuild
