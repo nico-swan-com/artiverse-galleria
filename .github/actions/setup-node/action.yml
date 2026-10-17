@@ -37,7 +37,7 @@ runs:
     - name: 'Setup Node'
       uses: actions/setup-node@v4
       with:
-        node-version: '18.20.6'
+        node-version: '20'
         cache: ${{ steps.detect.outputs.manager }}
 
     - name: 'Restore cache'
