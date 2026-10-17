@@ -8,6 +8,7 @@ ARG SKIP_ENV_VALIDATION=true
 ENV SKIP_ENV_VALIDATION=${SKIP_ENV_VALIDATION}
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
+RUN npm prune --omit=dev
 
 # Release image
 FROM node:22.17.0-slim
