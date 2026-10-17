@@ -29,9 +29,10 @@ jobs:
           SKIP_ENV_VALIDATION: true
       - name: Upload coverage reports
         uses: codecov/codecov-action@v4
-        if: always()
+        if: "!cancelled() && hashFiles('coverage/lcov.info') != ''"
         with:
           files: ./coverage/lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
       - name: Security Scan
         run: npm audit --audit-level=moderate
