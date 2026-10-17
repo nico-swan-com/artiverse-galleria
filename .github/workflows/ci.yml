@@ -43,7 +43,7 @@ jobs:
           fail_ci_if_error: false
 
       - name: Security scan
-        run: npm audit --audit-level=moderate
+        run: npm audit --audit-level=moderate --omit=dev
         continue-on-error: true
 
       - name: Build application

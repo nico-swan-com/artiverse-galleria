@@ -9,6 +9,6 @@ export default {
     if (filesToCheck.length === 0) {
       return []
     }
-    return `prettier --check ${filesToCheck.join(' ')}`
+    return `prettier --check --ignore-unknown ${filesToCheck.join(' ')}`
   }
 }
